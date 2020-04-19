@@ -5,7 +5,7 @@ namespace shopium\mod\telegram\migrations;
 use yii\console\Exception;
 use panix\engine\db\Migration;
 
-class m160808_112253_telegram_edited_message extends Migration
+class m000006_000000_telegram_edited_message extends Migration
 {
 
     // Use safeUp/safeDown to run migration code within a transaction
@@ -72,7 +72,7 @@ class m160808_112253_telegram_edited_message extends Migration
             return false;
         }
 
-        return "m160808_112253_telegram_edited_message was reverted.\n";
+        return "m000006_000000_telegram_edited_message was reverted.\n";
     }
 
 }

@@ -5,14 +5,14 @@ namespace shopium\mod\telegram\migrations;
 use yii\console\Exception;
 use panix\engine\db\Migration;
 
-class m160808_112253_telegram_inline_query extends Migration
+class m000005_000000_telegram_inline_query extends Migration
 {
 
     // Use safeUp/safeDown to run migration code within a transaction
     public function safeUp()
     {
         $this->createTable('{{%telegram__inline_query}}', [
-            'id' => $this->bigPrimaryKey()->comment('Unique identifier for this query'),
+            'id' => $this->bigPrimaryKey()->unsigned()->comment('Unique identifier for this query'),
             'user_id'=>$this->bigInteger()->null()->comment('Unique user identifier'),
             'location' => $this->char(255)->null()->defaultValue(NULL)->comment('Location of the user'),
             'query' => $this->text()->notNull()->comment('Text of the query'),
@@ -41,7 +41,7 @@ class m160808_112253_telegram_inline_query extends Migration
             return false;
         }
 
-        return "m160808_112253_telegram_inline_query was reverted.\n";
+        return "m000005_000000_telegram_inline_query was reverted.\n";
     }
 
 }

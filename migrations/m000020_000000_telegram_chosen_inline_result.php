@@ -5,14 +5,14 @@ namespace shopium\mod\telegram\migrations;
 use yii\console\Exception;
 use panix\engine\db\Migration;
 
-class m160808_112253_telegram_chosen_inline_result extends Migration
+class m000020_000000_telegram_chosen_inline_result extends Migration
 {
 
     // Use safeUp/safeDown to run migration code within a transaction
     public function safeUp()
     {
         $this->createTable('{{%telegram__chosen_inline_result}}', [
-            'id' => $this->bigPrimaryKey()->comment('Unique identifier for this query'),
+            'id' => $this->bigPrimaryKey()->unsigned()->comment('Unique identifier for this query'),
             'user_id'=>$this->bigInteger()->null()->comment('The user that chose the result'),
             'result_id' => $this->char(255)->notNull()->defaultValue('')->comment('The unique identifier for the result that was chosen'),
             'location' => $this->char(255)->null()->defaultValue(NULL)->comment('Sender location, only for bots that require user location'),
@@ -43,7 +43,7 @@ class m160808_112253_telegram_chosen_inline_result extends Migration
             return false;
         }
 
-        return "m160808_112253_telegram_chosen_inline_result was reverted.\n";
+        return "m000020_000000_telegram_chosen_inline_result was reverted.\n";
     }
 
 }
