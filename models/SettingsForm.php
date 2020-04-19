@@ -28,4 +28,16 @@ class SettingsForm extends SettingsModel
     }
 
 
+    /**
+     * @inheritdoc
+     */
+    public static function defaultSettings()
+    {
+        return [
+            'empty_cart_text' => 'Ваша корзина пустая',
+            'empty_history_text' => 'Ваша история пустая Воспользуйтесь каталогом чтобы ее наполнить',
+            'bot_admins' => '',
+        ];
+    }
+
 }

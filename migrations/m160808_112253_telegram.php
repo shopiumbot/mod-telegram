@@ -7,10 +7,14 @@ use panix\engine\db\Migration;
 
 class m160808_112253_telegram extends Migration
 {
-    
+    public $settingsForm = 'shopium\mod\telegram\models\SettingsForm';
     // Use safeUp/safeDown to run migration code within a transaction
     public function safeUp()
     {
+
+
+        $this->loadSettings();
+
         $this->createTable('{{%tlgrm_actions}}', [
             'chat_id' => $this->primaryKey(),
             'action' => $this->string(62),
