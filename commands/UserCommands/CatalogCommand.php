@@ -106,7 +106,9 @@ class CatalogCommand extends UserCommand
                             ])
                         ];
                     }
-                }
+                }else{
+					return $this->notify('В каталоге нет продукции','info');
+				}
 
             }
         }

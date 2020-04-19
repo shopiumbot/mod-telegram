@@ -61,6 +61,7 @@ class IndexController extends Controller
          //   $telegram->enableAdmins();
 
             // Enable MySQL
+            $telegram->enableExternalMySql(Yii::$app->db);
             $telegram->enableMySql($mysql_credentials);
 
             // Logging (Error, Debug and Raw Updates)

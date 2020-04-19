@@ -30,7 +30,7 @@ class DefaultController extends Controller
                 'actions' => [
                     'destroy-chat' => ['post'],
                     'init-chat' => ['post'],
-                    'hook' => ['post'],
+                  //  'hook' => ['post'],
                 ],
             ],
         ];
@@ -70,12 +70,20 @@ class DefaultController extends Controller
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
         $mysql_credentials = [
-            'host' => 'corner2.mysql.tools',
-            'user' => 'corner2_bot',
-            'password' => 'oHj0!5b4#E',
-            'database' => 'corner2_bot',
+            'host' => 'corner.mysql.tools',
+            'user' => 'corner_bot',
+            'password' => 'g09K*a+Jm1',
+            'database' => 'corner_bot',
         ];
-        Yii::$app->urlManager->setHostInfo('https://bot.7roddom.org.ua');
+		//Yii::error('MY_API   '.Yii::$app->settings->get('telegram','api_token'));
+		
+		
+		
+		//CMS::dump(Yii::$app->settings->get('app'));
+		//CMS::dump(Yii::$app->settings->get('telegram'));
+		//die;
+		//echo Yii::$app->settings->get('telegram','sitename');die;
+        //Yii::$app->urlManager->setHostInfo('https://bot.7roddom.org.ua');
         try {
 
             // Create Telegram API object
@@ -95,6 +103,7 @@ class DefaultController extends Controller
             $telegram->handle();
 
         } catch (TelegramException $e) {
+
             // Silence is golden!
             // log telegram errors
             Yii::error($e->getMessage());
