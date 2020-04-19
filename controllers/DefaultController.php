@@ -70,24 +70,16 @@ class DefaultController extends Controller
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-		//Yii::error('MY_API   '.Yii::$app->settings->get('telegram','api_token'));
         $mysql_credentials = [
             'host' => Yii::$app->getModule('telegram')->getDsnAttribute('host'),
             'user' => Yii::$app->db->username,
             'password' => Yii::$app->db->password,
             'database' =>Yii::$app->getModule('telegram')->getDsnAttribute('dbname'),
         ];
-		
-		
-		//CMS::dump(Yii::$app->settings->get('app'));
-		//CMS::dump(Yii::$app->settings->get('telegram'));
-		//die;
-		//echo Yii::$app->settings->get('telegram','sitename');die;
-        //Yii::$app->urlManager->setHostInfo('https://bot.7roddom.org.ua');
+
         try {
 
             // Create Telegram API object
-            //  $telegram = new Telegram(Yii::$app->getModule('telegram')->api_token, Yii::$app->getModule('telegram')->bot_name);
             $telegram = new Api();
             $basePath = \Yii::$app->getModule('telegram')->basePath;
             $commands_paths = [
