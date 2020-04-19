@@ -2,7 +2,7 @@
 
 namespace shopium\mod\telegram\models;
 
-use panix\mod\shop\models\Product;
+use core\modules\shop\models\Product;
 use Yii;
 
 /**

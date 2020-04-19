@@ -17,10 +17,10 @@ use Longman\TelegramBot\Entities\Keyboard;
 use Longman\TelegramBot\Entities\KeyboardButton;
 use Longman\TelegramBot\Request;
 use panix\engine\CMS;
-use panix\mod\shop\models\Attribute;
-use panix\mod\shop\models\Category;
-use panix\mod\shop\models\Product;
-use panix\mod\shop\models\ProductType;
+use core\modules\shop\models\Attribute;
+use core\modules\shop\models\Category;
+use core\modules\shop\models\Product;
+use core\modules\shop\models\ProductType;
 use Yii;
 
 /**

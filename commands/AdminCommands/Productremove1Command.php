@@ -16,7 +16,7 @@ use Longman\TelegramBot\Entities\Keyboard;
 use Longman\TelegramBot\Entities\KeyboardButton;
 use Longman\TelegramBot\Request;
 use panix\engine\CMS;
-use panix\mod\shop\models\Product;
+use core\modules\shop\models\Product;
 use shopium\mod\telegram\components\AdminCommand;
 use Yii;
 

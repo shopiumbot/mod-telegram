@@ -15,9 +15,9 @@ use Longman\TelegramBot\Entities\InlineKeyboard;
 use Longman\TelegramBot\Entities\InlineKeyboardButton;
 use Longman\TelegramBot\Entities\Keyboard;
 use Longman\TelegramBot\Entities\KeyboardButton;
-use panix\mod\shop\models\Attribute;
-use panix\mod\shop\models\Category;
-use panix\mod\shop\models\Product;
+use core\modules\shop\models\Attribute;
+use core\modules\shop\models\Category;
+use core\modules\shop\models\Product;
 use shopium\mod\telegram\commands\pager\InlineKeyboardPagination;
 use shopium\mod\telegram\components\InlineKeyboardMorePager;
 use shopium\mod\telegram\components\InlineKeyboardPager;
@@ -77,13 +77,6 @@ class CallbackqueryCommand extends SystemCommand
             ]);
             return $this->telegram->executeCommand('payment');
 
-        } elseif (strpos(trim($callback_data), 'command_pager')) {
-            return $this->telegram
-                ->setCommandConfig('cart', ['page' => $orderProduct->product_id])
-                ->executeCommand('cart');
-            $params = InlineKeyboardPagination::getParametersFromCallbackData($callback_data);
-
-            return Request::emptyResponse();
         } elseif (preg_match('/^getCatalog\s+([0-9]+)/iu', trim($callback_data), $match)) {
             $id = (isset($match[1])) ? $match[1] : 1;
             $root = Category::findOne($id);
@@ -605,7 +598,7 @@ class CallbackqueryCommand extends SystemCommand
     {
 
         $eav = $product;
-        /** @var \panix\mod\shop\components\EavBehavior $eav */
+        /** @var \core\modules\shop\components\EavBehavior $eav */
         $this->_attributes = $eav->getEavAttributes();
 
 

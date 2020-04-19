@@ -13,10 +13,8 @@ namespace shopium\mod\telegram\commands\UserCommands;
 
 use Longman\TelegramBot\Entities\InlineKeyboard;
 use Longman\TelegramBot\Entities\InlineKeyboardButton;
-use Longman\TelegramBot\Entities\Keyboard;
-use Longman\TelegramBot\Entities\KeyboardButton;
 use Longman\TelegramBot\Request;
-use panix\mod\shop\models\Category;
+use core\modules\shop\models\Category;
 use shopium\mod\telegram\components\UserCommand;
 use Yii;
 
@@ -87,7 +85,7 @@ class CatalogCommand extends UserCommand
             foreach ($categories as $category) {
 
                 $count = $category->countItems;
-                if ($count) {
+                if ($count || true) {
                     $child = $category->children()->count();
                     if ($child) {
                         $inlineKeyboards[] = [

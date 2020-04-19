@@ -18,8 +18,8 @@ use Longman\TelegramBot\Entities\InlineKeyboardButton;
 use Longman\TelegramBot\Entities\Keyboard;
 use Longman\TelegramBot\Entities\KeyboardButton;
 use Longman\TelegramBot\Request;
-use panix\mod\shop\models\Attribute;
-use panix\mod\shop\models\Product;
+use core\modules\shop\models\Attribute;
+use core\modules\shop\models\Product;
 use shopium\mod\telegram\components\InlineKeyboardMorePager;
 use shopium\mod\telegram\components\KeyboardPagination;
 use shopium\mod\telegram\components\SystemCommand;
@@ -233,7 +233,7 @@ class SearchResultCommand extends SystemCommand
     {
 
         $eav = $product;
-        /** @var \panix\mod\shop\components\EavBehavior $eav */
+        /** @var \core\modules\shop\components\EavBehavior $eav */
         $this->_attributes = $eav->getEavAttributes();
 
 

@@ -14,12 +14,7 @@ namespace shopium\mod\telegram\commands\AdminCommands;
 
 use Longman\TelegramBot\Conversation;
 use Longman\TelegramBot\Entities\Keyboard;
-use Longman\TelegramBot\Entities\KeyboardButton;
 use Longman\TelegramBot\Request;
-use panix\engine\CMS;
-use panix\mod\shop\models\Category;
-use panix\mod\shop\models\Product;
-use panix\mod\shop\models\ProductType;
 use shopium\mod\telegram\components\AdminCommand;
 use Yii;
 

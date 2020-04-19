@@ -30,10 +30,6 @@ class IndexController extends Controller
     public function actionIndex()
     {
 
-// Define all IDs of admin users in this array (leave as empty array if not used)
-      //  $admin_users = [812367093];
-      //  $admin_users2 = explode(',', Yii::$app->settings->get('telegram', 'bot_admins'));
-       // Yii::$app->urlManager->setHostInfo('https://yii2.pixelion.com.ua');
         $commands_paths = [
 
             __DIR__ . '/AdminCommands',
@@ -48,8 +44,8 @@ class IndexController extends Controller
             'password' => 'g09K*a+Jm1',
             'database' => 'corner_bot',
         ];
-        $api_key = Yii::$app->settings->get('telegram', 'api_token');
-        $bot_username = Yii::$app->settings->get('telegram', 'bot_name');
+        //$api_key = Yii::$app->settings->get('telegram', 'api_token');
+        //$bot_username = Yii::$app->settings->get('telegram', 'bot_name');
         try {
 
             $telegram = new Api();
@@ -61,7 +57,7 @@ class IndexController extends Controller
          //   $telegram->enableAdmins();
 
             // Enable MySQL
-            $telegram->enableExternalMySql(Yii::$app->db);
+            $telegram->enableExternalMySql(Yii::$app->db->pdo);
             $telegram->enableMySql($mysql_credentials);
 
             // Logging (Error, Debug and Raw Updates)
