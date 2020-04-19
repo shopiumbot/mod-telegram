@@ -2,9 +2,7 @@
 
 namespace shopium\mod\telegram\commands\UserCommands;
 
-
-use Longman\TelegramBot\Entities\Keyboard;
-use Longman\TelegramBot\Entities\KeyboardButton;
+use Longman\TelegramBot\Entities\BotCommand;
 use Longman\TelegramBot\Request;
 use shopium\mod\telegram\components\SystemCommand;
 use Yii;
@@ -66,7 +64,21 @@ class StartCommand extends SystemCommand
             'text' => $text,
         ];
 
-        $test =  \shopium\mod\telegram\components\Request::getMyCommands();
+        $cmd = Request::setMyCommands([
+            'commands' => [
+                new BotCommand([
+                    'command' => 'start',
+                    'description' => 'Start command'
+                ]),
+                new BotCommand([
+                    'command' => 'help',
+                    'description' => 'Помощь'
+                ]),
+            ]
+        ]);
+
+
+        $test = Request::getMyCommands();
         print_r($test);
         $data['reply_markup'] = $this->startKeyboards();
 
