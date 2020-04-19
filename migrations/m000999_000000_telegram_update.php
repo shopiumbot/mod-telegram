@@ -11,6 +11,13 @@ class m000999_000000_telegram_update extends Migration
     // Use safeUp/safeDown to run migration code within a transaction
     public function safeUp()
     {
+
+
+        /**
+
+
+        ALTER TABLE `telegram_update` ADD FOREIGN KEY (`poll_answer_poll_id`) REFERENCES `poll_answer` (`poll_id`);
+         */
         $this->createTable('{{%telegram__telegram_update}}', [
             'id' => $this->bigPrimaryKey()->unsigned()->comment('Update\'s unique identifier'),
             'chat_id' => $this->bigInteger()->null()->defaultValue(NULL)->comment('Unique chat identifier'),
@@ -24,6 +31,7 @@ class m000999_000000_telegram_update extends Migration
             'shipping_query_id' => $this->bigInteger()->unsigned()->defaultValue(NULL)->comment('New incoming shipping query. Only for invoices with flexible price'),
             'pre_checkout_query_id' => $this->bigInteger()->unsigned()->defaultValue(NULL)->comment('New incoming pre-checkout query. Contains full information about checkout'),
             'poll_id' => $this->bigInteger()->unsigned()->defaultValue(NULL)->comment('New poll state. Bots receive only updates about polls, which are sent or stopped by the bot'),
+            'poll_answer_poll_id'=>$this->bigInteger()->unsigned()->defaultValue(NULL)->comment('A user changed their answer in a non-anonymous poll. Bots receive new votes only in polls that were sent by the bot itself.')
         ], 'CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci ENGINE=InnoDB');
 
 
@@ -38,6 +46,15 @@ class m000999_000000_telegram_update extends Migration
         $this->createIndex('shipping_query_id', '{{%telegram__telegram_update}}', 'shipping_query_id');
         $this->createIndex('pre_checkout_query_id', '{{%telegram__telegram_update}}', 'pre_checkout_query_id');
         $this->createIndex('poll_id', '{{%telegram__telegram_update}}', 'poll_id');
+        $this->createIndex('poll_answer_poll_id', '{{%telegram__telegram_update}}', 'poll_answer_poll_id');
+
+        $this->addForeignKey(
+            '{{%telegram__telegram_update_fk_poll_answer_poll_id}}',
+            '{{%telegram__telegram_update}}',
+            'poll_answer_poll_id',
+            '{{%telegram__poll_answer}}',
+            'poll_id'
+        );
 
         $this->addForeignKey(
             '{{%telegram__telegram_update_fk_poll_id}}',

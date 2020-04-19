@@ -44,6 +44,7 @@ class m000004_000000_telegram_message extends Migration
             'location' => $this->text()->comment('Location object. Message is a shared location, information about the location'),
             'venue' => $this->text()->comment('Venue object. Message is a Venue, information about the Venue'),
             'poll' => $this->text()->comment('Poll object. Message is a native poll, information about the poll'),
+            'dice' => $this->text()->comment('Message is a dice with random value from 1 to 6'),
             'new_chat_members' => $this->text()->comment('List of unique user identifiers, new member(s) were added to the group, information about them (one of these members may be the bot itself)'),
             'left_chat_member' => $this->bigInteger()->null()->defaultValue(NULL)->comment('Unique user identifier, a member was removed from the group, information about them (this member may be the bot itself)'),
             'new_chat_title' => $this->char(255)->defaultValue(NULL)->comment('A chat title was changed to this value'),
