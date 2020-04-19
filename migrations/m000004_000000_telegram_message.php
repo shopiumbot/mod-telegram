@@ -5,7 +5,7 @@ namespace shopium\mod\telegram\migrations;
 use yii\console\Exception;
 use panix\engine\db\Migration;
 
-class m160808_112253_telegram_message extends Migration
+class m000004_000000_telegram_message extends Migration
 {
 
     // Use safeUp/safeDown to run migration code within a transaction
@@ -76,7 +76,7 @@ class m160808_112253_telegram_message extends Migration
 
 
         $this->addForeignKey(
-            'user_id',
+            'fk_user_id',
             '{{%telegram__message}}',
             'user_id',
             '{{%telegram__user}}',
@@ -85,7 +85,7 @@ class m160808_112253_telegram_message extends Migration
 
 
         $this->addForeignKey(
-            'chat_id',
+            'fk_chat_id',
             '{{%telegram__message}}',
             'chat_id',
             '{{%telegram__chat}}',
@@ -93,7 +93,7 @@ class m160808_112253_telegram_message extends Migration
         );
 
         $this->addForeignKey(
-            'forward_from',
+            'fk_forward_from',
             '{{%telegram__message}}',
             'forward_from',
             '{{%telegram__user}}',
@@ -102,7 +102,7 @@ class m160808_112253_telegram_message extends Migration
 
 
         $this->addForeignKey(
-            'forward_from_chat',
+            'fk_forward_from_chat',
             '{{%telegram__message}}',
             'forward_from_chat',
             '{{%telegram__chat}}',
@@ -111,23 +111,15 @@ class m160808_112253_telegram_message extends Migration
 
 
         $this->addForeignKey(
-            'reply_to_chat',
+            'fk_reply_to_chat',
             '{{%telegram__message}}',
             ['reply_to_chat', 'reply_to_message'],
             '{{%telegram__message}}',
             ['chat_id', 'id']
         );
 
-
         $this->addForeignKey(
-            'forward_from',
-            '{{%telegram__message}}',
-            'forward_from',
-            '{{%telegram__user}}',
-            'id'
-        );
-        $this->addForeignKey(
-            'left_chat_member',
+            'fk_left_chat_member',
             '{{%telegram__message}}',
             'left_chat_member',
             '{{%telegram__user}}',
@@ -146,7 +138,7 @@ class m160808_112253_telegram_message extends Migration
             return false;
         }
 
-        return "m160808_112253_telegram_message was reverted.\n";
+        return "m000004_000000_telegram_message was reverted.\n";
     }
 
 }

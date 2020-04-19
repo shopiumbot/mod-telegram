@@ -5,7 +5,7 @@ namespace shopium\mod\telegram\migrations;
 use yii\console\Exception;
 use panix\engine\db\Migration;
 
-class m160808_112253_telegram_user_chat extends Migration
+class m000003_000000_telegram_user_chat extends Migration
 {
 
     // Use safeUp/safeDown to run migration code within a transaction
@@ -31,7 +31,7 @@ class m160808_112253_telegram_user_chat extends Migration
         ], 'CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci ENGINE=InnoDB');
 
 
-        $this->addPrimaryKey('{{%telegram__user_chat_userchar}}', '{{%telegram__user_chat}}', ['user_id','chat_id']);
+        $this->addPrimaryKey('chat_user_id', '{{%telegram__user_chat}}', ['user_id','chat_id']);
 
 
         $this->addForeignKey(
@@ -64,7 +64,7 @@ class m160808_112253_telegram_user_chat extends Migration
             return false;
         }
 
-        return "m160808_112253_telegram__user_chat was reverted.\n";
+        return "m000003_000000_telegram_user_chat was reverted.\n";
     }
 
 }

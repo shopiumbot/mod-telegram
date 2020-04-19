@@ -5,7 +5,7 @@ namespace shopium\mod\telegram\migrations;
 use yii\console\Exception;
 use panix\engine\db\Migration;
 
-class m160808_112253_telegram_user extends Migration
+class m000001_000000_telegram_user extends Migration
 {
 
     // Use safeUp/safeDown to run migration code within a transaction
@@ -35,7 +35,7 @@ class m160808_112253_telegram_user extends Migration
             return false;
         }
 
-        return "m160808_112253_telegram_user was reverted.\n";
+        return "m000001_000000_telegram_user was reverted.\n";
     }
 
 }

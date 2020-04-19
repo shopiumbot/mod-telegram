@@ -38,7 +38,7 @@ class m160808_112253_telegram_edited_message extends Migration
 
 
         $this->addForeignKey(
-            'chat_id',
+            '{{%telegram__edited_message_fk_chat_id}}',
             '{{%telegram__edited_message}}',
             'chat_id',
             '{{%telegram__chat}}',
@@ -46,7 +46,7 @@ class m160808_112253_telegram_edited_message extends Migration
         );
 
         $this->addForeignKey(
-            'user_id',
+            '{{%telegram__edited_message_fk_user_id}}',
             '{{%telegram__edited_message}}',
             'user_id',
             '{{%telegram__user}}',
@@ -54,7 +54,7 @@ class m160808_112253_telegram_edited_message extends Migration
         );
 
         $this->addForeignKey(
-            'user_id_message_id',
+            '{{%telegram__edited_message_fk_message_id}}',
             '{{%telegram__edited_message}}',
             ['chat_id','message_id'],
             '{{%telegram__message}}',

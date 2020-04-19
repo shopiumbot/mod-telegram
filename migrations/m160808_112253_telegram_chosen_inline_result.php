@@ -25,7 +25,7 @@ class m160808_112253_telegram_chosen_inline_result extends Migration
         $this->createIndex('user_id', '{{%telegram__chosen_inline_result}}', 'user_id');
 
         $this->addForeignKey(
-            'user_id',
+            '{{%telegram__chosen_inline_result_fk_user_id}}',
             '{{%telegram__chosen_inline_result}}',
             'user_id',
             '{{%telegram__user}}',

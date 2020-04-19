@@ -22,8 +22,14 @@ class m160808_112253_telegram_inline_query extends Migration
         ], 'CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci ENGINE=InnoDB');
 
         $this->createIndex('user_id', '{{%telegram__inline_query}}', 'user_id');
-        $this->addPrimaryKey('user_id', '{{%telegram__user}}', 'id');
 
+        $this->addForeignKey(
+            '{{%telegram__inline_query_fk_user_id}}',
+            '{{%telegram__inline_query}}',
+            'user_id',
+            '{{%telegram__user}}',
+            'id'
+        );
     }
 
     public function safeDown()
