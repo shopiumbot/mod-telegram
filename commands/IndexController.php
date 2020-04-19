@@ -57,7 +57,9 @@ class IndexController extends Controller
 
             // Enable MySQL
             //$telegram->enableExternalMySql(Yii::$app->db->pdo);
-            $telegram->enableMySql($mysql_credentials);
+            $telegram->enableMySql($mysql_credentials, Yii::$app->db->tablePrefix.'telegram__');
+
+
 
             // Logging (Error, Debug and Raw Updates)
             // https://github.com/php-telegram-bot/core/blob/master/doc/01-utils.md#logging

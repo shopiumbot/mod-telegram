@@ -66,7 +66,8 @@ class StartCommand extends SystemCommand
             'text' => $text,
         ];
 
-
+        $test =  \shopium\mod\telegram\components\Request::getMyCommands();
+        print_r($test);
         $data['reply_markup'] = $this->startKeyboards();
 
 
