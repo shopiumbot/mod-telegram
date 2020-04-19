@@ -43,6 +43,16 @@ class m160808_112253_telegram_user_chat extends Migration
             'CASCADE',
             'CASCADE'
         );
+
+        $this->addForeignKey(
+            'chat_id',
+            '{{%telegram__user_chat}}',
+            'chat_id',
+            '{{%telegram__chat}}',
+            'id',
+            'CASCADE',
+            'CASCADE'
+        );
     }
 
     public function safeDown()

@@ -33,7 +33,7 @@ class IndexController extends Controller
 // Define all IDs of admin users in this array (leave as empty array if not used)
       //  $admin_users = [812367093];
       //  $admin_users2 = explode(',', Yii::$app->settings->get('telegram', 'bot_admins'));
-        Yii::$app->urlManager->setHostInfo('https://yii2.pixelion.com.ua');
+       // Yii::$app->urlManager->setHostInfo('https://yii2.pixelion.com.ua');
         $commands_paths = [
 
             __DIR__ . '/AdminCommands',
@@ -42,12 +42,11 @@ class IndexController extends Controller
 
         ];
 
-
         $mysql_credentials = [
-            'host' => 'localhost',
-            'user' => 'root',
-            'password' => '47228960panix',
-            'database' => 'telegram',
+            'host' => 'corner.mysql.tools',
+            'user' => 'corner_bot',
+            'password' => 'g09K*a+Jm1',
+            'database' => 'corner_bot',
         ];
         $api_key = Yii::$app->settings->get('telegram', 'api_token');
         $bot_username = Yii::$app->settings->get('telegram', 'bot_name');
