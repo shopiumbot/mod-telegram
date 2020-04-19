@@ -69,11 +69,11 @@ class DefaultController extends Controller
     public function actionHook()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
-
+        $db= Yii::$app->db;
         $mysql_credentials = [
             'host' => Yii::$app->getModule('telegram')->getDsnAttribute('host'),
-            'user' => Yii::$app->db->username,
-            'password' => Yii::$app->db->password,
+            'user' => $db->username,
+            'password' => $db->password,
             'database' =>Yii::$app->getModule('telegram')->getDsnAttribute('dbname'),
         ];
 
@@ -88,7 +88,7 @@ class DefaultController extends Controller
                 realpath($basePath . '/commands') . '/UserCommands',
             ];
 
-            $telegram->enableMySql($mysql_credentials);
+            $telegram->enableMySql($mysql_credentials, $db->tablePrefix.'telegram__');
             $telegram->addCommandsPaths($commands_paths);
 
             // Handle telegram webhook request
