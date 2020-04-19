@@ -39,13 +39,11 @@ class IndexController extends Controller
         ];
 
         $mysql_credentials = [
-            'host' => 'corner.mysql.tools',
-            'user' => 'corner_bot',
-            'password' => 'g09K*a+Jm1',
-            'database' => 'corner_bot',
+            'host' => Yii::$app->getModule('telegram')->getDsnAttribute('host'),
+            'user' => Yii::$app->db->username,
+            'password' => Yii::$app->db->password,
+            'database' =>Yii::$app->getModule('telegram')->getDsnAttribute('dbname'),
         ];
-        //$api_key = Yii::$app->settings->get('telegram', 'api_token');
-        //$bot_username = Yii::$app->settings->get('telegram', 'bot_name');
         try {
 
             $telegram = new Api();
@@ -56,8 +54,9 @@ class IndexController extends Controller
             // Enable admin users
          //   $telegram->enableAdmins();
 
+
             // Enable MySQL
-            $telegram->enableExternalMySql(Yii::$app->db->pdo);
+            //$telegram->enableExternalMySql(Yii::$app->db->pdo);
             $telegram->enableMySql($mysql_credentials);
 
             // Logging (Error, Debug and Raw Updates)

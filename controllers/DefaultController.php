@@ -69,14 +69,14 @@ class DefaultController extends Controller
     public function actionHook()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
-        $mysql_credentials = [
-            'host' => 'corner.mysql.tools',
-            'user' => 'corner_bot',
-            'password' => 'g09K*a+Jm1',
-            'database' => 'corner_bot',
-        ];
+
 		//Yii::error('MY_API   '.Yii::$app->settings->get('telegram','api_token'));
-		
+        $mysql_credentials = [
+            'host' => Yii::$app->getModule('telegram')->getDsnAttribute('host'),
+            'user' => Yii::$app->db->username,
+            'password' => Yii::$app->db->password,
+            'database' =>Yii::$app->getModule('telegram')->getDsnAttribute('dbname'),
+        ];
 		
 		
 		//CMS::dump(Yii::$app->settings->get('app'));

@@ -20,7 +20,14 @@ class Module extends WebModule implements \yii\base\BootstrapInterface
     public $timeBeforeResetChatHandler = 0;
     public $db = 'db';
     public $options = [];
-
+    public function getDsnAttribute($name)
+    {
+        if (preg_match('/' . $name . '=([^;]*)/', Yii::$app->db->dsn, $match)) {
+            return $match[1];
+        } else {
+            return null;
+        }
+    }
     /**
      * @inheritdoc
      */
