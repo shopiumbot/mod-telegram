@@ -19,7 +19,7 @@ class OrderProduct extends \yii\db\ActiveRecord
      */
     public static function tableName()
     {
-        return '{{%tg_order__product}}';
+        return '{{%telegram_order__product}}';
     }
 
     /**

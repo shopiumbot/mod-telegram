@@ -121,7 +121,7 @@ class CallbackqueryCommand extends SystemCommand
             $data = [
                 'chat_id' => $chat_id,
                 'parse_mode' => 'HTML',
-                'text' => '⬇ <strong>' . $root->name . '</strong>' . $root->description . '',
+                'text' => '⬇ <strong>' . $root->name . '</strong>',
                 'reply_markup' => new InlineKeyboard([
                     'inline_keyboard' => $keyboards
                 ]),
