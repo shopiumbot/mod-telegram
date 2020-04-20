@@ -22,15 +22,12 @@ Run
     composer require panix/mod-telegram
 
  
- add to your web config:
+ add to your config:
   
      'modules' => [
 	     //...
         'telegram' => [
             'class' => 'shopium\mod\telegram\Module',
-            'API_KEY' => 'forexample241875489:AdfgdfFuVJdsKa1cycuxra36g4dfgt66',
-            'BOT_NAME' => 'YourBotName_bot',
-            'hook_url' => 'https://yourhost.com/telegram/default/hook', // must be https! (if not prettyUrl https://yourhost.com/index.php?r=telegram/default/hook)
             'PASSPHRASE' => 'passphrase for login',
             // 'db' => 'db2', //db file name from config dir
 	        // 'userCommandsPath' => '@app/modules/telegram/UserCommands',
@@ -38,23 +35,6 @@ Run
         ]
 	    //more...
      ]
-     
- and to console config:
- 
-     'bootstrap' => [   
-     //other bootstrap components...
-                    'telegram'],
-     'modules' => [
-             //...
-         'telegram' => [
-             'class' => 'shopium\mod\telegram\Module',
-             'API_KEY' => 'forexample241875489:AdfgdfFuVJdsKa1cycuxra36g4dfgt66',
-             'BOT_NAME' => 'YourBotName_bot',
-	     'hook_url' => 'https://yourhost.com/telegram/default/hook', // must be https! (if not prettyUrl https://yourhost.com/index.php?r=telegram/default/hook)
-             'PASSPHRASE' => 'passphrase for login',
-         ]
-     ],       
-
 run migrations:
 
     php yii migrate --migrationPath=@vendor/onmotion/yii2-telegram/migrations #that add 4 tables in your DB
@@ -84,17 +64,6 @@ Now you can place where you want
 
     echo \shopium\mod\telegram\TelegramWidget::widget(); //that add chat button in the page
 
-in bottom right corner you can see:
-
-![chat button](https://github.com/panix/mod-telegram/blob/wiki/_wiki/04.png?raw=true)
-
-if you click it:
-
-![client chat](https://github.com/panix/mod-telegram/blob/wiki/_wiki/03.png?raw=true)
-
-and server side:
-
-![client chat](https://github.com/panix/mod-telegram/blob/wiki/_wiki/02.png?raw=true)
 
 If you want to limit the storage period of messages history, add to you crontab:
 
