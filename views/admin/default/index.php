@@ -55,7 +55,7 @@ $form = ActiveForm::begin();
         <div class="card-body">
             <?= $form->field($model, 'api_token') ?>
             <?= $form->field($model, 'bot_name') ?>
-            <?= $form->field($model, 'password') ?>
+
             <?= $form->field($model, 'empty_cart_text')->textarea() ?>
             <?php  echo $form->field($model, 'empty_history_text')->textarea() ?>
         </div>
