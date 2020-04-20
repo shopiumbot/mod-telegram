@@ -20,6 +20,9 @@ class Module extends WebModule implements \yii\base\BootstrapInterface
     public $timeBeforeResetChatHandler = 0;
     public $db = 'db';
     public $options = [];
+
+    public $icon = 'telegram-outline';
+
     public function getDsnAttribute($name)
     {
         if (preg_match('/' . $name . '=([^;]*)/', Yii::$app->db->dsn, $match)) {
@@ -91,6 +94,20 @@ class Module extends WebModule implements \yii\base\BootstrapInterface
         }
     }
 
+    public function getAdminMenu()
+    {
+        return [
+            'system' => [
+                'items' => [
+                    [
+                        'label' => Yii::t('telegram/default', 'MODULE_NAME'),
+                        'url' => ['/admin/telegram'],
+                        'icon' => $this->icon,
+                    ],
+                ],
+            ]
+        ];
+    }
 
     public function getInfo()
     {
