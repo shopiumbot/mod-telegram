@@ -45,10 +45,20 @@ class GenericCommand extends SystemCommand
     public function execute()
     {
         $message = $this->getMessage();
+        $update = $this->getUpdate();
+        if($update->getCallbackQuery()){
+           // print_r($update->getCallbackQuery());
+            $callbackQuery = $update->getCallbackQuery();
 
+            $chat_id = $callbackQuery->getChat()->getId();
+            $user_id = $callbackQuery->getFrom()->getId();
+
+        }else{
+            $chat_id = $message->getChat()->getId();
+            $user_id = $message->getFrom()->getId();
+        }
         //You can use $command as param
-        $chat_id = $message->getChat()->getId();
-        $user_id = $message->getFrom()->getId();
+
         $command = $message->getCommand();
 
 

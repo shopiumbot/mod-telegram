@@ -3,7 +3,10 @@
 namespace shopium\mod\telegram\commands\UserCommands;
 
 use Longman\TelegramBot\Entities\BotCommand;
+use Longman\TelegramBot\Entities\Poll;
+use Longman\TelegramBot\Entities\PollOption;
 use Longman\TelegramBot\Request;
+use panix\engine\CMS;
 use shopium\mod\telegram\components\SystemCommand;
 use Yii;
 
@@ -64,7 +67,7 @@ class StartCommand extends SystemCommand
             'text' => $text,
         ];
 
-        $cmd = Request::setMyCommands([
+        /*$cmd = Request::setMyCommands([
             'commands' => [
                 new BotCommand([
                     'command' => 'start',
@@ -78,8 +81,20 @@ class StartCommand extends SystemCommand
         ]);
 
 
-        $test = Request::getMyCommands();
-        print_r($test);
+        $pp = new Poll([
+            'id' => CMS::gen(11),
+            'question' => 'test?',
+            'options' => new PollOption(['text'=>'test','voter_count'=>0]),
+        ]);
+
+        $poll = Request::sendPoll([
+            'chat_id' => $chat_id,
+            'question' => 'test?',
+            'options' => json_encode(['text','test','voter_count']),
+        ]);
+        print_r($poll);*/
+        //$test = Request::getMyCommands();
+       // print_r($test);
         $data['reply_markup'] = $this->startKeyboards();
 
 
