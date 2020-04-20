@@ -2,9 +2,9 @@
 
 namespace shopium\mod\telegram\controllers\admin;
 
+use shopium\mod\telegram\models\MessageSearch;
 use Yii;
 use panix\engine\controllers\AdminController;
-use shopium\mod\telegram\models\SettingsForm;
 
 class MessageController extends AdminController
 {
@@ -21,20 +21,12 @@ class MessageController extends AdminController
             ],
             $this->pageName
         ];
-        $this->buttons=[
-            [
-                'label'=>'Emoji',
-                'url'=>'https://emojipedia.org/apple/',
-                'options'=>['target'=>'_blank']
-            ]
-        ];
-        $model = new SettingsForm();
-        if ($model->load(Yii::$app->request->post())) {
-            $model->save();
-            return Yii::$app->getResponse()->redirect(['/admin/telegram']);
-        }
+        $searchModel = new MessageSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->getQueryParams());
+
         return $this->render('index', [
-            'model' => $model
+            'dataProvider' => $dataProvider,
+            'searchModel' => $searchModel,
         ]);
     }
 

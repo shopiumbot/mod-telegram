@@ -1,9 +1,5 @@
 <?php
-/**
- * @copyright Copyright &copy; Alexandr Kozhevnikov (onmotion)
- * @package yii2-telegram
- * Date: 02.08.2016
- */
+
 namespace shopium\mod\telegram\models;
 
 use shopium\mod\telegram\Telegram;
@@ -19,6 +15,7 @@ use Yii;
  */
 class Message extends \yii\db\ActiveRecord
 {
+    const MODULE_ID = 'telegram';
     /**
      * @inheritdoc
      */

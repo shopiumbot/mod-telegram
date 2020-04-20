@@ -13,7 +13,7 @@ class m000004_000000_telegram_message extends Migration
     {
         $this->createTable('{{%telegram__message}}', [
             'chat_id' => $this->bigInteger()->comment('Unique chat identifier'),
-            'id' => $this->bigInteger(1)->unsigned()->comment('Unique message identifier'),
+            'id' => $this->bigInteger()->unsigned()->comment('Unique message identifier'),
             'user_id' => $this->bigInteger()->null()->comment('Unique user identifier'),
             'date' => $this->timestamp()->null()->defaultValue(NULL)->comment('Date the message was sent in timestamp format'),
             'forward_from' => $this->bigInteger()->null()->defaultValue(NULL)->comment('Unique user identifier, sender of the original message'),
