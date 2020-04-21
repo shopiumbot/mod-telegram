@@ -13,6 +13,7 @@ namespace shopium\mod\telegram\commands\UserCommands;
 
 use Longman\TelegramBot\Conversation;
 use Longman\TelegramBot\Entities\Keyboard;
+use Longman\TelegramBot\Entities\KeyboardButton;
 use Longman\TelegramBot\Request;
 use shopium\mod\telegram\components\UserCommand;
 use Yii;
@@ -67,7 +68,10 @@ class FeedbackCommand extends UserCommand
         $data = [
             'chat_id' => $chat_id,
         ];
-
+        if ($text === '❌ Отмена') {
+            $this->telegram->executeCommand('cancel');
+            return Request::emptyResponse();
+        }
         if ($chat->isGroupChat() || $chat->isSuperGroup()) {
             //reply to message id is applied by default
             //Force reply is applied by default so it can work with privacy on
@@ -107,7 +111,19 @@ class FeedbackCommand extends UserCommand
                     $this->conversation->update();
 
                     $data['text'] = 'Напишите сообщение. Оно будет отправлено команде:';
-                    $data['reply_markup'] = Keyboard::remove(['selective' => true]);
+                    //$data['reply_markup'] = Keyboard::remove(['selective' => true]);
+
+
+
+                    $keyboards = [[new KeyboardButton('❌ Отмена')]];
+                    $data['reply_markup'] = (new Keyboard(['keyboard' => $keyboards]))
+                        ->setResizeKeyboard(true)
+                        ->setOneTimeKeyboard(true)
+                        ->setSelective(true);
+
+
+
+
                     if ($text !== '') {
                         $data['text'] = 'Напишите сообщение. Оно будет отправлено команде:';
                     }

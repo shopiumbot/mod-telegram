@@ -84,7 +84,7 @@ class CancelCommand extends SystemCommand
     private function hideKeyboard($text)
     {
         return Request::sendMessage([
-            // 'reply_markup' => Keyboard::remove(['selective' => true]),
+             'reply_markup' => $this->startKeyboards(),
             'chat_id' => $this->getMessage()->getChat()->getId(),
             'text' => $text,
         ]);

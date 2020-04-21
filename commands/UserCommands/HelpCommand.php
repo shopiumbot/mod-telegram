@@ -84,7 +84,7 @@ class HelpCommand extends Command
                 }
             }
 
-            $data['text'] .= PHP_EOL . 'Для полной справки испльзуйте: /help <command>';
+            $data['text'] .= PHP_EOL . 'Для полной справки используйте: /help <command>';
             return Request::sendMessage($data);
         }
 
