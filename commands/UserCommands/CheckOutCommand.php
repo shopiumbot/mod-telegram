@@ -18,8 +18,8 @@ use Longman\TelegramBot\Entities\Keyboard;
 use Longman\TelegramBot\Entities\KeyboardButton;
 use Longman\TelegramBot\Entities\PhotoSize;
 use Longman\TelegramBot\Request;
-use panix\mod\cart\models\Delivery;
-use panix\mod\cart\models\Payment;
+use shopium\mod\cart\models\Delivery;
+use shopium\mod\cart\models\Payment;
 use shopium\mod\telegram\components\SystemCommand;
 use shopium\mod\cart\models\Order;
 use Yii;
@@ -355,8 +355,8 @@ class CheckOutCommand extends SystemCommand
 
                     $content .= PHP_EOL . PHP_EOL . 'Сумма заказа: *' . $this->number_format($order->total_price) . '* грн.';
 
-                    $order->delivery = $notes['delivery'];
-                    $order->payment = $notes['payment'];
+                    //$order->delivery = $notes['delivery'];
+                    //$order->payment = $notes['payment'];
                     $order->delivery_id = $notes['delivery_id'];
                     $order->payment_id = $notes['payment_id'];
                     $order->user_phone = $notes['phone_number'];

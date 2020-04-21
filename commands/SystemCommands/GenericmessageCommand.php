@@ -77,6 +77,11 @@ class GenericmessageCommand extends SystemCommand
             return $deprecated_system_command_response;
         }
 
+
+
+
+
+
         $text = trim($this->getMessage()->getText());
 /*
         $results = Request::sendToActiveChats(
