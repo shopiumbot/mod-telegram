@@ -275,7 +275,7 @@ class CallbackqueryCommand extends SystemCommand
                 $order->user_id = $user_id;
                 $order->firstname = $callback_query->getFrom()->getFirstName();
                 $order->lastname = $callback_query->getFrom()->getLastName();
-                $order->save();
+                $order->save(false);
 
 
             }
@@ -290,6 +290,14 @@ class CallbackqueryCommand extends SystemCommand
                     'cache_time' => 0,
                 ];
                 $notify = Request::answerCallbackQuery($data);*/
+
+                $data = [
+                    'callback_query_id' => $callback_query_id,
+                    'text' => '✅ Товар успешно добавлен в корзину',
+                    'show_alert' => false,
+                    'cache_time' => 0,
+                ];
+                $notify = Request::answerCallbackQuery($data);
 
                 $this->telegram->setCommandConfig('catalogproductquantity', [
                     'product_id' => $product->id,

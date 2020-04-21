@@ -105,13 +105,6 @@ class CatalogproductquantityCommand extends SystemCommand
             'inline_keyboard' => $keyboards
         ]);
 
-        $data = [
-            'callback_query_id' => $callback_query_id,
-            'text' => '✅ Товар успешно добавлен в корзину',
-            'show_alert' => false,
-            'cache_time' => 0,
-        ];
-        $notify = Request::answerCallbackQuery($data);
 
         return Request::editMessageReplyMarkup($dataEdit);
     }

@@ -359,8 +359,9 @@ class CheckOutCommand extends SystemCommand
                     $order->payment = $notes['payment'];
                     $order->delivery_id = $notes['delivery_id'];
                     $order->payment_id = $notes['payment_id'];
+                    $order->user_phone = $notes['phone_number'];
                     $order->checkout = 1;
-                    $order->save();
+                    $order->save(false);
 
                     $data['parse_mode'] = 'Markdown';
                     $data['reply_markup'] = $this->homeKeyboards();
