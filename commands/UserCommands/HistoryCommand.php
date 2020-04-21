@@ -125,8 +125,8 @@ class HistoryCommand extends UserCommand
                 foreach ($order->products as $product) {
                     $text .= '*' . $product->name . '* `' . $product->quantity . 'шт. / ' . $product->price . ' грн. `' . PHP_EOL;
                 }
-                $text .= PHP_EOL . PHP_EOL . 'Доставка: *' . $order->delivery . '*' . PHP_EOL;
-                $text .= 'Оплата: *' . $order->payment . '*' . PHP_EOL;
+                $text .= PHP_EOL . PHP_EOL . 'Доставка: *' . $order->deliveryMethod->name . '*' . PHP_EOL;
+                $text .= 'Оплата: *' . $order->paymentMethod->name . '*' . PHP_EOL;
                 $text .= 'Общая стоимость заказа: *' . $order->total_price . ' грн.*' . PHP_EOL;
 
             }

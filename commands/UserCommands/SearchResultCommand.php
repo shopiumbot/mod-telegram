@@ -11,7 +11,6 @@
 namespace shopium\mod\telegram\commands\UserCommands;
 
 
-
 use Longman\TelegramBot\Conversation;
 use Longman\TelegramBot\Entities\InlineKeyboard;
 use Longman\TelegramBot\Entities\InlineKeyboardButton;
@@ -78,7 +77,6 @@ class SearchResultCommand extends SystemCommand
         $text = trim($message->getText(true));
 
 
-
         $order = Order::findOne(['user_id' => $user_id, 'checkout' => 0]);
 
 
@@ -86,12 +84,12 @@ class SearchResultCommand extends SystemCommand
 
         if ($this->getConfig('page')) {
             $this->page = $this->getConfig('page');
-        }else{
+        } else {
             $this->page = 1;
         }
 
         $query = Product::find()->sort()->published();
-            //->groupBy(Product::tableName() . '.`id`');
+        //->groupBy(Product::tableName() . '.`id`');
         $query->applySearch($this->string);
 
         $pages = new KeyboardPagination([
@@ -112,8 +110,8 @@ class SearchResultCommand extends SystemCommand
             ->offset($pages->offset - 5)
             ->limit($pages->limit);
 
-      //  var_dump($this->page);
-       // echo $products1->createCommand()->rawSql.PHP_EOL;
+        //  var_dump($this->page);
+        // echo $products1->createCommand()->rawSql.PHP_EOL;
 
         $products = $products1->all();
 
@@ -125,7 +123,7 @@ class SearchResultCommand extends SystemCommand
             'prevPageLabel' => false,
             'maxButtonCount' => 1,
             'internal' => false,
-            'callback_data'=>'command={command}&page={page}',
+            'callback_data' => 'command={command}&page={page}',
             'command' => 'search&string=' . $this->string,
             'nextPageLabel' => '🔄 загрузить еще...'
         ]);
@@ -133,14 +131,22 @@ class SearchResultCommand extends SystemCommand
 
         if ($products) {
 
+
+            $data['chat_id'] = $chat_id;
+            $data['parse_mode'] = 'Markdown';
+            $data['text'] = "Результат по запросу: *{$this->string}*";
+            $data['reply_markup'] = $this->startKeyboards();
+            $r = Request::sendMessage($data);
+
+
             foreach ($products as $index => $product) {
                 $keyboards = [];
                 $caption = '<strong>' . $product->name . '</strong>' . PHP_EOL;
                 $caption .= $this->number_format($product->price) . ' грн' . PHP_EOL . PHP_EOL;
-               // $caption .= '<strong>Характеристики:</strong>' . PHP_EOL;
-               // foreach ($this->attributes($product) as $name => $value) {
-               //     $caption .= '<strong>' . $name . '</strong>: ' . $value . PHP_EOL;
-               // }
+                // $caption .= '<strong>Характеристики:</strong>' . PHP_EOL;
+                // foreach ($this->attributes($product) as $name => $value) {
+                //     $caption .= '<strong>' . $name . '</strong>: ' . $value . PHP_EOL;
+                // }
 
                 if ($order) {
                     $orderProduct = OrderProduct::findOne(['product_id' => $product->id, 'order_id' => $order->id]);
@@ -183,12 +189,11 @@ class SearchResultCommand extends SystemCommand
 
 
                 $imageData = $product->getImage();
-                if($imageData){
+                if ($imageData) {
                     $image = $imageData->getPathToOrigin();
-                }else{
+                } else {
                     $image = Yii::getAlias('@uploads') . DIRECTORY_SEPARATOR . 'no-image.jpg';
                 }
-
 
 
                 //Url::to($product->getImage()->getUrlToOrigin(),true),
@@ -196,7 +201,7 @@ class SearchResultCommand extends SystemCommand
 
                     'photo' => $image,
                     //'photo'=>'https://www.meme-arsenal.com/memes/50569ac974c29121ff9075e45a334942.jpg',
-                   // 'photo' => Url::to($product->getImage()->getUrl('800x800'), true),
+                    // 'photo' => Url::to($product->getImage()->getUrl('800x800'), true),
                     'chat_id' => $chat_id,
                     'parse_mode' => 'HTML',
                     'caption' => $caption,
@@ -207,7 +212,6 @@ class SearchResultCommand extends SystemCommand
                 $reqPhoto = Request::sendPhoto($dataPhoto);
             }
         }
-
 
 
         $begin = $pages->getPage() * $pages->pageSize;
@@ -231,7 +235,6 @@ class SearchResultCommand extends SystemCommand
         return Request::sendMessage($data);
 
     }
-
 
 
     protected $_attributes;

@@ -32,7 +32,7 @@ class FeedbackCommand extends UserCommand
     /**
      * @var string
      */
-    protected $description = 'Feedback send message';
+    protected $description = 'Написать нам сообщение';
 
     /**
      * @var string
@@ -125,23 +125,21 @@ class FeedbackCommand extends UserCommand
                 $out_text = '';
                 unset($notes['state']);
                 foreach ($notes as $k => $v) {
-                    $out_text .= PHP_EOL .'<strong>'. ucfirst($k) . '</strong>: ' . $v;
+                    $out_text .= PHP_EOL . '<strong>' . ucfirst($k) . '</strong>: ' . $v;
                 }
 
-                $data['reply_markup'] = Keyboard::remove(['selective' => true]);
                 $data['text'] = '✅ Сообщение успешно отправлено! Мы рассмотрим обращение и свяжемся с Вами.';
+                $data['reply_markup'] = $this->startKeyboards();
                 $this->conversation->stop();
 
                 $dataChat['chat_id'] = '@pixelpalkin';
                 $dataChat['parse_mode'] = 'HTML';
-                $dataChat['disable_notification']=true;
-                $dataChat['text'] = 'Заявка feedback: '.$out_text;
+                $dataChat['disable_notification'] = true;
+                $dataChat['text'] = 'Заявка feedback: ' . $out_text;
 
                 $resultSendChat = Request::sendMessage($dataChat);
 
-
                 $result = Request::sendMessage($data);
-
 
 
                 break;
