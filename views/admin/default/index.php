@@ -37,7 +37,7 @@ $results = \Longman\TelegramBot\Request::sendToActiveChats(
 
 
 
-
+//print_r(Yii::$app->telegram->getMe());
 
 
 ?>

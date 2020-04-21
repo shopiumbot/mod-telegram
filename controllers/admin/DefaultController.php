@@ -28,10 +28,15 @@ class DefaultController extends AdminController
         ];
         $this->buttons=[
             [
+                'label'=>'Включить бота',
+                'url'=>['/admin/telegram/default/set'],
+                'options'=>['class'=>'btn btn-success']
+            ],
+            [
                 'label'=>'Emoji',
                 'url'=>'https://emojipedia.org/apple/',
                 'options'=>['target'=>'_blank']
-            ]
+            ],
         ];
         $model = new SettingsForm();
         if ($model->load(Yii::$app->request->post())) {
