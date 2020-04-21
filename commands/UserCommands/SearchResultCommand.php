@@ -23,8 +23,8 @@ use core\modules\shop\models\Product;
 use shopium\mod\telegram\components\InlineKeyboardMorePager;
 use shopium\mod\telegram\components\KeyboardPagination;
 use shopium\mod\telegram\components\SystemCommand;
-use shopium\mod\telegram\models\Order;
-use shopium\mod\telegram\models\OrderProduct;
+use shopium\mod\cart\models\Order;
+use shopium\mod\cart\models\OrderProduct;
 use Yii;
 use yii\helpers\Url;
 

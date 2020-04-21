@@ -14,14 +14,11 @@ namespace shopium\mod\telegram\commands\UserCommands;
 use Longman\TelegramBot\Entities\InlineKeyboard;
 use Longman\TelegramBot\Entities\InlineKeyboardButton;
 use Longman\TelegramBot\Request;
-use shopium\mod\telegram\commands\pager\InlineKeyboardPagination;
 use shopium\mod\telegram\components\InlineKeyboardPager;
-use shopium\mod\telegram\components\KeyboardPager;
 use shopium\mod\telegram\components\UserCommand;
-use shopium\mod\telegram\models\OrderProduct;
-use shopium\mod\telegram\components\KeyboardCart;
+use shopium\mod\cart\models\OrderProduct;
 use shopium\mod\telegram\components\KeyboardPagination;
-use shopium\mod\telegram\models\Order;
+use shopium\mod\cart\models\Order;
 use Yii;
 
 /**

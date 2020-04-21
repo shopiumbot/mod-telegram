@@ -10,14 +10,11 @@
 
 namespace shopium\mod\telegram\commands\SystemCommands;
 
-use Longman\TelegramBot\Conversation;
-use Longman\TelegramBot\Entities\Keyboard;
 use Longman\TelegramBot\Entities\Payments\LabeledPrice;
 use Longman\TelegramBot\Entities\ReplyKeyboardHide;
 use Longman\TelegramBot\Request;
 use panix\engine\CMS;
 use shopium\mod\telegram\components\SystemCommand;
-use shopium\mod\telegram\models\Order;
 
 /**
  *

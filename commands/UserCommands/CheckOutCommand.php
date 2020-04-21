@@ -21,7 +21,7 @@ use Longman\TelegramBot\Request;
 use panix\mod\cart\models\Delivery;
 use panix\mod\cart\models\Payment;
 use shopium\mod\telegram\components\SystemCommand;
-use shopium\mod\telegram\models\Order;
+use shopium\mod\cart\models\Order;
 use Yii;
 
 /**

@@ -11,12 +11,9 @@
 namespace shopium\mod\telegram\commands\SystemCommands;
 
 
-use Longman\TelegramBot\Entities\InlineKeyboard;
-use Longman\TelegramBot\Entities\InlineKeyboardButton;
 use Longman\TelegramBot\Request;
 use shopium\mod\telegram\components\SystemCommand;
-use shopium\mod\telegram\models\Order;
-use shopium\mod\telegram\models\OrderProduct;
+use shopium\mod\cart\models\OrderProduct;
 use Yii;
 /**
  *
