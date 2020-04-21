@@ -360,6 +360,7 @@ class CheckOutCommand extends SystemCommand
                     $order->delivery_id = $notes['delivery_id'];
                     $order->payment_id = $notes['payment_id'];
                     $order->user_phone = $notes['phone_number'];
+                    $order->status_id = 1;
                     $order->checkout = 1;
                     $order->save(false);
 
