@@ -70,14 +70,14 @@ class StartCommand extends SystemCommand
         $adsData['chat_id']=$chat_id;
         $adsData['parse_mode']='Markdown';
         $adsData['text']='Бот работает на платформе 🥇 @shopiumbot'.PHP_EOL;
-        $adsData['text'].='➡ https://shopiumbot.com'.PHP_EOL;
+        $adsData['text'].='👉 https://shopiumbot.com'.PHP_EOL;
         $ads = Request::sendMessage($adsData);
 
 
-        $adsData2['chat_id']=812367093;
-        $adsData2['parse_mode']='Markdown';
-        $adsData2['text']='test message';
-        $ads2 = Request::sendMessage($adsData2);
+        //$adsData2['chat_id']=343987970;
+        //$adsData2['parse_mode']='Markdown';
+        //$adsData2['text']='test message';
+        //$ads2 = Request::sendMessage($adsData2);
 
 
 
