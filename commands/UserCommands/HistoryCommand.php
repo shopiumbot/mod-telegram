@@ -79,7 +79,7 @@ class HistoryCommand extends UserCommand
             $this->page = $this->getConfig('page');
         }
 
-        $query = Order::find()->where(['client_id' => $user_id, 'checkout' => 1]);
+        $query = Order::find()->where(['user_id' => $user_id, 'checkout' => 1]);
         $pages = new KeyboardPagination([
             'totalCount' => $query->count(),
             'defaultPageSize' => 1,

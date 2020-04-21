@@ -85,7 +85,7 @@ class CartCommand extends UserCommand
         $data['chat_id'] = $chat_id;
 
 
-        $order = Order::find()->where(['client_id' => $user_id, 'checkout' => 0])->one();
+        $order = Order::find()->where(['user_id' => $user_id, 'checkout' => 0])->one();
 
         if ($order) {
 

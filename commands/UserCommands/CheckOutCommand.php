@@ -101,7 +101,7 @@ class CheckOutCommand extends SystemCommand
 
             $chat_id = $chat->getId();
             $user_id = $user->getId();
-            $order = Order::find()->where(['client_id' => $user_id, 'checkout' => 0])->one();
+            $order = Order::find()->where(['user_id' => $user_id, 'checkout' => 0])->one();
         }
 
 
@@ -332,7 +332,7 @@ class CheckOutCommand extends SystemCommand
                 case 5:
                     $this->conversation->update();
                     $content = '*✅ Ваш заказ успешно оформлен*' . PHP_EOL . PHP_EOL;
-                    $order = Order::find()->where(['client_id' => $user_id, 'checkout' => 0])->one();
+                    $order = Order::find()->where(['user_id' => $user_id, 'checkout' => 0])->one();
                     if ($order) {
                         $products = $order->products;
                         if ($products) {

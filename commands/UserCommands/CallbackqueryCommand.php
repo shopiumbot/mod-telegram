@@ -268,11 +268,11 @@ class CallbackqueryCommand extends SystemCommand
 
             $product = Product::findOne($product_id);
 
-            $order = Order::find()->where(['client_id' => $user_id, 'checkout' => 0])->one();
+            $order = Order::find()->where(['user_id' => $user_id, 'checkout' => 0])->one();
             $quantity = 1;
             if (!$order) {
                 $order = new Order;
-                $order->client_id = $user_id;
+                $order->user_id = $user_id;
                 $order->firstname = $callback_query->getFrom()->getFirstName();
                 $order->lastname = $callback_query->getFrom()->getLastName();
                 $order->save();
@@ -306,11 +306,11 @@ class CallbackqueryCommand extends SystemCommand
             $user_id = $callback_query->getFrom()->getId();
 
             $product = Product::findOne($match[1]);
-            $order = Order::find()->where(['client_id' => $user_id, 'checkout' => 0])->one();
+            $order = Order::find()->where(['user_id' => $user_id, 'checkout' => 0])->one();
             $quantity = 1;
             if (!$order) {
                 $order = new Order;
-                $order->client_id = $user_id;
+                $order->user_id = $user_id;
                 $order->firstname = $callback_query->getFrom()->getFirstName();
                 $order->lastname = $callback_query->getFrom()->getLastName();
                 $order->save();
@@ -405,7 +405,7 @@ class CallbackqueryCommand extends SystemCommand
             return Request::answerCallbackQuery($data);
         } elseif (preg_match('/getCatalogList/iu', trim($callback_data), $match)) { //preg_match('/^getCatalogList\/([0-9]+)/iu', trim($callback_data), $match)
             $user_id = $callback_query->getFrom()->getId();
-            $order = Order::findOne(['client_id' => $user_id, 'checkout' => 0]);
+            $order = Order::findOne(['user_id' => $user_id, 'checkout' => 0]);
 
             parse_str($callback_data, $params);
 

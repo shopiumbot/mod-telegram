@@ -79,7 +79,7 @@ class SearchResultCommand extends SystemCommand
 
 
 
-        $order = Order::findOne(['client_id' => $user_id, 'checkout' => 0]);
+        $order = Order::findOne(['user_id' => $user_id, 'checkout' => 0]);
 
 
         $this->string = $this->getConfig('string');
