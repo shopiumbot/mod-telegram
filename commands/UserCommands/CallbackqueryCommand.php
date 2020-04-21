@@ -509,8 +509,13 @@ class CallbackqueryCommand extends SystemCommand
                         //  echo Url::to($product->getImage()->getUrlToOrigin(), true) . PHP_EOL;
                         // echo $product->getImage()->getPath();
 
+                        $imageData = $product->getImage();
+                        if($imageData){
+                            $image = $imageData->getPathToOrigin();
+                        }else{
+                            $image = Yii::getAlias('@uploads') . DIRECTORY_SEPARATOR . 'no-image.jpg';
+                        }
 
-                        $image = $product->getImage()->getPathToOrigin();
                         // $image = Url::to($product->getImage()->getUrlToOrigin(), true);
                         $dataPhoto = [
                             //'photo' => Url::to($product->getImage()->getUrl('800x800'), true),

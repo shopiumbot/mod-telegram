@@ -155,11 +155,19 @@ class CartCommand extends UserCommand
                     ];
 
 
+
+                    $imageData = $product->originalProduct->getImage();
+
                     $text = '*Ваша корзина*' . PHP_EOL;
                     //$text .= '[Мой товар](https://images.ua.prom.st/1866772551_w640_h640_1866772551.jpg)' . PHP_EOL;
                     //$text .= '[' . $product->name . '](https://images.ua.prom.st/1866772551_w640_h640_1866772551.jpg)' . PHP_EOL;
-                    $text .= '[' . $product->name . '](https://bot.7roddom.org.ua' . $product->image . ')' . PHP_EOL;
-                    $text .= '_описание товара_' . PHP_EOL;
+                    if($imageData){
+                        $text .= '[' . $product->name . '](https://bot2.shopiumbot.com'.$imageData->getUrlToOrigin() . ')' . PHP_EOL;
+                    }else{
+                        $text .= '[' . $product->name . '](https://bot2.shopiumbot.com/uploads/no-image.jpg)' . PHP_EOL;
+                    }
+
+                    $text .= '_описание товара_ ' . PHP_EOL;
                     $text .= '`' . $this->number_format($product->price) . ' грн / ' . $product->quantity . ' шт = ' . $this->number_format(($product->price * $product->quantity)) . ' грн`' . PHP_EOL;
 
                     //  $data['chat_id'] = $chat_id;

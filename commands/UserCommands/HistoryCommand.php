@@ -109,7 +109,7 @@ class HistoryCommand extends UserCommand
                 if ($pager->buttons)
                     $keyboards[] = $pager->buttons;
 
-                if($order->pay) {
+                if($order->paid) {
                     $keyboards[] = [
                         new InlineKeyboardButton([
                             'text' => Yii::t('telegram/command', '✅ ОПЛАЧЕНО!'),

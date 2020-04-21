@@ -181,7 +181,16 @@ class SearchResultCommand extends SystemCommand
 
                 $keyboards[] = $this->productAdminKeywords($chat_id, $product->id);
 
-                $image = $product->getImage()->getPathToOrigin();
+
+                $imageData = $product->getImage();
+                if($imageData){
+                    $image = $imageData->getPathToOrigin();
+                }else{
+                    $image = Yii::getAlias('@uploads') . DIRECTORY_SEPARATOR . 'no-image.jpg';
+                }
+
+
+
                 //Url::to($product->getImage()->getUrlToOrigin(),true),
                 $dataPhoto = [
 
