@@ -461,6 +461,11 @@ class CallbackqueryCommand extends SystemCommand
                         $keyboards = [];
                         $caption = '<strong>' . $product->name . '</strong>' . PHP_EOL;
                         $caption .= $this->number_format($product->price) . ' грн' . PHP_EOL . PHP_EOL;
+
+                        if($product->manufacturer_id){
+                            $caption .= '<strong>Производитель</strong>: ' . $product->manufacturer->name . PHP_EOL;
+                        }
+
                         //$caption .= '<strong>Характеристики:</strong>' . PHP_EOL;
                         //foreach ($this->attributes($product) as $name => $value) {
                         //    $caption .= '<strong>' . $name . '</strong>: ' . $value . PHP_EOL;

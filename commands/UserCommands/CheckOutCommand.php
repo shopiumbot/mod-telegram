@@ -18,6 +18,7 @@ use Longman\TelegramBot\Entities\Keyboard;
 use Longman\TelegramBot\Entities\KeyboardButton;
 use Longman\TelegramBot\Entities\PhotoSize;
 use Longman\TelegramBot\Request;
+use panix\engine\CMS;
 use shopium\mod\cart\models\Delivery;
 use shopium\mod\cart\models\Payment;
 use shopium\mod\telegram\components\SystemCommand;
@@ -331,8 +332,9 @@ class CheckOutCommand extends SystemCommand
                 // no break
                 case 5:
                     $this->conversation->update();
-                    $content = '*✅ Ваш заказ успешно оформлен*' . PHP_EOL . PHP_EOL;
+                    $titleClient = '*✅ Ваш заказ успешно оформлен*' . PHP_EOL . PHP_EOL;
                     $order = Order::find()->where(['user_id' => $user_id, 'checkout' => 0])->one();
+                    $content = '';
                     if ($order) {
                         $products = $order->products;
                         if ($products) {
@@ -364,9 +366,23 @@ class CheckOutCommand extends SystemCommand
                     $order->checkout = 1;
                     $order->save(false);
 
+
+                    //$test = $order->sendAdminEmail();
+                    $titleOwner = '*✅ Новый заказ '.CMS::idToNumber($order->id).'*' . PHP_EOL . PHP_EOL;
+                    $this->telegram->getAdminList();
+                    foreach ($this->telegram->getAdminList() as $admin){
+                        $data2['chat_id'] = $admin;
+                        $data2['parse_mode'] = 'Markdown';
+                        $data2['text'] = $titleOwner.$content;
+                        $result2 = Request::sendMessage($data2);
+                    }
+
+
+
+
                     $data['parse_mode'] = 'Markdown';
                     $data['reply_markup'] = $this->homeKeyboards();
-                    $data['text'] = $content;
+                    $data['text'] = $titleClient.$content;
                     $result = Request::sendMessage($data);
 
 
