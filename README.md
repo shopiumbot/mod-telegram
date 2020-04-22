@@ -18,7 +18,7 @@ The preferred way to install this extension is through [composer](http://getcomp
 Run
 
 
-    composer require panix/mod-telegram
+    composer require shopium/mod-telegram
 
  
  add to your config:
