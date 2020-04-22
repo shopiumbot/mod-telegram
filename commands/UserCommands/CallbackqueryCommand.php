@@ -72,72 +72,12 @@ class CallbackqueryCommand extends SystemCommand
             ]);
             return $this->telegram->executeCommand('payment');
 
-        } elseif (preg_match('/^getCatalog\s+([0-9]+)/iu', trim($callback_data), $match)) {
-            $id = (isset($match[1])) ? $match[1] : 1;
-            $root = Category::findOne($id);
-
-            $categories = $root->children()->all();
-
-
-            $keyboards = [];
-            if ($categories) {
-
-                foreach ($categories as $category) {
-                    $child = $category->children()->count();
-                    $count = $category->countItems;
-                    if ($count) {
-                        if ($child) {
-                            $keyboards[] = [
-                                new InlineKeyboardButton([
-                                    'text' => '📂 ' . $category->name,
-                                    'callback_data' => 'getCatalog ' . $category->id
-                                ])];
-                        } else {
-                            $keyboards[] = [
-                                new InlineKeyboardButton([
-                                    'text' => ' ' . $category->name . ' (' . $count . ')',
-                                    //'callback_data' => 'getCatalogList/' . $category->id
-                                    'callback_data' => 'query=getCatalogList&category_id=' . $category->id
-                                ])];
-                        }
-                    }
-
-                }
-
-            }
-            $back = $root->parent()->one();
-            if ($back) {
-                $keyboards[] = [
-                    new InlineKeyboardButton([
-                        'text' => '↩ ' . $back->name,
-                        'callback_data' => 'getCatalog ' . $back->id
-                    ])];
-            }
-            $data = [
-                'chat_id' => $chat_id,
-                'parse_mode' => 'HTML',
-                'text' => '⬇ <strong>' . $root->name . '</strong>',
-                'reply_markup' => new InlineKeyboard([
-                    'inline_keyboard' => $keyboards
-                ]),
-            ];
-
-
-            //  print_r($msg);
-            //  echo 'tester';
-            //  $preg=  preg_match('/^getCatalog\s+([0-9]+)/iu', trim($callback_data), $match);
-            //if($preg){
-            //  print_r($message);die;
-            $dataEdit['chat_id'] = $chat_id;
-            $dataEdit['message_id'] = $message->getMessageId();
-            $dataEdit['reply_markup'] = new InlineKeyboard([
-                'inline_keyboard' => $keyboards
+        } elseif (preg_match('/openCatalog/iu', trim($callback_data), $match)) { //preg_match('/^getCatalog\s+([0-9]+)/iu', trim($callback_data), $match)
+            parse_str($callback_data, $params);
+            $this->telegram->setCommandConfig('catalog', [
+                'id' => $params['id']
             ]);
-            return Request::editMessageReplyMarkup($dataEdit);
-            //  return Yii::$app->telegram->sendMessage($data);
-            // }
-
-
+            return $this->telegram->executeCommand('catalog');
         } elseif (preg_match('/^cartDelete\/([0-9]+)/iu', trim($callback_data), $match)) {
             $user_id = $callback_query->getFrom()->getId();
 

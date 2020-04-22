@@ -43,14 +43,14 @@ class CatalogCommand extends UserCommand
     /**
      * @var string
      */
-    protected $version = '1.0';
+    protected $version = '1.1';
     /**
      * The Google API Key from the command config
      *
      * @var string
      */
-    private $category_id;
-    private $page;
+    public $id;
+
     public $private_only = true;
 
     /**
@@ -61,73 +61,100 @@ class CatalogCommand extends UserCommand
      */
     public function execute()
     {
-        $message = $this->getMessage();
+        $update = $this->getUpdate();
 
-        $chat = $message->getChat();
-        $user = $message->getFrom();
-        $text = trim($message->getText(true));
-        $chat_id = $chat->getId();
-        $user_id = $user->getId();
-        if (($this->category_id = trim($this->getConfig('category_id'))) === '') {
-            $this->category_id = 1;
+        $isCallback = false;
+        if ($update->getCallbackQuery()) {
+            $isCallback = true;
+            $callbackQuery = $update->getCallbackQuery();
+
+            $message = $callbackQuery->getMessage();
+            $chat = $message->getChat();
+            $user = $callbackQuery->getFrom();
+        } else {
+            $message = $this->getMessage();
+            $chat = $message->getChat();
+            $user = $message->getFrom();
         }
 
-        // $preg = preg_match('/^(\/catalog)\s([0-9]+)/', trim($message->getText()), $match);
-        //if ($message->getText() == '/catalog' || $preg) {
-        // $id = (isset($match[1])) ? $match[1] : 1;
-        $root = Category::findOne($this->category_id);
+        $chat_id = $chat->getId();
+        $user_id = $user->getId();
+
+        if (($this->id = trim($this->getConfig('id'))) === '') {
+            $this->id = 1;
+        }
+
+        $root = Category::findOne($this->id);
         $categories = $root->children()->all();
 
 
-        $inlineKeyboards = [];
+        $keyboards = [];
         if ($categories) {
-
             foreach ($categories as $category) {
-
                 $count = $category->countItems;
-                if ($count || true) {
-                    $child = $category->children()->count();
-                    if ($child) {
-                        $inlineKeyboards[] = [
+
+                $child = $category->children()->count();
+                if ($child) {
+                    $keyboards[] = [
+                        new InlineKeyboardButton([
+                            'text' => '📂 ' . $category->name,
+                            'callback_data' => 'query=openCatalog&id=' . $category->id
+                        ])
+                    ];
+                } else {
+                    if ($count) {
+                        $keyboards[] = [
                             new InlineKeyboardButton([
-                                'text' => '📂 ' . $category->name,
-                                'callback_data' => 'getCatalog ' . $category->id
-                            ])
-                        ];
-                    } else {
-                        //  $inlineKeyboards[] = [new InlineKeyboardButton(['text' => '📄 ' . $category->name . ' (' . $count . ')', 'callback_data' => 'getCatalogList ' . $category->id])];
-                        $inlineKeyboards[] = [
-                            new InlineKeyboardButton([
-                                'text' => '📄 ' . $category->name . ' (' . $count . ')',
+                                'text' => $category->name . ' (' . $count . ')',
                                 // 'callback_data' => 'getCatalogList/' . $category->id
                                 'callback_data' => 'query=getCatalogList&category_id=' . $category->id
                             ])
                         ];
                     }
-                }else{
-					return $this->notify('В каталоге нет продукции','info');
-				}
-
+                }
             }
+        } else {
+            return $this->notify('В каталоге нет продукции', 'info');
         }
 
-        $data = [
-            'chat_id' => $chat_id,
-            'text' => 'Выберите раздел:',
-            'reply_markup' => new InlineKeyboard([
-                'inline_keyboard' => $inlineKeyboards
-            ]),
-        ];
+
+        if ($isCallback) {
+            $back = $root->parent()->one();
+            if ($back) {
+                $keyboards[] = [
+                    new InlineKeyboardButton([
+                        'text' => '↩ ' . $back->name,
+                        'callback_data' => 'query=openCatalog&id=' . $back->id
+                    ])];
+            }
+            $dataEdit['chat_id'] = $chat_id;
+            $dataEdit['message_id'] = $message->getMessageId();
+            $dataEdit['reply_markup'] = new InlineKeyboard([
+                'inline_keyboard' => $keyboards
+            ]);
+            return Request::editMessageReplyMarkup($dataEdit);
+        } else {
+            $data = [
+                'chat_id' => $chat_id,
+                'text' => 'Выберите раздел:',
+                'reply_markup' => new InlineKeyboard([
+                    'inline_keyboard' => $keyboards
+                ]),
+            ];
 
 
-        $dataCatalog['text'] = '⬇ Каталог продукции';
-        $dataCatalog['chat_id'] = $chat_id;
-        $dataCatalog['reply_markup'] = $this->catalogKeyboards();
-        $buttonsResponse = Request::sendMessage($dataCatalog);
+            $dataCatalog['text'] = '⬇ Каталог продукции';
+            $dataCatalog['chat_id'] = $chat_id;
+            $dataCatalog['reply_markup'] = $this->catalogKeyboards();
+            $buttonsResponse = Request::sendMessage($dataCatalog);
 
-        $result = $data;
+            $result = $data;
+
+        }
+
 
         return Request::sendMessage($result);
+
 
     }
 

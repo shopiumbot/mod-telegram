@@ -107,6 +107,7 @@ class GenericmessageCommand extends SystemCommand
         if (preg_match('/^(\x{1F6CD})/iu', $text, $match)) { //cart emoji
             return $this->telegram->executeCommand('cart');
         } elseif (preg_match('/^(\x{1F4C2})/iu', $text, $match)) { //folder emoji
+            $this->telegram->setCommandConfig('catalog', ['id' => 1]);
             return $this->telegram->executeCommand('catalog');
         } elseif (preg_match('/^(\x{1F3E0})/iu', $text, $match)) { //home emoji
             $this->telegram->executeCommand('start');
