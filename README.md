@@ -1,9 +1,8 @@
-# **Telegram support Bot for Yii2**
-[![Latest Stable Version](https://poser.pugx.org/panix/mod-telegram/v/stable)](https://packagist.org/packages/panix/mod-telegram)
-[![Total Downloads](https://poser.pugx.org/panix/mod-telegram/downloads)](https://packagist.org/packages/panix/mod-telegram)
-[![License](https://poser.pugx.org/panix/mod-telegram/license)](https://packagist.org/packages/panix/mod-telegram)
-[![Daily Downloads](https://poser.pugx.org/panix/mod-telegram/d/daily)](https://packagist.org/packages/panix/mod-telegram)
-[![Monthly Downloads](https://poser.pugx.org/panix/mod-telegram/d/monthly)](https://packagist.org/packages/panix/mod-telegram)
+[![Latest Stable Version](https://poser.pugx.org/shopium/mod-telegram/v/stable)](https://packagist.org/packages/shopium/mod-telegram)
+[![Total Downloads](https://poser.pugx.org/shopium/mod-telegram/downloads)](https://packagist.org/packages/shopium/mod-telegram)
+[![License](https://poser.pugx.org/shopium/mod-telegram/license)](https://packagist.org/packages/shopium/mod-telegram)
+[![Daily Downloads](https://poser.pugx.org/shopium/mod-telegram/d/daily)](https://packagist.org/packages/shopium/mod-telegram)
+[![Monthly Downloads](https://poser.pugx.org/shopium/mod-telegram/d/monthly)](https://packagist.org/packages/shopium/mod-telegram)
 
 **Support chat for site based on Telegram bot**
 
@@ -37,7 +36,7 @@ Run
      ]
 run migrations:
 
-    php yii migrate --migrationPath=@vendor/onmotion/yii2-telegram/migrations #that add 4 tables in your DB
+    php yii migrate --migrationPath=@vendor/shopium/mod-telegram/migrations #that add 4 tables in your DB
 
 or add to your config file
 ```
