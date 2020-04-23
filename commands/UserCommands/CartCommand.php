@@ -96,8 +96,9 @@ class CartCommand extends UserCommand
 
 
             $query = OrderProduct::find()->where(['order_id' => $order->id]);
+            $queryCount = $query->count();
             $pages = new KeyboardPagination([
-                'totalCount' => $query->count(),
+                'totalCount' => $queryCount,
                 'defaultPageSize' => 1,
                 //'pageSize'=>3
             ]);
@@ -118,7 +119,7 @@ class CartCommand extends UserCommand
 
             $keyboards = [];
 
-            if ($query->count()) {
+            if ($queryCount) {
                 foreach ($products as $product) {
 
                     $keyboards[] = [

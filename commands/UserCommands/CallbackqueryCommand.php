@@ -399,19 +399,16 @@ class CallbackqueryCommand extends SystemCommand
 
                     foreach ($products as $index => $product) {
                         $keyboards = [];
-                        $caption = '<strong>' . $product->name . '</strong>' . PHP_EOL;
+                        $caption = '*' . $product->name . '*' . PHP_EOL;
                         $caption .= $this->number_format($product->price) . ' грн' . PHP_EOL . PHP_EOL;
 
                         if($product->manufacturer_id){
-                            $caption .= '<strong>Производитель</strong>: ' . $product->manufacturer->name . PHP_EOL;
+                            $caption .= '*Производитель*: ' . $product->manufacturer->name . PHP_EOL;
                         }
 
-                        $caption .= '<strong>Характеристики:</strong>' . PHP_EOL;
-
-                        print_r($this->attributes($product));
-
+                        $caption .= '*Характеристики:*' . PHP_EOL;
                         foreach ($this->attributes($product) as $name => $value) {
-                            $caption .= '<strong>' . $name . '</strong>: ' . $value . PHP_EOL;
+                            $caption .= '*' . $name . '*: ' . $value . PHP_EOL;
                         }
 
                         if ($order) {
@@ -419,6 +416,34 @@ class CallbackqueryCommand extends SystemCommand
                         } else {
                             $orderProduct = null;
                         }
+
+
+                        //check tarif plan
+                        /*if(true){
+                            $images = $product->getImages();
+                            print_r($images);
+                            $pages = new KeyboardPagination([
+                                'totalCount' => 3,
+                                'defaultPageSize' => 1,
+                                //'pageSize'=>3
+                            ]);
+                            $pages->setPage(0);
+                            $pager = new InlineKeyboardPager([
+                                'pagination' => $pages,
+                                'lastPageLabel' => false,
+                                'firstPageLabel' => false,
+                                'maxButtonCount' => 1,
+                                'command' => 'test'
+                            ]);
+                            if ($pager->buttons)
+                                $keyboards[] = $pager->buttons;
+
+                        }*/
+
+
+
+
+
 
                         if ($orderProduct) {
                             $keyboards[] = [
@@ -469,7 +494,7 @@ class CallbackqueryCommand extends SystemCommand
                             //'photo' => Url::to($product->getImage()->getUrl('800x800'), true),
                             'photo' => $image,
                             'chat_id' => $chat_id,
-                            'parse_mode' => 'HTML',
+                            'parse_mode' => 'Markdown',
                             'caption' => $caption,
                             'reply_markup' => new InlineKeyboard([
                                 'inline_keyboard' => $keyboards
@@ -557,9 +582,8 @@ class CallbackqueryCommand extends SystemCommand
         /** @var \core\modules\shop\components\EavBehavior $eav */
         $this->_attributes = $eav->getEavAttributes();
 
-print_r($this->_attributes);
+
         $data = [];
-        $groups = [];
         foreach ($this->getModels() as $model) {
             /** @var Attribute $model */
             $abbr = ($model->abbreviation) ? ' ' . $model->abbreviation : '';
