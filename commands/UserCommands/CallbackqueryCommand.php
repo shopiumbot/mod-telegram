@@ -406,10 +406,13 @@ class CallbackqueryCommand extends SystemCommand
                             $caption .= '<strong>Производитель</strong>: ' . $product->manufacturer->name . PHP_EOL;
                         }
 
-                        //$caption .= '<strong>Характеристики:</strong>' . PHP_EOL;
-                        //foreach ($this->attributes($product) as $name => $value) {
-                        //    $caption .= '<strong>' . $name . '</strong>: ' . $value . PHP_EOL;
-                        //}
+                        $caption .= '<strong>Характеристики:</strong>' . PHP_EOL;
+
+                        print_r($this->attributes($product));
+
+                        foreach ($this->attributes($product) as $name => $value) {
+                            $caption .= '<strong>' . $name . '</strong>: ' . $value . PHP_EOL;
+                        }
 
                         if ($order) {
                             $orderProduct = OrderProduct::findOne(['product_id' => $product->id, 'order_id' => $order->id]);
@@ -554,7 +557,7 @@ class CallbackqueryCommand extends SystemCommand
         /** @var \core\modules\shop\components\EavBehavior $eav */
         $this->_attributes = $eav->getEavAttributes();
 
-
+print_r($this->_attributes);
         $data = [];
         $groups = [];
         foreach ($this->getModels() as $model) {
@@ -582,7 +585,6 @@ class CallbackqueryCommand extends SystemCommand
         // $query = Attribute::getDb()->cache(function () {
         $query = Attribute::find()
             ->where(['IN', 'name', array_keys($this->_attributes)])
-            ->displayOnFront()
             ->sort()
             ->all();
         // }, 3600);
