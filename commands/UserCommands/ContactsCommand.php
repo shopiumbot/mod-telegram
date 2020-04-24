@@ -13,6 +13,7 @@ namespace shopium\mod\telegram\commands\UserCommands;
 
 use core\modules\contacts\models\SettingsForm;
 use Longman\TelegramBot\Request;
+use panix\engine\Html;
 use shopium\mod\telegram\components\UserCommand;
 use Yii;
 

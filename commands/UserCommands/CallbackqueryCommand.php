@@ -341,9 +341,10 @@ class CallbackqueryCommand extends SystemCommand
             /// /
             ///
 
-        }elseif(preg_match('/changeProductImage/iu', trim($callback_data), $match)){
+        } elseif (preg_match('/changeProductImage/iu', trim($callback_data), $match)) {
             parse_str($callback_data, $params);
-            print_r($params);die;
+            print_r($params);
+            die;
         } elseif (preg_match('/(productDelete|productUpdate|productSwitch)/iu', trim($callback_data), $match)) {
             parse_str($callback_data, $params);
 
@@ -404,7 +405,7 @@ class CallbackqueryCommand extends SystemCommand
                     foreach ($products as $index => $product) {
                         $keyboards = [];
 
-                        $caption='';
+                        $caption = '';
                         if ($product->hasDiscount) {
                             $caption .= '🔥🔥🔥';
                         }
@@ -413,7 +414,7 @@ class CallbackqueryCommand extends SystemCommand
                         $caption .= $this->number_format($product->price) . ' грн' . PHP_EOL . PHP_EOL;
 
                         if ($product->hasDiscount) {
-                            $caption .= '*🎁 Скидка*: ' . $product->discountSum. PHP_EOL. PHP_EOL;
+                            $caption .= '*🎁 Скидка*: ' . $product->discountSum . PHP_EOL . PHP_EOL;
                         }
 
                         if ($product->manufacturer_id) {
@@ -424,15 +425,17 @@ class CallbackqueryCommand extends SystemCommand
                         }
 
 
-
-                        $caption .= '*Характеристики:*' . PHP_EOL;
-                        foreach ($this->attributes($product) as $name => $data) {
-                            if (!empty($data['value'])) {
-                                $caption .= '*' . $name . '*: ' . $data['value'].' '.$data['abbreviation'] . PHP_EOL;
+                        $attributes = $this->attributes($product);
+                        if ($attributes) {
+                            $caption .= '*Характеристики:*' . PHP_EOL;
+                            foreach ($attributes as $name => $data) {
+                                if (!empty($data['value'])) {
+                                    $caption .= '*' . $name . '*: ' . $data['value'] . ' ' . $data['abbreviation'] . PHP_EOL;
+                                }
                             }
                         }
                         if ($product->description) {
-                            $caption .= PHP_EOL.Html::encode($product->description). PHP_EOL. PHP_EOL;
+                            $caption .= PHP_EOL . Html::encode($product->description) . PHP_EOL . PHP_EOL;
                         }
                         if ($order) {
                             $orderProduct = OrderProduct::findOne(['product_id' => $product->id, 'order_id' => $order->id]);
@@ -442,7 +445,7 @@ class CallbackqueryCommand extends SystemCommand
 
 
                         //check tarif plan
-                        if(false){
+                        if (false) {
                             $images = $product->getImages();
                             print_r($images);
                             $pages2 = new KeyboardPagination([
@@ -489,10 +492,6 @@ class CallbackqueryCommand extends SystemCommand
                         } else {
 
 
-
-
-
-
                             $keyboards[] = [
                                 new InlineKeyboardButton([
                                     'text' => Yii::t('telegram/command', 'BUTTON_BUY', $this->number_format($product->getFrontPrice())),
@@ -534,7 +533,6 @@ class CallbackqueryCommand extends SystemCommand
                         }
                     }
                 }
-
 
 
                 $begin = $pages->getPage() * $pages->pageSize;
@@ -590,7 +588,6 @@ class CallbackqueryCommand extends SystemCommand
         foreach ($this->getModels() as $model) {
             /** @var Attribute $model */
             $abbr = ($model->abbreviation) ? ' ' . $model->abbreviation : '';
-
 
 
             $data[$model->title]['value'] = $model->renderValue($this->_attributes[$model->name]);
