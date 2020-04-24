@@ -11,6 +11,7 @@
 namespace shopium\mod\telegram\commands\UserCommands;
 
 
+use core\modules\contacts\models\SettingsForm;
 use Longman\TelegramBot\Request;
 use shopium\mod\telegram\components\UserCommand;
 use Yii;
@@ -59,16 +60,61 @@ class ContactsCommand extends UserCommand
         $user_id = $user->getId();
 
         $data['chat_id'] = $chat_id;
-        $data['text'] = '*Контактная информация*'.PHP_EOL.PHP_EOL;
-        $data['text'] .= '📞 Телефон: *+38 063 489 26 95*'.PHP_EOL.PHP_EOL;
-        $data['text'] .= '✉ Почта: *info@pixelion.com.ua*'.PHP_EOL.PHP_EOL;
-        $data['text'] .= '🌍 Адрес: *Украина, г.Одесса, ул. Малая Арнаутская 36*'.PHP_EOL.PHP_EOL;
+        $data['text'] = '*Контактная информация*' . PHP_EOL . PHP_EOL;
+
+        $address = Yii::$app->getModule('contacts')->getAddress();
+        $phones = Yii::$app->getModule('contacts')->getPhones();
+        $emails = Yii::$app->getModule('contacts')->getEmails();
+
+        foreach ($address as $addr) {
+            $data['text'] .= '🌍 Адрес: *' . $addr . '*' . PHP_EOL;
+        }
+        foreach ($phones as $phone) {
+            $data['text'] .= '📞 Телефон: ' . $phone['number'] . ' ' . $phone['name'] . '' . PHP_EOL;
+        }
+        foreach ($emails as $email) {
+            $data['text'] .= '✉ Почта: *' . $email . '*' . PHP_EOL;
+        }
         $data['parse_mode'] = 'Markdown';
 
         $data['reply_markup'] = $this->homeKeyboards();
+        $response= Request::sendMessage($data);
+
+        $config = Yii::$app->settings->get('contacts');
 
 
-        return Request::sendMessage($data);
+        if (isset($config->schedule)) {
+            $data2['chat_id'] = $chat_id;
+            $data2['text'] = '🗒 *' . Yii::t('contacts/default', 'SCHEDULE') . '*' . PHP_EOL . PHP_EOL;
+
+            foreach ($config->schedule as $key => $schedule) {
+
+                $isStatus='';
+                /*
+                if (date('N') == $key + 1) {
+                    if (Yii::$app->getModule('contacts')->getTodayOpen($key)) {
+                        $isStatus = '🚫'.Yii::t('contacts/default', 'IS_CLOSE'). PHP_EOL;
+                    } else {
+                        $isStatus = Yii::t('contacts/default', 'IS_OPEN'). PHP_EOL;
+                    }
+                }*/
+
+
+                $data2['text'] .= '🕗 *' . SettingsForm::dayList()[$key] . '* ';
+                if (!empty($schedule['start_time']) || !empty($schedule['end_time'])) {
+                    $data2['text'] .= 'с ' . $schedule['start_time'] . ' до ' . $schedule['end_time'].$isStatus. PHP_EOL;
+                } else {
+                    $data2['text'] .= SettingsForm::t('DAY_OFF'). PHP_EOL;
+                }
+
+
+             }
+            $data2['parse_mode'] = 'Markdown';
+            $responseSchedule = Request::sendMessage($data2);
+        }
+
+
+        return Request::emptyResponse();
 
     }
 
