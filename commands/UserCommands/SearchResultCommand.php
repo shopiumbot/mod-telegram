@@ -11,11 +11,8 @@
 namespace shopium\mod\telegram\commands\UserCommands;
 
 
-use Longman\TelegramBot\Conversation;
 use Longman\TelegramBot\Entities\InlineKeyboard;
 use Longman\TelegramBot\Entities\InlineKeyboardButton;
-use Longman\TelegramBot\Entities\Keyboard;
-use Longman\TelegramBot\Entities\KeyboardButton;
 use Longman\TelegramBot\Request;
 use core\modules\shop\models\Attribute;
 use core\modules\shop\models\Product;
@@ -25,7 +22,7 @@ use shopium\mod\telegram\components\SystemCommand;
 use shopium\mod\cart\models\Order;
 use shopium\mod\cart\models\OrderProduct;
 use Yii;
-use yii\helpers\Url;
+use panix\engine\Html;
 
 /**
  *
@@ -141,12 +138,39 @@ class SearchResultCommand extends SystemCommand
 
             foreach ($products as $index => $product) {
                 $keyboards = [];
-                $caption = '<strong>' . $product->name . '</strong>' . PHP_EOL;
+
+                $caption = '';
+                if ($product->hasDiscount) {
+                    $caption .= '🔥🔥🔥';
+                }
+
+                $caption .= '*' . $product->name . '*' . PHP_EOL;
                 $caption .= $this->number_format($product->price) . ' грн' . PHP_EOL . PHP_EOL;
-                // $caption .= '<strong>Характеристики:</strong>' . PHP_EOL;
-                // foreach ($this->attributes($product) as $name => $value) {
-                //     $caption .= '<strong>' . $name . '</strong>: ' . $value . PHP_EOL;
-                // }
+
+                if ($product->hasDiscount) {
+                    $caption .= '*🎁 Скидка*: ' . $product->discountSum . PHP_EOL . PHP_EOL;
+                }
+
+                if ($product->manufacturer_id) {
+                    $caption .= '*Производитель*: ' . $product->manufacturer->name . PHP_EOL;
+                }
+                if ($product->sku) {
+                    $caption .= '*Артикул*: ' . $product->sku . PHP_EOL;
+                }
+
+
+                $attributes = $this->attributes($product);
+                if ($attributes) {
+                    $caption .= '*Характеристики:*' . PHP_EOL;
+                    foreach ($attributes as $name => $data) {
+                        if (!empty($data['value'])) {
+                            $caption .= '*' . $name . '*: ' . $data['value'] . ' ' . $data['abbreviation'] . PHP_EOL;
+                        }
+                    }
+                }
+                if ($product->description) {
+                    $caption .= PHP_EOL . Html::encode($product->description) . PHP_EOL . PHP_EOL;
+                }
 
                 if ($order) {
                     $orderProduct = OrderProduct::findOne(['product_id' => $product->id, 'order_id' => $order->id]);
@@ -203,7 +227,7 @@ class SearchResultCommand extends SystemCommand
                     //'photo'=>'https://www.meme-arsenal.com/memes/50569ac974c29121ff9075e45a334942.jpg',
                     // 'photo' => Url::to($product->getImage()->getUrl('800x800'), true),
                     'chat_id' => $chat_id,
-                    'parse_mode' => 'HTML',
+                    'parse_mode' => 'Markdown',
                     'caption' => $caption,
                     'reply_markup' => new InlineKeyboard([
                         'inline_keyboard' => $keyboards
@@ -236,7 +260,6 @@ class SearchResultCommand extends SystemCommand
 
     }
 
-
     protected $_attributes;
     public $model;
     protected $_models;
@@ -250,14 +273,13 @@ class SearchResultCommand extends SystemCommand
 
 
         $data = [];
-        $groups = [];
         foreach ($this->getModels() as $model) {
             /** @var Attribute $model */
             $abbr = ($model->abbreviation) ? ' ' . $model->abbreviation : '';
 
-            $value = $model->renderValue($this->_attributes[$model->name]) . $abbr;
 
-            $data[$model->title] = $value;
+            $data[$model->title]['value'] = $model->renderValue($this->_attributes[$model->name]);
+            $data[$model->title]['abbreviation'] = $abbr;
         }
 
         return $data;
@@ -276,7 +298,6 @@ class SearchResultCommand extends SystemCommand
         // $query = Attribute::getDb()->cache(function () {
         $query = Attribute::find()
             ->where(['IN', 'name', array_keys($this->_attributes)])
-            ->displayOnFront()
             ->sort()
             ->all();
         // }, 3600);

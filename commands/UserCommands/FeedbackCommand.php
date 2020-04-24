@@ -114,14 +114,11 @@ class FeedbackCommand extends UserCommand
                     //$data['reply_markup'] = Keyboard::remove(['selective' => true]);
 
 
-
                     $keyboards = [[new KeyboardButton('❌ Отмена')]];
                     $data['reply_markup'] = (new Keyboard(['keyboard' => $keyboards]))
                         ->setResizeKeyboard(true)
                         ->setOneTimeKeyboard(true)
                         ->setSelective(true);
-
-
 
 
                     if ($text !== '') {
@@ -139,21 +136,21 @@ class FeedbackCommand extends UserCommand
                 $notes['state'] = 1;
                 $this->conversation->update();
                 $out_text = '';
+                $out_text .= 'От /whois' . $user_id . PHP_EOL;
                 unset($notes['state']);
                 foreach ($notes as $k => $v) {
-                    $out_text .= PHP_EOL . '<strong>' . ucfirst($k) . '</strong>: ' . $v;
+                    $out_text .= PHP_EOL . '*' . ucfirst($k) . '*: ' . $v;
                 }
 
                 $data['text'] = '✅ Сообщение успешно отправлено! Мы рассмотрим обращение и свяжемся с Вами.';
                 $data['reply_markup'] = $this->startKeyboards();
                 $this->conversation->stop();
 
-                foreach ($this->telegram->getAdminList() as $admin){
+                foreach ($this->telegram->getAdminList() as $admin) {
                     $dataChat['chat_id'] = $admin;
-                    $dataChat['parse_mode'] = 'HTML';
+                    $dataChat['parse_mode'] = 'Markdown';
                     $dataChat['disable_notification'] = true;
-                    $dataChat['text'] = 'Заявка feedback: ' . $out_text;
-
+                    $dataChat['text'] = '*Заявка feedback*: ' . PHP_EOL . $out_text;
                     $resp = Request::sendMessage($dataChat);
                 }
 

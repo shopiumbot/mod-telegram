@@ -10,7 +10,7 @@
 
 namespace shopium\mod\telegram\commands\SystemCommands;
 
-use Longman\TelegramBot\Commands\SystemCommand;
+use shopium\mod\telegram\components\SystemCommand;
 use Longman\TelegramBot\Request;
 use Yii;
 
@@ -75,5 +75,6 @@ class GenericCommand extends SystemCommand
         ];
 
         return Request::sendMessage($data);
+
     }
 }
