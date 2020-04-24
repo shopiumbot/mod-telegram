@@ -2,14 +2,15 @@
 
 namespace shopium\mod\telegram\controllers\admin;
 
-use shopium\mod\telegram\models\search\MessageSearch;
+
 use Yii;
 use panix\engine\controllers\AdminController;
+use shopium\mod\telegram\models\search\UserSearch;
 
-class MessageController extends AdminController
+class UsersController extends AdminController
 {
 
-    public $icon = 'settings';
+    public $icon = 'user';
 
     public function actionIndex()
     {
@@ -21,7 +22,7 @@ class MessageController extends AdminController
             ],
             $this->pageName
         ];
-        $searchModel = new MessageSearch();
+        $searchModel = new UserSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->getQueryParams());
 
         return $this->render('index', [

@@ -12,8 +12,15 @@ echo GridView::widget([
     'dataProvider' => $dataProvider,
     'filterModel' => $searchModel,
     'columns' => [
-        'user_id',
-        'text',
+        'user.username',
+
+        [
+            'attribute'=>'text',
+            'format'=>'raw',
+            'value'=>function($model){
+                return $model->text;
+            }
+        ]
     ]
 ]);
 Pjax::end();

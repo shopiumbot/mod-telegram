@@ -13,7 +13,7 @@ use Yii;
  * @property string $time
  * @property string $direction
  */
-class Message extends \yii\db\ActiveRecord
+class User extends \yii\db\ActiveRecord
 {
     const MODULE_ID = 'telegram';
     /**
@@ -21,16 +21,7 @@ class Message extends \yii\db\ActiveRecord
      */
     public static function tableName()
     {
-        return '{{%telegram__message}}';
-    }
-
-    /**
-     * @return \yii\db\Connection the database connection used by this AR class.
-     */
-    public static function getDb()
-    {
-        $db = \Yii::$app->controller->module->db;
-        return Yii::$app->get($db);
+        return '{{%telegram__user}}';
     }
 
     /**
@@ -40,12 +31,13 @@ class Message extends \yii\db\ActiveRecord
     {
         return [
             [['client_chat_id'], 'required'],
+            [['first_name','last_name','username'], 'safe'],
          //   [['message'], 'string', 'max' => 4100],
         ];
     }
-    public function getUser()
+    public function getMessages()
     {
-        return $this->hasOne(User::class, ['id' => 'user_id']);
+        return $this->hasMany(User::class, ['id' => 'user_id']);
     }
     /**
      * @inheritdoc

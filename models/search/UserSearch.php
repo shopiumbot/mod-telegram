@@ -1,25 +1,25 @@
 <?php
 
-namespace shopium\mod\telegram\models;
+namespace shopium\mod\telegram\models\search;
 
 use panix\engine\data\ActiveDataProvider;
-use panix\mod\cart\models\Delivery;
+use shopium\mod\telegram\models\User;
 
 /**
- * Class DeliverySearch
+ * Class UserSearch
  * @property integer $id
  * @property string $name
  * @package panix\mod\cart\models\search
  */
-class MessageSearch extends Message {
+class UserSearch extends User {
 
     /**
      * @inheritdoc
      */
     public function rules() {
         return [
-            [['id'], 'integer'],
-            [['text'], 'safe'],
+            [['id','is_bot'], 'integer'],
+            [['first_name','last_name','username'], 'safe'],
         ];
     }
 
@@ -39,7 +39,7 @@ class MessageSearch extends Message {
      * @return ActiveDataProvider
      */
     public function search($params) {
-        $query = Message::find();
+        $query = User::find();
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
@@ -52,11 +52,10 @@ class MessageSearch extends Message {
             return $dataProvider;
         }
 
-        $query->andFilterWhere([
-            'id' => $this->id,
-        ]);
-
-        $query->andFilterWhere(['like', 'text', $this->text]);
+        $query->andFilterWhere(['id' => $this->id]);
+        $query->andFilterWhere(['like', 'first_name', $this->first_name]);
+        $query->andFilterWhere(['like', 'last_name', $this->last_name]);
+        $query->andFilterWhere(['like', 'username', $this->username]);
 
         return $dataProvider;
     }
