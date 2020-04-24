@@ -62,9 +62,6 @@ class GenericCommand extends SystemCommand
         $command = $message->getCommand();
 
 
-
-
-
         //If the user is an admin and the command is in the format "/whoisXYZ", call the /whois command
         if (stripos($command, 'whois') === 0 && $this->telegram->isAdmin($user_id)) {
             return $this->telegram->executeCommand('whois');

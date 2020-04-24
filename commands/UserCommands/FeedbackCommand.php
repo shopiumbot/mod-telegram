@@ -148,12 +148,15 @@ class FeedbackCommand extends UserCommand
                 $data['reply_markup'] = $this->startKeyboards();
                 $this->conversation->stop();
 
-                $dataChat['chat_id'] = '@pixelpalkin';
-                $dataChat['parse_mode'] = 'HTML';
-                $dataChat['disable_notification'] = true;
-                $dataChat['text'] = 'Заявка feedback: ' . $out_text;
+                foreach ($this->telegram->getAdminList() as $admin){
+                    $dataChat['chat_id'] = $admin;
+                    $dataChat['parse_mode'] = 'HTML';
+                    $dataChat['disable_notification'] = true;
+                    $dataChat['text'] = 'Заявка feedback: ' . $out_text;
 
-                $resultSendChat = Request::sendMessage($dataChat);
+                    $resp = Request::sendMessage($dataChat);
+                }
+
 
                 $result = Request::sendMessage($data);
 
