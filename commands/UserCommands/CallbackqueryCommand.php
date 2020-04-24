@@ -223,13 +223,13 @@ class CallbackqueryCommand extends SystemCommand
 
             $add = $order->addProduct($product, $quantity, $product->price);
             if ($add) {
-               /* $data = [
-                    'callback_query_id' => $callback_query_id,
-                    'text' => 'Товар успешно добавлен в корзину',
-                    'show_alert' => false,
-                    'cache_time' => 0,
-                ];
-                $notify = Request::answerCallbackQuery($data);*/
+                /* $data = [
+                     'callback_query_id' => $callback_query_id,
+                     'text' => 'Товар успешно добавлен в корзину',
+                     'show_alert' => false,
+                     'cache_time' => 0,
+                 ];
+                 $notify = Request::answerCallbackQuery($data);*/
 
                 $data = [
                     'callback_query_id' => $callback_query_id,
@@ -402,13 +402,29 @@ class CallbackqueryCommand extends SystemCommand
                         $caption = '*' . $product->name . '*' . PHP_EOL;
                         $caption .= $this->number_format($product->price) . ' грн' . PHP_EOL . PHP_EOL;
 
-                        if($product->manufacturer_id){
+                        if ($product->manufacturer_id) {
                             $caption .= '*Производитель*: ' . $product->manufacturer->name . PHP_EOL;
+                        }
+                        if ($product->sku) {
+                            $caption .= '*Артикул*: ' . $product->sku . PHP_EOL;
+                        }
+                        if ($product->hasDiscount) {
+                            $price = $product->discountPrice;
+                        }else{
+                            $price = $product->price;
+                        }
+
+
+
+                        if ($product->hasDiscount) {
+                            $caption .= PHP_EOL.'* 🔥 Скидка 💥*: ' . $product->discountSum. PHP_EOL. PHP_EOL;
                         }
 
                         $caption .= '*Характеристики:*' . PHP_EOL;
-                        foreach ($this->attributes($product) as $name => $value) {
-                            $caption .= '*' . $name . '*: ' . $value . PHP_EOL;
+                        foreach ($this->attributes($product) as $name => $data) {
+                            if (!empty($data['value'])) {
+                                $caption .= '*' . $name . '*: ' . $data['value'].' '.$data['abbreviation'] . PHP_EOL;
+                            }
                         }
 
                         if ($order) {
@@ -441,10 +457,6 @@ class CallbackqueryCommand extends SystemCommand
                         }*/
 
 
-
-
-
-
                         if ($orderProduct) {
                             $keyboards[] = [
                                 new InlineKeyboardButton([
@@ -468,9 +480,15 @@ class CallbackqueryCommand extends SystemCommand
                             ];
                             //   $keyboards[] = $this->telegram->executeCommand('cartproductquantity')->getKeywords();
                         } else {
+
+
+
+
+
+
                             $keyboards[] = [
                                 new InlineKeyboardButton([
-                                    'text' => Yii::t('telegram/command', 'BUTTON_BUY', $this->number_format($product->price)),
+                                    'text' => Yii::t('telegram/command', 'BUTTON_BUY', $this->number_format($price)),
                                     // 'callback_data' => "addCart/{$product->id}"
                                     'callback_data' => "query=addCart&product_id={$product->id}"
                                 ])
@@ -483,9 +501,9 @@ class CallbackqueryCommand extends SystemCommand
                         // echo $product->getImage()->getPath();
 
                         $imageData = $product->getImage();
-                        if($imageData){
+                        if ($imageData) {
                             $image = $imageData->getPathToOrigin();
-                        }else{
+                        } else {
                             $image = Yii::getAlias('@uploads') . DIRECTORY_SEPARATOR . 'no-image.jpg';
                         }
 
@@ -588,9 +606,10 @@ class CallbackqueryCommand extends SystemCommand
             /** @var Attribute $model */
             $abbr = ($model->abbreviation) ? ' ' . $model->abbreviation : '';
 
-            $value = $model->renderValue($this->_attributes[$model->name]) . $abbr;
 
-            $data[$model->title] = $value;
+
+            $data[$model->title]['value'] = $model->renderValue($this->_attributes[$model->name]);
+            $data[$model->title]['abbreviation'] = $abbr;
         }
 
         return $data;
