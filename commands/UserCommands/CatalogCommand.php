@@ -92,12 +92,12 @@ class CatalogCommand extends UserCommand
         if ($categories) {
             foreach ($categories as $category) {
                 $count = $category->countItems;
-
+				$icon = ($category->icon) ? $category->icon.' ' : '';
                 $child = $category->children()->count();
                 if ($child) {
                     $keyboards[] = [
                         new InlineKeyboardButton([
-                            'text' => '📂 ' . $category->name,
+                            'text' => $icon . $category->name,
                             'callback_data' => 'query=openCatalog&id=' . $category->id
                         ])
                     ];
@@ -105,7 +105,7 @@ class CatalogCommand extends UserCommand
                     if ($count) {
                         $keyboards[] = [
                             new InlineKeyboardButton([
-                                'text' => $category->name . ' (' . $count . ')',
+                                'text' => $icon . $category->name . ' (' . $count . ')',
                                 // 'callback_data' => 'getCatalogList/' . $category->id
                                 'callback_data' => 'query=getCatalogList&category_id=' . $category->id
                             ])
