@@ -2,8 +2,12 @@
 
 namespace shopium\mod\telegram\models;
 
-use shopium\mod\telegram\Telegram;
+
+use shopium\mod\telegram\models\query\UserQuery;
+use Longman\TelegramBot\Request;
 use Yii;
+use yii\base\Exception;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "actions".
@@ -13,9 +17,15 @@ use Yii;
  * @property string $time
  * @property string $direction
  */
-class User extends \yii\db\ActiveRecord
+class User extends ActiveRecord
 {
     const MODULE_ID = 'telegram';
+
+    public static function find()
+    {
+        return new UserQuery(get_called_class());
+    }
+
     /**
      * @inheritdoc
      */
@@ -31,21 +41,54 @@ class User extends \yii\db\ActiveRecord
     {
         return [
             [['client_chat_id'], 'required'],
-            [['first_name','last_name','username'], 'safe'],
-         //   [['message'], 'string', 'max' => 4100],
+            [['first_name', 'last_name', 'username'], 'safe'],
+            //   [['message'], 'string', 'max' => 4100],
         ];
     }
+
     public function getMessages()
     {
-        return $this->hasMany(User::class, ['id' => 'user_id']);
+        return $this->hasMany(Message::class, ['user_id' => 'id']);
     }
+
+    public function getChats()
+    {
+        return $this->hasMany(Message::class, ['chat_id' => 'id']);
+    }
+
+    public function getLastMessage()
+    {
+        return $this->hasOne(Message::class, ['user_id' => 'id'])->orderBy(['date' => SORT_DESC]);
+    }
+
     /**
      * @inheritdoc
      */
     public function attributeLabels()
     {
         return [
-    
+
         ];
+    }
+
+    public function getPhoto()
+    {
+
+        try {
+            $profile = Request::getUserProfilePhotos(['user_id' => $this->id]);
+
+
+            if ($profile->getResult()->photos) {
+                $photo = $profile->getResult()->photos[0][2];
+                $file = Request::getFile(['file_id' => $photo['file_id']]);
+                if (!file_exists(Yii::getAlias('@app/web/downloads/telegram') . DIRECTORY_SEPARATOR . $file->getResult()->file_path)) {
+                    $download = Request::downloadFile($file->getResult());
+                }
+                return '/downloads/telegram/' . $file->getResult()->file_path;
+            }
+        } catch (Exception $e) {
+
+        }
+        return '/uploads/no-image.jpg';
     }
 }

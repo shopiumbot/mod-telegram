@@ -1,16 +1,15 @@
 <?php
 
-namespace app\modules\telegram\controllers\admin;
+namespace shopium\mod\telegram\controllers\admin;
 
-
-use Yii;
 use panix\engine\controllers\AdminController;
-use shopium\mod\telegram\models\search\UserSearch;
+use Yii;
+use shopium\mod\telegram\models\SettingsForm;
 
-class UsersController extends AdminController
+class SettingsController extends AdminController
 {
 
-    public $icon = 'user';
+    public $icon = 'settings';
 
     public function actionIndex()
     {
@@ -22,14 +21,18 @@ class UsersController extends AdminController
             ],
             $this->pageName
         ];
-        $searchModel = new UserSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->getQueryParams());
 
+        $model = new SettingsForm();
+
+        if ($model->load(Yii::$app->request->post())) {
+            if ($model->validate()) {
+                $model->save();
+            }
+
+        }
         return $this->render('index', [
-            'dataProvider' => $dataProvider,
-            'searchModel' => $searchModel,
+            'model' => $model
         ]);
     }
-
 
 }

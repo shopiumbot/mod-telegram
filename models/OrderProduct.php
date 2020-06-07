@@ -2,7 +2,7 @@
 
 namespace shopium\mod\telegram\models;
 
-use core\modules\shop\models\Product;
+use app\modules\shop\models\Product;
 use Yii;
 
 /**
@@ -27,8 +27,7 @@ class OrderProduct extends \yii\db\ActiveRecord
      */
     public static function getDb()
     {
-        $db = \Yii::$app->controller->module->db;
-        return Yii::$app->get($db);
+        return Yii::$app->user->getClientDb();
     }
 
     /**

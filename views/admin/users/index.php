@@ -22,6 +22,7 @@ Pjax::begin([
     'dataProvider' => $dataProvider
 ]);
 echo GridView::widget([
+    'layoutPath' => '@user/views/layouts/_grid_layout',
     'tableOptions' => ['class' => 'table table-striped'],
     'dataProvider' => $dataProvider,
     'filterModel' => $searchModel,
@@ -29,24 +30,18 @@ echo GridView::widget([
         'id',
         [
             'attribute' => 'username',
-            'format'=>'raw',
+            'format' => 'raw',
             'value' => function ($model) {
-                return Html::a('@'.$model->username, 'tg://@' . $model->username);
+                if ($model->username)
+                    return Html::a('@' . $model->username, 'tg://@' . $model->username);
             }
         ],
         'last_name',
         [
             'attribute' => 'first_name',
-            'format'=>'raw',
+            'format' => 'raw',
             'value' => function ($model) {
                 return $model->first_name;
-            }
-        ],
-        [
-            'attribute' => 'username',
-            'format'=>'raw',
-            'value' => function ($model) {
-                return Html::a('@'.$model->username, 'tg://@' . $model->username);
             }
         ]
     ]

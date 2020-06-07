@@ -58,13 +58,13 @@ $form = ActiveForm::begin();
 
             <?= $form->field($model, 'empty_cart_text')->textarea() ?>
             <?php  echo $form->field($model, 'empty_history_text')->textarea() ?>
-        </div>
+
         <?=
         $form->field($model, 'bot_admins')
             ->widget(\panix\ext\taginput\TagInput::class, ['placeholder' => 'ID'])
             ->hint('Введите ID и нажмите Enter');
         ?>
-
+        </div>
 
         <div class="card-footer text-center">
             <?= $model->submitButton(); ?>
@@ -73,4 +73,4 @@ $form = ActiveForm::begin();
 <?php ActiveForm::end(); ?>
 
 <?php
-echo \shopium\mod\telegram\TelegramWidget::widget();
+echo \app\modules\telegram\TelegramWidget::widget();

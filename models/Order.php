@@ -29,8 +29,7 @@ class Order extends \yii\db\ActiveRecord
      */
     public static function getDb()
     {
-        $db = \Yii::$app->controller->module->db;
-        return Yii::$app->get($db);
+        return Yii::$app->user->getClientDb();
     }
 
     /**
