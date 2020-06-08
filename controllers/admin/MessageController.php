@@ -5,7 +5,7 @@ namespace shopium\mod\telegram\controllers\admin;
 use panix\engine\CMS;
 use Yii;
 use shopium\mod\telegram\models\Message;
-use panix\engine\controllers\AdminController;
+use core\components\controllers\AdminController;
 use shopium\mod\telegram\models\search\MessageSearch;
 use shopium\mod\telegram\components\Api;
 

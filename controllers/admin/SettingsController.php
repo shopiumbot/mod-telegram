@@ -2,7 +2,7 @@
 
 namespace shopium\mod\telegram\controllers\admin;
 
-use panix\engine\controllers\AdminController;
+use core\components\controllers\AdminController;
 use Yii;
 use shopium\mod\telegram\models\SettingsForm;
 

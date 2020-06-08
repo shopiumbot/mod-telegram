@@ -4,7 +4,7 @@ namespace shopium\mod\telegram\controllers\admin;
 
 
 use Yii;
-use panix\engine\controllers\AdminController;
+use core\components\controllers\AdminController;
 use shopium\mod\telegram\models\search\UserSearch;
 
 class UsersController extends AdminController
