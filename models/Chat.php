@@ -1,13 +1,13 @@
 <?php
 
-namespace app\modules\telegram\models;
+namespace shopium\mod\telegram\models;
 
 
-use app\modules\telegram\models\query\ChatQuery;
-use app\modules\user\components\ClientActiveRecord;
+use shopium\mod\telegram\models\query\ChatQuery;
 use Longman\TelegramBot\Request;
 use Yii;
 use yii\base\Exception;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "actions".
@@ -17,7 +17,7 @@ use yii\base\Exception;
  * @property string $time
  * @property string $direction
  */
-class Chat extends ClientActiveRecord
+class Chat extends ActiveRecord
 {
     const MODULE_ID = 'telegram';
 

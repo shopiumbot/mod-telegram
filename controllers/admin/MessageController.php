@@ -13,7 +13,6 @@ class MessageController extends AdminController
 {
 
     public $icon = 'settings';
-
     public $layout = '@theme/views/layouts/dashboard_fluid';
 
     public function actionIndex()

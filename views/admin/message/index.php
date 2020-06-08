@@ -1,5 +1,5 @@
 <?php
-declare(encoding='UTF-8');
+
 
 use panix\engine\widgets\Pjax;
 use panix\engine\grid\GridView;
@@ -7,6 +7,9 @@ use Longman\TelegramBot\Request;
 use panix\engine\Html;
 use panix\engine\CMS;
 use shopium\mod\telegram\models\User;
+
+
+$asset = \core\web\themes\dashboard\AdminAsset::register($this);
 ?>
 
 <div class="chat-application">
@@ -44,7 +47,7 @@ use shopium\mod\telegram\models\User;
 
 
                                 ?>
-                                <a href="javascript:void(0)" class="chat-user message-item" id='chat_user_1'
+                                <a href="javascript:void(0)" class="chat-user message-item" id='chat_user_<?= $user->id; ?>'
                                    data-user-id='<?= $user->id; ?>'>
                                         <span class="user-img">
 
@@ -65,7 +68,7 @@ use shopium\mod\telegram\models\User;
                         <!-- Message -->
                         <a href="javascript:void(0)" class="chat-user message-item" id='chat_user_8' data-user-id='8'>
                                         <span class="user-img">
-                                            <img src="<?= $this->context->asset->baseUrl; ?>/images/3.jpg" alt="user"
+                                            <img src="<?= $asset->baseUrl; ?>/images/3.jpg" alt="user"
                                                  class="rounded-circle">
                                             <span class="profile-status offline pull-right"></span>
                                         </span>
@@ -100,7 +103,7 @@ use shopium\mod\telegram\models\User;
                     <div class="chat-meta-user pb-3 border-bottom">
                         <div class="current-chat-user-name">
                                         <span>
-                                            <img src="<?= $this->context->asset->baseUrl; ?>/images/2.jpg"
+                                            <img src="<?= $asset->baseUrl; ?>/images/2.jpg"
                                                  alt="dynamic-image" class="rounded-circle" width="45">
                                             <span class="name font-medium ml-2"></span>
                                         </span>
@@ -161,7 +164,7 @@ use shopium\mod\telegram\models\User;
                         <ul class="chat-list chat" data-user-id="2">
                             <!--chat Row -->
                             <li class="chat-item">
-                                <div class="chat-img"><img src="<?= $this->context->asset->baseUrl; ?>/images/2.jpg"
+                                <div class="chat-img"><img src="<?= $asset->baseUrl; ?>/images/2.jpg"
                                                            alt="user"></div>
                                 <div class="chat-content">
                                     <h6 class="font-medium">James Anderson</h6>
@@ -173,7 +176,7 @@ use shopium\mod\telegram\models\User;
                             </li>
                             <!--chat Row -->
                             <li class="chat-item">
-                                <div class="chat-img"><img src="<?= $this->context->asset->baseUrl; ?>/images/2.jpg"
+                                <div class="chat-img"><img src="<?= $asset->baseUrl; ?>/images/2.jpg"
                                                            alt="user"></div>
                                 <div class="chat-content">
                                     <h6 class="font-medium">Bianca Doe</h6>
@@ -198,7 +201,7 @@ use shopium\mod\telegram\models\User;
                             </li>
                             <!--chat Row -->
                             <li class="chat-item">
-                                <div class="chat-img"><img src="<?= $this->context->asset->baseUrl; ?>/images/2.jpg" alt="user"></div>
+                                <div class="chat-img"><img src="<?= $asset->baseUrl; ?>/images/2.jpg" alt="user"></div>
                                 <div class="chat-content">
                                     <h6 class="font-medium">Angelina Rhodes</h6>
                                     <div class="box bg-light-info">Well we have good budget for the project</div>
@@ -211,7 +214,7 @@ use shopium\mod\telegram\models\User;
                         <ul class="chat-list chat" data-user-id="3">
                             <!--chat Row -->
                             <li class="chat-item">
-                                <div class="chat-img"><img src="<?= $this->context->asset->baseUrl; ?>/images/2.jpg" alt="user"></div>
+                                <div class="chat-img"><img src="<?= $asset->baseUrl; ?>/images/2.jpg" alt="user"></div>
                                 <div class="chat-content">
                                     <h6 class="font-medium">James Anderson</h6>
                                     <div class="box bg-light-info">Lorem Ipsum is simply dummy text of the printing
@@ -222,7 +225,7 @@ use shopium\mod\telegram\models\User;
                             </li>
                             <!--chat Row -->
                             <li class="chat-item">
-                                <div class="chat-img"><img src="<?= $this->context->asset->baseUrl; ?>/images/2.jpg" alt="user"></div>
+                                <div class="chat-img"><img src="<?= $asset->baseUrl; ?>/images/2.jpg" alt="user"></div>
                                 <div class="chat-content">
                                     <h6 class="font-medium">Bianca Doe</h6>
                                     <div class="box bg-light-info">It’s Great opportunity to work.</div>
@@ -246,7 +249,7 @@ use shopium\mod\telegram\models\User;
                             </li>
                             <!--chat Row -->
                             <li class="chat-item">
-                                <div class="chat-img"><img src="<?= $this->context->asset->baseUrl; ?>/images/2.jpg" alt="user"></div>
+                                <div class="chat-img"><img src="<?= $asset->baseUrl; ?>/images/2.jpg" alt="user"></div>
                                 <div class="chat-content">
                                     <h6 class="font-medium">Angelina Rhodes</h6>
                                     <div class="box bg-light-info">Well we have good budget for the project</div>
