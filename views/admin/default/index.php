@@ -73,4 +73,4 @@ $form = ActiveForm::begin();
 <?php ActiveForm::end(); ?>
 
 <?php
-echo \app\modules\telegram\TelegramWidget::widget();
+
