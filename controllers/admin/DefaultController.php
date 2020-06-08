@@ -4,9 +4,9 @@ namespace shopium\mod\telegram\controllers\admin;
 
 use panix\engine\controllers\AdminController;
 use Longman\TelegramBot\Exception\TelegramException;
-use app\modules\telegram\components\Api;
+use shopium\mod\telegram\components\Api;
 use Yii;
-use app\modules\telegram\models\SettingsForm;
+use shopium\mod\telegram\models\SettingsForm;
 use yii\base\UserException;
 use yii\web\Controller;
 use yii\web\ForbiddenHttpException;

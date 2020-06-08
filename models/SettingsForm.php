@@ -2,7 +2,7 @@
 
 namespace shopium\mod\telegram\models;
 
-use app\modules\user\components\SettingsModel;
+use panix\engine\SettingsModel;
 use Yii;
 class SettingsForm extends SettingsModel
 {
