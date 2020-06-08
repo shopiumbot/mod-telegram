@@ -1,6 +1,6 @@
 <?php
 
-namespace app\modules\telegram\controllers\admin;
+namespace shopium\mod\telegram\controllers\admin;
 
 
 use Yii;
