@@ -5,7 +5,7 @@ namespace shopium\mod\telegram;
 use Yii;
 use yii\base\UserException;
 use yii\helpers\Url;
-use panix\engine\WebModule;
+use core\components\WebModule;
 
 /**
  * telegram module definition class
