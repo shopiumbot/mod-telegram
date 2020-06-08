@@ -81,7 +81,7 @@ class Message extends ActiveRecord
                 $profile = Request::getUserProfilePhotos(['user_id' => $this->user_id]);
 
                 if ($profile) {
-                    if ($profile->getResult()->photos) {
+                    if (isset($profile->getResult()->photos) && isset($profile->getResult()->photos[0])) {
                         $photo = $profile->getResult()->photos[0][2];
                         $file = Request::getFile(['file_id' => $photo['file_id']]);
                         if (!file_exists(Yii::getAlias('@app/web/downloads/telegram') . DIRECTORY_SEPARATOR . $file->getResult()->file_path)) {
