@@ -572,7 +572,7 @@ class CallbackqueryCommand extends SystemCommand
 
     }
 
-    protected $_attributes;
+
     public $model;
     protected $_models;
 
@@ -581,35 +581,34 @@ class CallbackqueryCommand extends SystemCommand
 
         $eav = $product;
         /** @var \core\modules\shop\components\EavBehavior $eav */
-        $this->_attributes = $eav->getEavAttributes();
+        $attributes = $eav->getEavAttributes();
 
 
         $data = [];
-        foreach ($this->getModels() as $model) {
+        foreach ($this->getModels($attributes) as $model) {
             /** @var Attribute $model */
             $abbr = ($model->abbreviation) ? ' ' . $model->abbreviation : '';
 
-
-            $data[$model->title]['value'] = $model->renderValue($this->_attributes[$model->name]);
-            $data[$model->title]['abbreviation'] = $abbr;
+            if (isset($attributes[$model->name])) {
+                $data[$model->title]['value'] = $model->renderValue($attributes[$model->name]);
+                $data[$model->title]['abbreviation'] = $abbr;
+            }
         }
 
         return $data;
 
     }
 
-    public function getModels()
+    public function getModels($attributes)
     {
         if (is_array($this->_models))
             return $this->_models;
 
         $this->_models = [];
-        //$cr = new CDbCriteria;
-        //$cr->addInCondition('t.name', array_keys($this->_attributes));
 
         // $query = Attribute::getDb()->cache(function () {
         $query = Attribute::find()
-            ->where(['IN', 'name', array_keys($this->_attributes)])
+            ->where(['IN', 'name', array_keys($attributes)])
             ->sort()
             ->all();
         // }, 3600);

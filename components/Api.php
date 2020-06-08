@@ -22,8 +22,9 @@ class Api extends \Longman\TelegramBot\Telegram
         // echo TB_BASE_COMMANDS_PATH.PHP_EOL;
 
         $api_key = Yii::$app->user->token;//$this->config->api_token;
+        Yii::info('token: '.$api_key);
        // $bot_username = $this->config->bot_name;
-        parent::__construct($api_key, '');
+        parent::__construct($api_key, 'shopiumbot');
         $this->enableAdmins();
 
         $this->setDownloadPath(Yii::getAlias('@app/web/downloads/telegram'));
