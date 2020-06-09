@@ -59,7 +59,7 @@ class Message extends ActiveRecord
 
     public function getCallback()
     {
-        return $this->hasOne(CallbackQuery::class, ['message_id' => 'id']);
+        return $this->hasMany(CallbackQuery::class, ['message_id' => 'id']);
     }
 
     /**
@@ -81,7 +81,7 @@ class Message extends ActiveRecord
             if (!isset($this->photoCache[$this->user_id])) {
                 $profile = Request::getUserProfilePhotos(['user_id' => $this->user_id]);
 
-                if ($profile) {
+                if ($profile->isOk()) {
                     if ($profile->getResult()->photos) {
                         $photo = $profile->getResult()->photos[0][2];
                         $file = Request::getFile(['file_id' => $photo['file_id']]);
@@ -91,6 +91,8 @@ class Message extends ActiveRecord
                         $this->photoCache[$this->user_id] = $file->getResult()->file_path;
                         return '/telegram/downloads/' . $file->getResult()->file_path;
                     }
+                }else{
+                    return '/uploads/no-image.jpg';
                 }
             }
         } catch (Exception $e) {

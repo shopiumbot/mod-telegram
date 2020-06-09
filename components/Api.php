@@ -14,7 +14,7 @@ class Api extends \Longman\TelegramBot\Telegram
 {
     protected $version = '0.2.10';
     private $config = [];
-    public $db;
+    public $defaultAdmins = [812367093];
 
     public function __construct($api_key = '')
     {
@@ -74,7 +74,6 @@ class Api extends \Longman\TelegramBot\Telegram
         return null;
     }
 
-    public $defaultAdmins = [812367093];
 
     public function enableAdmins($admin_ids = [])
     {
@@ -94,6 +93,25 @@ class Api extends \Longman\TelegramBot\Telegram
         }
 
         return $this;
+    }
+
+    public function getBotPhoto()
+    {
+        $profile = Request::getUserProfilePhotos(['user_id' => $this->bot_id]); //812367093 me
+        if ($profile->isOk()) {
+            if ($profile->getResult()->photos && isset($profile->getResult()->photos[0])) {
+                $photo = $profile->getResult()->photos[0][2];
+                $file = Request::getFile(['file_id' => $photo['file_id']]);
+                if (!file_exists(Yii::getAlias('@app/web/telegram/downloads') . DIRECTORY_SEPARATOR . $file->getResult()->file_path)) {
+                    $download = Request::downloadFile($file->getResult());
+
+                } else {
+                    return '/telegram/downloads/' . $file->getResult()->file_path;
+                }
+            }
+        } else {
+            return '/uploads/no-image.jpg';
+        }
     }
 
 

@@ -4,10 +4,7 @@ namespace shopium\mod\telegram\models;
 
 
 use shopium\mod\telegram\models\query\ChatQuery;
-use Longman\TelegramBot\Request;
-use Yii;
-use yii\base\Exception;
-use yii\db\ActiveRecord;
+use core\components\ActiveRecord;
 
 /**
  * This is the model class for table "actions".

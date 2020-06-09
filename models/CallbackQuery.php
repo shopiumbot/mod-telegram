@@ -3,8 +3,9 @@
 namespace shopium\mod\telegram\models;
 
 use shopium\mod\telegram\models\query\CallbackQueryQuery;
-use app\modules\user\components\ClientActiveRecord;
+
 use Yii;
+use core\components\ActiveRecord;
 
 /**
  * This is the model class for table "actions".
@@ -14,7 +15,7 @@ use Yii;
  * @property string $time
  * @property string $direction
  */
-class CallbackQuery extends ClientActiveRecord
+class CallbackQuery extends ActiveRecord
 {
     const MODULE_ID = 'telegram';
 

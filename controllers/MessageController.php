@@ -3,6 +3,7 @@
 namespace shopium\mod\telegram\controllers;
 
 use Longman\TelegramBot\Exception\TelegramException;
+use shopium\mod\telegram\models\User;
 use Yii;
 use shopium\mod\telegram\models\Message;
 use core\components\controllers\AdminController;
@@ -21,7 +22,7 @@ class MessageController extends AdminController
 
     public function actionIndex()
     {
-        $api = new Api(Yii::$app->user->token);
+
         $this->pageName = Yii::t('app/default', 'SETTINGS');
         $this->breadcrumbs = [
             [
@@ -33,19 +34,30 @@ class MessageController extends AdminController
         $searchModel = new MessageSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->getQueryParams());
 
+        $sendForm = new \shopium\mod\telegram\models\forms\SendMessageForm();
+        if($sendForm->load(Yii::$app->request->post())){
+            if($sendForm->validate()){
+                $sendForm->send();
+                return $this->refresh();
+            }
+
+        }
         return $this->render('index', [
             'dataProvider' => $dataProvider,
             'searchModel' => $searchModel,
+            'sendForm'=>$sendForm
         ]);
     }
 
     public function actionLoadChat(){
-        $api = new Api(Yii::$app->user->token);
+
         $user_id = Yii::$app->request->get('user_id');
+        $user = User::find()->where(['id'=>$user_id])->one();
         $model = Message::find()->where(['chat_id'=>$user_id])->limit(50)->all();
-        //print_r($id);die;
-       // return $id;
-        return $this->renderAjax('load-chat',['model'=>$model]);
+
+
+
+        return $this->renderAjax('load-chat',['model'=>$model,'user'=>$user]);
     }
 
 

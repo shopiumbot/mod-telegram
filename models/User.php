@@ -3,6 +3,7 @@
 namespace shopium\mod\telegram\models;
 
 
+use panix\engine\CMS;
 use shopium\mod\telegram\models\query\UserQuery;
 use Longman\TelegramBot\Request;
 use Yii;
@@ -77,14 +78,17 @@ class User extends ActiveRecord
         try {
             $profile = Request::getUserProfilePhotos(['user_id' => $this->id]);
 
-
-            if ($profile->getResult()->photos) {
-                $photo = $profile->getResult()->photos[0][2];
-                $file = Request::getFile(['file_id' => $photo['file_id']]);
-                if (!file_exists(Yii::getAlias('@app/web/telegram/downloads') . DIRECTORY_SEPARATOR . $file->getResult()->file_path)) {
-                    $download = Request::downloadFile($file->getResult());
+            if ($profile->isOk()) {
+                if ($profile->getResult()->photos) {
+                    $photo = $profile->getResult()->photos[0][2];
+                    $file = Request::getFile(['file_id' => $photo['file_id']]);
+                    if (!file_exists(Yii::getAlias('@app/web/telegram/downloads') . DIRECTORY_SEPARATOR . $file->getResult()->file_path)) {
+                        $download = Request::downloadFile($file->getResult());
+                    }
+                    return '/telegram/downloads/' . $file->getResult()->file_path;
                 }
-                return '/telegram/downloads/' . $file->getResult()->file_path;
+            } else {
+                return '/uploads/no-image.jpg';
             }
         } catch (Exception $e) {
 
