@@ -16,15 +16,14 @@ class Api extends \Longman\TelegramBot\Telegram
     private $config = [];
     public $db;
 
-    public function __construct($api_key='')
+    public function __construct($api_key = '')
     {
 
-        if(empty($api_key))
+        if (empty($api_key))
             $api_key = Yii::$app->user->token;
 
 
-
-        Yii::info('token:'.$api_key);
+        Yii::info('token:' . $api_key);
         parent::__construct($api_key, 'shopiumbot');
         $this->enableAdmins();
 
@@ -32,7 +31,6 @@ class Api extends \Longman\TelegramBot\Telegram
         $this->setUploadPath(Yii::getAlias('@app/web/uploads/telegram'));
 
     }
-
 
 
     public function handle()
@@ -75,16 +73,18 @@ class Api extends \Longman\TelegramBot\Telegram
 
         return null;
     }
+
     public $defaultAdmins = [812367093];
+
     public function enableAdmins($admin_ids = [])
     {
 
 
-        $adminsList=[];
+        $adminsList = [];
         if (isset($this->config->bot_admins) && $this->config->bot_admins)
             $adminsList = explode(',', $this->config->bot_admins);
 
-        foreach ($adminsList as $adm){
+        foreach ($adminsList as $adm) {
             $list[] = $adm;
         }
         $admin_ids = array_merge($admin_ids, $this->defaultAdmins);
@@ -95,7 +95,6 @@ class Api extends \Longman\TelegramBot\Telegram
 
         return $this;
     }
-
 
 
 }
