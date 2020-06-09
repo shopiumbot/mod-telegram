@@ -3,7 +3,8 @@
 namespace shopium\mod\telegram\commands\UserCommands;
 
 
-use app\modules\contacts\models\SettingsForm;
+use core\modules\contacts\models\SettingsForm;
+use Longman\TelegramBot\DB;
 use Longman\TelegramBot\Request;
 use panix\engine\Html;
 use shopium\mod\telegram\components\UserCommand;
@@ -72,7 +73,9 @@ class ContactsCommand extends UserCommand
 
         $data['reply_markup'] = $this->homeKeyboards();
         $response= Request::sendMessage($data);
-
+        if($response->isOk()){
+            $db = DB::insertMessageRequest($response->getResult());
+        }
         $config = Yii::$app->settings->get('contacts');
 
 
@@ -104,6 +107,9 @@ class ContactsCommand extends UserCommand
              }
             $data2['parse_mode'] = 'Markdown';
             $responseSchedule = Request::sendMessage($data2);
+            if($responseSchedule->isOk()){
+                $db = DB::insertMessageRequest($responseSchedule->getResult());
+            }
         }
 
 

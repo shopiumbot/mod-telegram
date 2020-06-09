@@ -3,6 +3,7 @@
 namespace shopium\mod\telegram\commands\UserCommands;
 
 use Longman\TelegramBot\Conversation;
+use Longman\TelegramBot\DB;
 use Longman\TelegramBot\Entities\Keyboard;
 use Longman\TelegramBot\Entities\ReplyKeyboardHide;
 use Longman\TelegramBot\Request;
@@ -75,10 +76,17 @@ class CancelCommand extends SystemCommand
      */
     private function hideKeyboard($text)
     {
-        return Request::sendMessage([
+
+        $response = Request::sendMessage([
             'reply_markup' => $this->startKeyboards(),
             'chat_id' => $this->getMessage()->getChat()->getId(),
             'text' => $text,
         ]);
+        if($response->isOk()){
+            $db = DB::insertMessageRequest($response->getResult());
+        }
+
+
+        return $response;
     }
 }

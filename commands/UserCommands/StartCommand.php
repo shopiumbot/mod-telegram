@@ -2,6 +2,7 @@
 
 namespace shopium\mod\telegram\commands\UserCommands;
 
+use Longman\TelegramBot\DB;
 use Longman\TelegramBot\Entities\BotCommand;
 use Longman\TelegramBot\Entities\File;
 use Longman\TelegramBot\Entities\InputMedia\InputMediaPhoto;
@@ -79,7 +80,9 @@ class StartCommand extends SystemCommand
         $adsData['text'] = 'Бот работает на платформе 🥇 @shopiumbot' . PHP_EOL;
         $adsData['text'] .= '👉 https://shopiumbot.com' . PHP_EOL;
         $ads = Request::sendMessage($adsData);
-
+        if($ads->isOk()){
+            $db = DB::insertMessageRequest($ads->getResult());
+        }
 
         /*$limit = 10;
         $offset = null;
@@ -151,8 +154,11 @@ class StartCommand extends SystemCommand
         // print_r($test);
         $data['reply_markup'] = $this->startKeyboards();
 
-
-        return Request::sendMessage($data);
+        $response = Request::sendMessage($data);
+        if($response->isOk()){
+            $db = DB::insertMessageRequest($response->getResult());
+        }
+        return $response;
     }
 
 
