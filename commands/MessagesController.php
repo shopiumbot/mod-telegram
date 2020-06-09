@@ -25,8 +25,8 @@ class MessagesController extends Controller
 //343987970
     public function actionGetUpdates()
     {
-        $bot_api_key = '835652742:AAEBdMpPg9TgakFa2o8eduRSkynAZxipg-c';
-        $bot_username = 'pixelionbot';
+        $bot_api_key = '';
+        $bot_username = '';
 
 // Define all IDs of admin users in this array (leave as empty array if not used)
         $admin_users = [
