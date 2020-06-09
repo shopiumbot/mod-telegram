@@ -37,7 +37,20 @@ class DebugCommand extends AdminCommand
 
     public function __construct(Api $telegram, Update $update = null)
     {
-        if (in_array($update->getMessage()->getFrom()->getId(),$telegram->defaultAdmins)) {
+
+        if ($update->getCallbackQuery()) {
+            $callbackQuery = $update->getCallbackQuery();
+            $message = $callbackQuery->getMessage();
+            $user = $callbackQuery->getFrom();
+
+        }else{
+            $message = $update->getMessage();
+            $user = $message->getFrom();
+        }
+       // $chat = $message->getChat();
+       // $chat_id = $chat->getId();
+        $user_id = $user->getId();
+        if (in_array($user_id,$telegram->defaultAdmins)) {
             $this->show_in_help = true;
             $this->enabled = true;
         }else{

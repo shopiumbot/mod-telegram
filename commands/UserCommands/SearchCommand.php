@@ -7,10 +7,8 @@ use Longman\TelegramBot\Conversation;
 use Longman\TelegramBot\Entities\InlineKeyboard;
 use Longman\TelegramBot\Entities\InlineKeyboardButton;
 use Longman\TelegramBot\Entities\Keyboard;
-use Longman\TelegramBot\Entities\KeyboardButton;
-use Longman\TelegramBot\Entities\PhotoSize;
 use Longman\TelegramBot\Request;
-use app\modules\shop\models\Product;
+use core\modules\shop\models\Product;
 use shopium\mod\telegram\components\UserCommand;
 use Yii;
 
@@ -78,7 +76,10 @@ class SearchCommand extends UserCommand
         $data = [
             'chat_id' => $chat_id,
         ];
-
+        if ($text === '❌ Отмена') {
+            return $this->telegram->executeCommand('cancel');
+            //return Request::emptyResponse();
+        }
         if ($chat->isGroupChat() || $chat->isSuperGroup()) {
             //reply to message id is applied by default
             //Force reply is applied by default so it can work with privacy on
@@ -98,10 +99,7 @@ class SearchCommand extends UserCommand
         }
         $notes['status'] = false;
         $result = Request::emptyResponse();
-        echo $text;
-        //State machine
-        //Entrypoint of the machine state if given by the track
-        //Every time a step is achieved the track is updated
+
         switch ($state) {
             case 0:
                 if ($text === '' || preg_match('/^(\x{1F50E})/iu', $text, $match)) {
@@ -109,7 +107,14 @@ class SearchCommand extends UserCommand
                     $this->conversation->update();
 
                     $data['text'] = 'Введите название товара или артикул:';
-                    $data['reply_markup'] = Keyboard::remove(['selective' => true]);
+                    //$data['reply_markup'] = Keyboard::remove(['selective' => true]);
+
+                    $data['reply_markup'] = (new Keyboard(['❌ Отмена']))
+                        ->setResizeKeyboard(true)
+                        ->setOneTimeKeyboard(true)
+                        ->setSelective(true);
+
+
                     if ($text !== '') {
                         $data['text'] = 'Введите название товара или артикул:';
                     }
@@ -142,9 +147,8 @@ class SearchCommand extends UserCommand
                         ];
                         $data['chat_id'] = $chat_id;
                         $data['parse_mode'] = 'Markdown';
-                        $data['text'] = $text;
+                        $data['text'] = 'Результат поиска';
                         $data['reply_markup'] = $this->catalogKeyboards();
-
                         $result2 = Request::sendMessage($data);
 
                         $data = [];
@@ -155,7 +159,6 @@ class SearchCommand extends UserCommand
                         ]);
 
                         $data['reply_markup'] = new InlineKeyboard(['inline_keyboard' => $buttons]);
-
 
                         $result = Request::sendMessage($data);
 

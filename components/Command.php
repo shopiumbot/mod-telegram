@@ -6,6 +6,7 @@ use Longman\TelegramBot\Entities\InlineKeyboardButton;
 use Longman\TelegramBot\Entities\Keyboard;
 use Longman\TelegramBot\Entities\KeyboardButton;
 use Longman\TelegramBot\Request;
+use panix\engine\CMS;
 
 abstract class Command extends \Longman\TelegramBot\Commands\Command
 {
@@ -97,19 +98,19 @@ abstract class Command extends \Longman\TelegramBot\Commands\Command
         return Request::sendMessage($data);
     }
 
-    public function notify($message = null, $type = 'info')
+    public function notify($message = null, $type = 'info', $reply_markup = false)
     {
         if (!in_array($type, ['info', 'success', 'error', 'warning'])) {
             $type = 'info';
         }
         if ($type == 'success') {
-            $preText = '*✅ Успех:*'.PHP_EOL;
+            $preText = '*✅ Успех:*' . PHP_EOL;
         } elseif ($type == 'error') {
-            $preText = '*🚫 Ошибка:*'.PHP_EOL;
+            $preText = '*🚫 Ошибка:*' . PHP_EOL;
         } elseif ($type == 'warning') {
-            $preText = '*⚠ Внимание:*'.PHP_EOL;
+            $preText = '*⚠ Внимание:*' . PHP_EOL;
         } else {
-            $preText = '*ℹ Информация:*'.PHP_EOL;
+            $preText = '*ℹ Информация:*' . PHP_EOL;
         }
         $update = $this->getUpdate();
         if ($update->getCallbackQuery()) {
@@ -117,8 +118,12 @@ abstract class Command extends \Longman\TelegramBot\Commands\Command
         } else {
             $data['chat_id'] = $update->getMessage()->getChat()->getId();
         }
-        $data['parse_mode']='Markdown';
-        $data['text'] = $preText . '`'.$message.'`';
+        $data['parse_mode'] = 'Markdown';
+        $data['text'] = $preText . ' ' . $message . '';
+        if ($reply_markup) {
+            $data['reply_markup'] = $reply_markup;
+        }
+
         return Request::sendMessage($data);
     }
 

@@ -1,12 +1,4 @@
 <?php
-/**
- * This file is part of the TelegramBot package.
- *
- * (c) Avtandil Kikabidze aka LONGMAN <akalongman@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
 
 namespace shopium\mod\telegram\commands\UserCommands;
 
@@ -17,6 +9,7 @@ use Longman\TelegramBot\Entities\InlineKeyboardButton;
 use Longman\TelegramBot\Entities\Keyboard;
 use Longman\TelegramBot\Entities\KeyboardButton;
 use Longman\TelegramBot\Request;
+use panix\engine\CMS;
 use shopium\mod\cart\models\Delivery;
 use shopium\mod\cart\models\Payment;
 use shopium\mod\telegram\components\SystemCommand;
@@ -48,7 +41,7 @@ class CheckOutCommand extends SystemCommand
     /**
      * @var string
      */
-    protected $version = '1.0.0';
+    protected $version = '1.1.0';
 
     /**
      * @var bool
@@ -66,7 +59,7 @@ class CheckOutCommand extends SystemCommand
      * @var \Longman\TelegramBot\Conversation
      */
     protected $conversation;
-    public $id;
+
 
     /**
      * Command execute method
@@ -100,15 +93,15 @@ class CheckOutCommand extends SystemCommand
 
             $chat_id = $chat->getId();
             $user_id = $user->getId();
-            $order = Order::find()->where(['client_id' => $user_id, 'checkout' => 0])->one();
+            $order = Order::find()->where(['user_id' => $user_id, 'checkout' => 0])->one();
         }
 
 
         $data['chat_id'] = $chat_id;
         $text = trim($message->getText(true));
 
-        /*$order = Order::find()->where(['client_id' => $user_id, 'checkout' => 0])->one();
-        if (!$order || !$order->getProducts()->count()) {
+
+        /*if (!$order || !$order->getProducts()->count()) {
             $data['text'] = Yii::$app->settings->get('telegram', 'empty_cart_text');
             $data['reply_markup'] = $this->startKeyboards();
              return Request::sendMessage($data);
@@ -121,8 +114,22 @@ class CheckOutCommand extends SystemCommand
             return Request::emptyResponse();
         }
 
-        if ($order) {
 
+        if ($order) {
+            if (!$order->getProducts()->count()) {
+                // $data['reply_markup'] = $this->startKeyboards();
+                //  return $this->notify(Yii::$app->settings->get('telegram', 'empty_cart_text'),'info');
+
+
+                $data_edit = [
+                    'chat_id' => $chat_id,
+                    'message_id' => $message->getMessageId(),
+                    'text' => Yii::$app->settings->get('telegram', 'empty_cart_text'),
+                ];
+                return Request::editMessageText($data_edit);
+
+
+            }
             if ($chat->isGroupChat() || $chat->isSuperGroup()) {
                 //reply to message id is applied by default
                 //Force reply is applied by default so it can work with privacy on
@@ -140,7 +147,6 @@ class CheckOutCommand extends SystemCommand
             if (isset($notes['state'])) {
                 $state = $notes['state'];
             }
-
 
             $result = Request::emptyResponse();
 
@@ -174,11 +180,15 @@ class CheckOutCommand extends SystemCommand
                         return $this->telegram->executeCommand('cancel');
                     }
                 case 1:
-                    if ($text === '' || $notes['confirm'] == '➡ Продолжить') {
+                    username:
+                    if ($text == '⬅ Назад') {
+                        $text = '';
+                    }
+                    if ($text === '' || $notes['confirm'] === '➡ Продолжить') {
                         $notes['state'] = 1;
                         $this->conversation->update();
 
-                        $data['reply_markup'] = (new Keyboard([$user->getFirstName() . ' ' . $user->getLastName(), 'Отмена']))
+                        $data['reply_markup'] = (new Keyboard([$user->getFirstName() . ' ' . $user->getLastName(), '❌ Отмена']))
                             ->setResizeKeyboard(true)
                             ->setOneTimeKeyboard(true)
                             ->setSelective(true);
@@ -193,22 +203,50 @@ class CheckOutCommand extends SystemCommand
                     $text = '';
                 // no break
                 case 2:
-
+                    delivery:
+                    if ($text === '⬅ Назад') {
+                        $text = '';
+                        goto username;
+                    }
                     $delivery = Delivery::find()->all();
                     $deliveryList = [];
+                    $deliverySystemList = [];
                     $keyboards = [];
                     foreach ($delivery as $item) {
                         $deliveryList[$item->id] = $item->name;
+
+                        if($item->system){
+                            $deliverySystemList[$item->system] = $item->name;
+                        }
+
                         $keyboards[] = new KeyboardButton($item->name);
                     }
-                    $keyboards[] = new KeyboardButton('❌ Отмена');
+
+
+
+
                     $keyboards = array_chunk($keyboards, 2);
+                    $keyboards[] = [
+                        new KeyboardButton('⬅ Назад'),
+                        new KeyboardButton('❌ Отмена')
+                    ];
 
 
                     $buttons = (new Keyboard(['keyboard' => $keyboards]))
                         ->setResizeKeyboard(true)
                         ->setOneTimeKeyboard(true)
                         ->setSelective(true);
+
+
+                    /*if ($text === '' || !in_array($text, $deliverySystemList, true)) {
+                        $data['reply_markup'] = $buttons;
+
+                        $data['text'] = 'Выберите вариант доставки:';
+                        if ($text !== '') {
+                            $data['text'] = 'Выберите вариант доставки, на клавиатуре:';
+                        }
+                        $result = Request::sendMessage($data);
+                    }*/
 
 
                     if ($text === '' || !in_array($text, $deliveryList, true)) {
@@ -228,9 +266,63 @@ class CheckOutCommand extends SystemCommand
 
                     $notes['delivery'] = $text;
                     $notes['delivery_id'] = array_search($text, $deliveryList);
+                    if($deliverySystemList){
+                        $notes['delivery_system'] = array_search($text, $deliverySystemList);
+                    }
+
+
+                    if (isset($notes['delivery_system'])) {
+                        if($notes['delivery_system'] == 'novaposhta'){
+                            $text = '';
+                            goto system_novaposhta;
+                        }
+                    }
+
+                case "2.1":
+                    system_novaposhta:
+
+                    $delivery = Delivery::findOne($notes['delivery_id']);
+                    if ($text === 'Доставка на адрес') {
+                        $data['text'] = 'Введите адрес:';
+                        $result = Request::sendMessage($data);
+                        break;
+                    }
+
+                    $notes['state'] = "2.1";
+                    $this->conversation->update();
+                    $keyboards = [];
+                    $keyboards[] = [
+                        new KeyboardButton('Доставка на адрес'),
+                        new KeyboardButton('Доставка на отделение')
+                    ];
+                    $keyboards[] = [
+                        new KeyboardButton('⬅ Назад'),
+                        new KeyboardButton('❌ Отмена')
+                    ];
+                    $buttons = (new Keyboard(['keyboard' => $keyboards]))
+                        ->setResizeKeyboard(true)
+                        ->setOneTimeKeyboard(true)
+                        ->setSelective(true);
+                    $data['reply_markup'] = $buttons;
+                    $data['text'] = 'Выберите вариант доставки:';
+                    if ($text !== '') {
+                        $data['text'] = 'Выберите вариант доставки, на клавиатуре:';
+                    }
+
+                    $result = Request::sendMessage($data);
+                    $data['text'] = json_encode($notes);
+                    $result2 = Request::sendMessage($data);
+
+                    $this->conversation->stop();
+                    break;
+
                 // no break
                 case 3:
-
+                    payment:
+                    if ($text === '⬅ Назад') {
+                        $text = '';
+                        goto delivery;
+                    }
                     $payments = Payment::find()->all();
                     $paymentList = [];
                     $keyboards = [];
@@ -238,9 +330,11 @@ class CheckOutCommand extends SystemCommand
                         $paymentList[$item->id] = $item->name;
                         $keyboards[] = new KeyboardButton(['text' => $item->name]);
                     }
-                    $keyboards[] = new KeyboardButton('❌ Отмена');
                     $keyboards = array_chunk($keyboards, 2);
-
+                    $keyboards[] = [
+                        new KeyboardButton('⬅ Назад'),
+                        new KeyboardButton('❌ Отмена')
+                    ];
                     $buttons = (new Keyboard(['keyboard' => $keyboards]))
                         ->setResizeKeyboard(true)
                         ->setOneTimeKeyboard(true)
@@ -265,17 +359,30 @@ class CheckOutCommand extends SystemCommand
                     $notes['payment_id'] = array_search($text, $paymentList);
                 // no break
                 case 4:
+                    contact:
+                    if ($text === '⬅ Назад') {
+                        $text = '';
+                        goto payment;
+                    }
                     if ($message->getContact() === null) {
                         $notes['state'] = 4;
                         $this->conversation->update();
 
-                        $data['reply_markup'] = (new Keyboard(
-                            (new KeyboardButton('📞 Оставить контакты'))->setRequestContact(true),
-                            new KeyboardButton('❌ Отмена')
-                        ))
-                            ->setOneTimeKeyboard(true)
+                        $keyboards = [
+                            [
+                                (new KeyboardButton('📞 Оставить контакты'))->setRequestContact(true)],
+                            [
+                                new KeyboardButton('⬅ Назад'),
+                                new KeyboardButton('❌ Отмена')
+                            ]
+                        ];
+                        $buttons = (new Keyboard(['keyboard' => $keyboards]))
                             ->setResizeKeyboard(true)
+                            ->setOneTimeKeyboard(true)
                             ->setSelective(true);
+
+
+                        $data['reply_markup'] = $buttons;
 
                         $data['text'] = 'Ваши контактные данные:';
 
@@ -288,8 +395,9 @@ class CheckOutCommand extends SystemCommand
                 // no break
                 case 5:
                     $this->conversation->update();
-                    $content = '*✅ Ваш заказ успешно оформлен*' . PHP_EOL . PHP_EOL;
-                    $order = Order::find()->where(['client_id' => $user_id, 'checkout' => 0])->one();
+                    $titleClient = '*✅ Ваш заказ успешно оформлен*' . PHP_EOL . PHP_EOL;
+                    $order = Order::find()->where(['user_id' => $user_id, 'checkout' => 0])->one();
+                    $content = '';
                     if ($order) {
                         $products = $order->products;
                         if ($products) {
@@ -312,16 +420,32 @@ class CheckOutCommand extends SystemCommand
 
                     $content .= PHP_EOL . PHP_EOL . 'Сумма заказа: *' . $this->number_format($order->total_price) . '* грн.';
 
-                    $order->delivery = $notes['delivery'];
-                    $order->payment = $notes['payment'];
+                    //$order->delivery = $notes['delivery'];
+                    //$order->payment = $notes['payment'];
                     $order->delivery_id = $notes['delivery_id'];
                     $order->payment_id = $notes['payment_id'];
+                    $order->user_phone = $notes['phone_number'];
+                    $order->status_id = 1;
                     $order->checkout = 1;
-                    $order->save();
+                    $order->save(false);
+
+
+                    //$test = $order->sendAdminEmail();
+                    $titleOwner = '*✅ Новый заказ '.CMS::idToNumber($order->id).'*' . PHP_EOL . PHP_EOL;
+                    $this->telegram->getAdminList();
+                    foreach ($this->telegram->getAdminList() as $admin){
+                        $data2['chat_id'] = $admin;
+                        $data2['parse_mode'] = 'Markdown';
+                        $data2['text'] = $titleOwner.$content;
+                        $result2 = Request::sendMessage($data2);
+                    }
+
+
+
 
                     $data['parse_mode'] = 'Markdown';
                     $data['reply_markup'] = $this->homeKeyboards();
-                    $data['text'] = $content;
+                    $data['text'] = $titleClient.$content;
                     $result = Request::sendMessage($data);
 
 
@@ -332,7 +456,7 @@ class CheckOutCommand extends SystemCommand
                         $data['reply_markup'] = new InlineKeyboard([
                             'inline_keyboard' => $inlineKeyboards
                         ]);
-                        $data['text'] = '🙍🏼‍♀ Наш менеджер свяжеться с вами!';
+                        $data['text'] = '🙍🏼‍♀ Наш менеджер свяжеться с вами!‍';
                         $result = Request::sendMessage($data);
                     }
 
