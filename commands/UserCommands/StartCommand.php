@@ -3,9 +3,15 @@
 namespace shopium\mod\telegram\commands\UserCommands;
 
 use Longman\TelegramBot\Entities\BotCommand;
+use Longman\TelegramBot\Entities\File;
+use Longman\TelegramBot\Entities\InputMedia\InputMediaPhoto;
+use Longman\TelegramBot\Entities\PhotoSize;
 use Longman\TelegramBot\Entities\Poll;
 use Longman\TelegramBot\Entities\PollOption;
+use Longman\TelegramBot\Entities\UserProfilePhotos;
+use Longman\TelegramBot\Exception\TelegramException;
 use Longman\TelegramBot\Request;
+use Longman\TelegramBot\TelegramLog;
 use panix\engine\CMS;
 use shopium\mod\telegram\components\SystemCommand;
 use Yii;
@@ -73,6 +79,47 @@ class StartCommand extends SystemCommand
         $adsData['text'].='👉 https://shopiumbot.com'.PHP_EOL;
         $ads = Request::sendMessage($adsData);
 
+
+
+
+        /*$limit = 10;
+        $offset = null;
+        $response = Request::getUserProfilePhotos(
+            [
+                'user_id' => $user_id,
+                'limit' => $limit,
+                'offset' => $offset,
+            ]
+        );
+
+        if ($response->isOk()) {
+            $user_profile_photos = $response->getResult();
+
+            if ($user_profile_photos->getTotalCount() > 0) {
+                $photos = $user_profile_photos->getPhotos();
+
+                $photo = $photos[0][2];
+                $file_id = $photo->getFileId();
+
+                //Download the photo after send message response to speedup response
+                $response2 = Request::getFile(['file_id' => $file_id]);
+                if ($response2->isOk()) {
+                    $photo_file = $response2->getResult();
+                    $s = Request::downloadFile($photo_file);
+                }
+            }
+
+            Request::sendMessage([
+                'chat_id' => $user_id,
+                'text' => json_encode($file_id)
+            ]);
+        }*/
+
+
+
+
+
+
         //$adsData2['chat_id']=343987970;
         //$adsData2['parse_mode']='Markdown';
         //$adsData2['text']='test message';
@@ -113,4 +160,7 @@ class StartCommand extends SystemCommand
 
         return Request::sendMessage($data);
     }
+
+
+
 }

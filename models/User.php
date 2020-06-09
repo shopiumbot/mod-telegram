@@ -78,8 +78,7 @@ class User extends ActiveRecord
             $profile = Request::getUserProfilePhotos(['user_id' => $this->id]);
 
 
-            if (isset($profile->getResult()->photos) && isset($profile->getResult()->photos[0])) {
-
+            if ($profile->getResult()->photos) {
                 $photo = $profile->getResult()->photos[0][2];
                 $file = Request::getFile(['file_id' => $photo['file_id']]);
                 if (!file_exists(Yii::getAlias('@app/web/downloads/telegram') . DIRECTORY_SEPARATOR . $file->getResult()->file_path)) {

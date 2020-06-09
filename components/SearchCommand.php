@@ -17,7 +17,7 @@ use Longman\TelegramBot\Entities\Keyboard;
 use Longman\TelegramBot\Entities\KeyboardButton;
 use Longman\TelegramBot\Entities\PhotoSize;
 use Longman\TelegramBot\Request;
-use core\modules\shop\models\Product;
+use app\modules\shop\models\Product;
 use shopium\mod\telegram\components\UserCommand;
 use Yii;
 

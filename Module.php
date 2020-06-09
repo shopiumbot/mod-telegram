@@ -6,6 +6,7 @@ use Yii;
 use yii\base\UserException;
 use yii\helpers\Url;
 use core\components\WebModule;
+use yii\web\GroupUrlRule;
 
 /**
  * telegram module definition class
@@ -21,7 +22,22 @@ class Module extends WebModule implements \yii\base\BootstrapInterface
     public $db = 'db';
     public $options = [];
 
+    public function setApi($version)
+    {
+        $this->_telegram = $version;
+    }
+
+    public function getApi()
+    {
+        return $this->_telegram;
+    }
+
     public $icon = 'telegram-outline';
+    public $_telegram;
+
+    /**
+     * @inheritdoc
+     */
 
     public function getDsnAttribute($name)
     {
@@ -31,6 +47,7 @@ class Module extends WebModule implements \yii\base\BootstrapInterface
             return null;
         }
     }
+
     /**
      * @inheritdoc
      */
@@ -41,57 +58,59 @@ class Module extends WebModule implements \yii\base\BootstrapInterface
      */
     public function init()
     {
-        $config = Yii::$app->settings->get('telegram');
-
-        if (isset($config->api_token))
-            $this->api_token = $config->api_token;
-
-        if (isset($config->bot_name))
-            $this->bot_name = $config->bot_name;
-
-        if (isset($config->password))
-            $this->password = $config->password;
-
         if (!(Yii::$app instanceof \yii\console\Application)) {
-            $this->hook_url = 'https://' . Yii::$app->request->getServerName() . '/telegram/hook';
+            $config = Yii::$app->settings->get('telegram');
 
-            if (empty($this->hook_url))
-                throw new UserException('You must set hook_url');
+            if (isset($config->api_token))
+                $this->api_token = $config->api_token;
+
+            if (isset($config->bot_name))
+                $this->bot_name = $config->bot_name;
+
+            if (isset($config->password))
+                $this->password = $config->password;
+
+            parent::init();
+
+            $this->options = [
+                'initChat' => Url::to(['/telegram/default/init-chat']),
+                'destroyChat' => Url::to(['/telegram/default/destroy-chat']),
+                'getAllMessages' => Url::to(['/telegram/chat/get-all-messages']),
+                'getLastMessages' => Url::to(['/telegram/chat/get-last-messages']),
+                'initialMessage' => \Yii::t('telegram/default', 'Write your question...'),
+            ];
         }
-
-        parent::init();
-
-        $this->options = [
-            'initChat' => Url::to(['/telegram/default/init-chat']),
-            'destroyChat' => Url::to(['/telegram/default/destroy-chat']),
-            'getAllMessages' => Url::to(['/telegram/chat/get-all-messages']),
-            'getLastMessages' => Url::to(['/telegram/chat/get-last-messages']),
-            'initialMessage' => \Yii::t('telegram/default', 'Write your question...'),
-        ];
-
     }
 
     public function bootstrap($app)
     {
-        $config = Yii::$app->settings->get('telegram');
+
         if ($app instanceof \yii\console\Application) {
+
             $this->controllerNamespace = 'shopium\mod\telegram\commands';
         }
-
-        $rules['telegram/chat/<action:[0-9a-zA-Z_\-]+>'] = 'telegram/chat/<action>';
-        $rules['telegram/<action:[0-9a-zA-Z_\-]+>'] = 'telegram/default/<action>';
-        $app->urlManager->addRules(
-            $rules,
-            false
-        );
-        if (isset($config->api_token)) {
-            $app->setComponents([
-                'telegram' => [
-                    'class' => 'shopium\mod\telegram\components\Telegram',
-                    'botToken' => $config->api_token,
-                ]
-            ]);
+        if (!($app instanceof \yii\console\Application)) {
+            $config = Yii::$app->settings->get('telegram');
+            if (isset($config->api_token)) {
+                $app->setComponents([
+                    'telegram' => [
+                        'class' => 'shopium\mod\telegram\components\Telegram',
+                        'botToken' => $config->api_token,
+                    ]
+                ]);
+            }
         }
+        $groupUrlRule = new GroupUrlRule([
+            'prefix' => $this->id,
+            'rules' => [
+                '<controller:[0-9a-zA-Z_\-]+>/<action:[0-9a-zA-Z_\-]+>' => '<controller>/<action>',
+                '<controller:[0-9a-zA-Z_\-]+>' => '<controller>/index',
+                '<action:[0-9a-zA-Z_\-]+>' => 'default/<action>',
+                '' => 'default/index',
+            ],
+        ]);
+        $app->getUrlManager()->addRules($groupUrlRule->rules, false);
+
     }
 
     public function getAdminMenu()

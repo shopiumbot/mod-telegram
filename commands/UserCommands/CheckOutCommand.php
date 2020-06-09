@@ -1,12 +1,4 @@
 <?php
-/**
- * This file is part of the TelegramBot package.
- *
- * (c) Avtandil Kikabidze aka LONGMAN <akalongman@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
 
 namespace shopium\mod\telegram\commands\UserCommands;
 
@@ -219,11 +211,21 @@ class CheckOutCommand extends SystemCommand
                     }
                     $delivery = Delivery::find()->all();
                     $deliveryList = [];
+                    $deliverySystemList = [];
                     $keyboards = [];
                     foreach ($delivery as $item) {
                         $deliveryList[$item->id] = $item->name;
+
+                        if($item->system){
+                            $deliverySystemList[$item->system] = $item->name;
+                        }
+
                         $keyboards[] = new KeyboardButton($item->name);
                     }
+
+
+
+
                     $keyboards = array_chunk($keyboards, 2);
                     $keyboards[] = [
                         new KeyboardButton('⬅ Назад'),
@@ -235,6 +237,18 @@ class CheckOutCommand extends SystemCommand
                         ->setResizeKeyboard(true)
                         ->setOneTimeKeyboard(true)
                         ->setSelective(true);
+
+
+                    /*if ($text === '' || !in_array($text, $deliverySystemList, true)) {
+                        $data['reply_markup'] = $buttons;
+
+                        $data['text'] = 'Выберите вариант доставки:';
+                        if ($text !== '') {
+                            $data['text'] = 'Выберите вариант доставки, на клавиатуре:';
+                        }
+                        $result = Request::sendMessage($data);
+                    }*/
+
 
                     if ($text === '' || !in_array($text, $deliveryList, true)) {
                         $notes['state'] = 2;
@@ -253,6 +267,56 @@ class CheckOutCommand extends SystemCommand
 
                     $notes['delivery'] = $text;
                     $notes['delivery_id'] = array_search($text, $deliveryList);
+                    if($deliverySystemList){
+                        $notes['delivery_system'] = array_search($text, $deliverySystemList);
+                    }
+
+
+                    if (isset($notes['delivery_system'])) {
+                        if($notes['delivery_system'] == 'novaposhta'){
+                            $text = '';
+                            goto system_novaposhta;
+                        }
+                    }
+
+                case "2.1":
+                    system_novaposhta:
+
+                    $delivery = Delivery::findOne($notes['delivery_id']);
+                    if ($text === 'Доставка на адрес') {
+                        $data['text'] = 'Введите адрес:';
+                        $result = Request::sendMessage($data);
+                        break;
+                    }
+
+                    $notes['state'] = "2.1";
+                    $this->conversation->update();
+                    $keyboards = [];
+                    $keyboards[] = [
+                        new KeyboardButton('Доставка на адрес'),
+                        new KeyboardButton('Доставка на отделение')
+                    ];
+                    $keyboards[] = [
+                        new KeyboardButton('⬅ Назад'),
+                        new KeyboardButton('❌ Отмена')
+                    ];
+                    $buttons = (new Keyboard(['keyboard' => $keyboards]))
+                        ->setResizeKeyboard(true)
+                        ->setOneTimeKeyboard(true)
+                        ->setSelective(true);
+                    $data['reply_markup'] = $buttons;
+                    $data['text'] = 'Выберите вариант доставки:';
+                    if ($text !== '') {
+                        $data['text'] = 'Выберите вариант доставки, на клавиатуре:';
+                    }
+
+                    $result = Request::sendMessage($data);
+                    $data['text'] = json_encode($notes);
+                    $result2 = Request::sendMessage($data);
+
+                    $this->conversation->stop();
+                    break;
+
                 // no break
                 case 3:
                     payment:

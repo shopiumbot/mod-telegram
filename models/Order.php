@@ -6,6 +6,7 @@ use panix\mod\cart\components\events\EventProduct;
 use panix\mod\cart\components\HistoricalBehavior;
 use panix\mod\cart\models\Delivery;
 use Yii;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "actions".
@@ -14,7 +15,7 @@ use Yii;
  * @property string $action
  * @property string $param
  */
-class Order extends \yii\db\ActiveRecord
+class Order extends ActiveRecord
 {
     /**
      * @inheritdoc

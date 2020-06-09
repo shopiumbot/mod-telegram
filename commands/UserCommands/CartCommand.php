@@ -149,7 +149,6 @@ class CartCommand extends UserCommand
                     $keyboards[] = [
                         new InlineKeyboardButton([
                             'text' => Yii::t('telegram/command', 'BUTTON_CHECKOUT', $this->number_format($order->total_price)),
-                            // 'callback_data' => "checkOut/{$order->id}"
                             'callback_data' => 'query=checkOut&id=' . $order->id
 
                         ]),

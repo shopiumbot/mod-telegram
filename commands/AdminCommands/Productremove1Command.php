@@ -1,12 +1,4 @@
 <?php
-/**
- * This file is part of the TelegramBot package.
- *
- * (c) Avtandil Kikabidze aka LONGMAN <akalongman@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
 
 namespace shopium\mod\telegram\commands\AdminCommands;
 
@@ -16,7 +8,7 @@ use Longman\TelegramBot\Entities\Keyboard;
 use Longman\TelegramBot\Entities\KeyboardButton;
 use Longman\TelegramBot\Request;
 use panix\engine\CMS;
-use core\modules\shop\models\Product;
+use app\modules\shop\models\Product;
 use shopium\mod\telegram\components\AdminCommand;
 use Yii;
 

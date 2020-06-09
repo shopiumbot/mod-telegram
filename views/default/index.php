@@ -73,4 +73,4 @@ $form = ActiveForm::begin();
 <?php ActiveForm::end(); ?>
 
 <?php
-
+echo \shopium\mod\telegram\TelegramWidget::widget();

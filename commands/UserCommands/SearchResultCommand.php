@@ -1,12 +1,4 @@
 <?php
-/**
- * This file is part of the TelegramBot package.
- *
- * (c) Avtandil Kikabidze aka LONGMAN <akalongman@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
 
 namespace shopium\mod\telegram\commands\UserCommands;
 
@@ -14,8 +6,8 @@ namespace shopium\mod\telegram\commands\UserCommands;
 use Longman\TelegramBot\Entities\InlineKeyboard;
 use Longman\TelegramBot\Entities\InlineKeyboardButton;
 use Longman\TelegramBot\Request;
-use core\modules\shop\models\Attribute;
-use core\modules\shop\models\Product;
+use app\modules\shop\models\Attribute;
+use app\modules\shop\models\Product;
 use shopium\mod\telegram\components\InlineKeyboardMorePager;
 use shopium\mod\telegram\components\KeyboardPagination;
 use shopium\mod\telegram\components\SystemCommand;
@@ -268,7 +260,7 @@ class SearchResultCommand extends SystemCommand
     {
 
         $eav = $product;
-        /** @var \core\modules\shop\components\EavBehavior $eav */
+        /** @var \app\modules\shop\components\EavBehavior $eav */
         $this->_attributes = $eav->getEavAttributes();
 
 

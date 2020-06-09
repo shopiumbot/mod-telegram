@@ -1,14 +1,5 @@
 <?php
 
-/**
- * This file is part of the TelegramBot package.
- *
- * (c) Avtandil Kikabidze aka LONGMAN <akalongman@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 namespace shopium\mod\telegram\commands\AdminCommands;
 
 use shopium\mod\telegram\components\AdminCommand;
@@ -28,17 +19,17 @@ class ChatsCommand extends AdminCommand
     /**
      * @var string
      */
-    protected $description = 'List or search all chats stored by the bot';
+    protected $description = 'Список или поиск всех чатов, сохраненных ботом';
 
     /**
      * @var string
      */
-    protected $usage = '/chats, /chats * or /chats <search string>';
+    protected $usage = '/chats, /chats * или /chats <search string>';
 
     /**
      * @var string
      */
-    protected $version = '1.2.0';
+    protected $version = '1.0.0';
 
     /**
      * @var bool
@@ -74,9 +65,9 @@ class ChatsCommand extends AdminCommand
         if ($text === '') {
             $text_back = '';
         } elseif ($text === '*') {
-            $text_back = 'List of all bot chats:' . PHP_EOL;
+            $text_back = 'Список всех чат-ботов:' . PHP_EOL;
         } else {
-            $text_back = 'Chat search results:' . PHP_EOL;
+            $text_back = 'Результат поиска чата:' . PHP_EOL;
         }
 
         if (is_array($results)) {
@@ -129,7 +120,7 @@ class ChatsCommand extends AdminCommand
             $text_back .= PHP_EOL . 'Total: ' . ($user_chats + $group_chats + $supergroup_chats);
 
             if ($text === '') {
-                $text_back .= PHP_EOL . PHP_EOL . 'List all chats: /' . $this->name . ' *' . PHP_EOL . 'Search for chats: /' . $this->name . ' <search string>';
+                $text_back .= PHP_EOL . PHP_EOL . 'Список всех чатов: /' . $this->name . ' *' . PHP_EOL . 'Search for chats: /' . $this->name . ' <search string>';
             }
         }
 

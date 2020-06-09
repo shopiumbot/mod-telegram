@@ -16,6 +16,10 @@ use yii\helpers\Html;
 
 class InlineKeyboardPager extends Component
 {
+
+
+    public $callback_data = 'command={command}&page={page}';
+    public $command = 'command';
     /**
      * @var Pagination the pagination object that this pager is associated with.
      * You must set this property in order to make LinkPager work.
@@ -172,15 +176,13 @@ class InlineKeyboardPager extends Component
         return [$beginPage, $endPage];
     }
 
-    public $callback_data = 'command={command}&page={page}';
-    public $command = 'command';
 
-    protected function generateCallbackData(int $page): string
+    protected function generateCallbackData($page)
     {
         return str_replace(['{command}', '{page}'], [$this->command, $page], $this->callback_data);
     }
 
-    public static function getParametersFromCallbackData($data): array
+    public static function getParametersFromCallbackData($data)
     {
         parse_str($data, $params);
 

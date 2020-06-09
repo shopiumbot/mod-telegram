@@ -1,21 +1,10 @@
 <?php
-/**
- * This file is part of the TelegramBot package.
- *
- * (c) Avtandil Kikabidze aka LONGMAN <akalongman@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
 
 namespace shopium\mod\telegram\commands\UserCommands;
 
 
-use Longman\TelegramBot\Conversation;
 use Longman\TelegramBot\Entities\InlineKeyboard;
 use Longman\TelegramBot\Entities\InlineKeyboardButton;
-use Longman\TelegramBot\Entities\Keyboard;
-use Longman\TelegramBot\Entities\KeyboardButton;
 use Longman\TelegramBot\Request;
 use core\modules\shop\models\Product;
 use shopium\mod\telegram\components\UserCommand;

@@ -1,14 +1,5 @@
 <?php
 
-/**
- * This file is part of the TelegramBot package.
- *
- * (c) Avtandil Kikabidze aka LONGMAN <akalongman@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 namespace shopium\mod\telegram\commands\AdminCommands;
 
 use shopium\mod\telegram\components\AdminCommand;
@@ -47,7 +38,7 @@ class CleanupCommand extends AdminCommand
     /**
      * @var string
      */
-    protected $description = 'Clean up the database from old records';
+    protected $description = 'Очистить базу данных от старых записей';
 
     /**
      * @var string

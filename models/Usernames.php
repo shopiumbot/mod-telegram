@@ -4,7 +4,7 @@
  * @package yii2-telegram
  * Date: 02.08.2016
  */
-namespace app\modules\telegram\models;
+namespace shopium\mod\telegram\models;
 
 use Yii;
 

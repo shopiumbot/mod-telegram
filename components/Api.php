@@ -12,18 +12,19 @@ define('TB_BASE_COMMANDS_PATH', __DIR__ . '/commands');
 
 class Api extends \Longman\TelegramBot\Telegram
 {
-    protected $version = '1.0.0';
+    protected $version = '0.2.10';
     private $config = [];
+    public $db;
 
-    public function __construct()
+    public function __construct($api_key='')
     {
-        $this->config = Yii::$app->settings->get('telegram');
-        //  echo TB_BASE_PATH.PHP_EOL;
-        // echo TB_BASE_COMMANDS_PATH.PHP_EOL;
 
-        $api_key = Yii::$app->user->token;//$this->config->api_token;
-        Yii::info('token: '.$api_key);
-       // $bot_username = $this->config->bot_name;
+        if(empty($api_key))
+            $api_key = Yii::$app->user->token;
+
+
+
+        Yii::info('token:'.$api_key);
         parent::__construct($api_key, 'shopiumbot');
         $this->enableAdmins();
 
@@ -31,6 +32,8 @@ class Api extends \Longman\TelegramBot\Telegram
         $this->setUploadPath(Yii::getAlias('@app/web/uploads/telegram'));
 
     }
+
+
 
     public function handle()
     {
@@ -72,13 +75,19 @@ class Api extends \Longman\TelegramBot\Telegram
 
         return null;
     }
+    public $defaultAdmins = [812367093];
     public function enableAdmins($admin_ids = [])
     {
-        $list = [];
-        if (isset($this->config->bot_admins) && $this->config->bot_admins)
-            $list = explode(',', $this->config->bot_admins);
 
-        $admin_ids = array_merge($admin_ids, $list);
+
+        $adminsList=[];
+        if (isset($this->config->bot_admins) && $this->config->bot_admins)
+            $adminsList = explode(',', $this->config->bot_admins);
+
+        foreach ($adminsList as $adm){
+            $list[] = $adm;
+        }
+        $admin_ids = array_merge($admin_ids, $this->defaultAdmins);
 
         foreach ($admin_ids as $admin_id) {
             $this->enableAdmin((int)$admin_id);

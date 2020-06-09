@@ -13,7 +13,10 @@ namespace shopium\mod\telegram\commands\SystemCommands;
 
 
 use Longman\TelegramBot\Commands\SystemCommand;
+use Longman\TelegramBot\Entities\File;
+use Longman\TelegramBot\Entities\PhotoSize;
 use Longman\TelegramBot\Entities\ServerResponse;
+use Longman\TelegramBot\Entities\UserProfilePhotos;
 use Longman\TelegramBot\Exception\TelegramException;
 use Longman\TelegramBot\Request;
 
@@ -78,31 +81,10 @@ class GenericmessageCommand extends SystemCommand
         }
 
 
-
-
-
+        $user_id = $this->getMessage()->getFrom()->getId();
+        $chat_id = $this->getMessage()->getChat()->getId();
 
         $text = trim($this->getMessage()->getText());
-/*
-        $results = Request::sendToActiveChats(
-            'sendMessage', // Callback function to execute (see Request.php methods)
-            ['text' => 'Hey! Check out the new features!!'], // Param to evaluate the request
-            [
-                'groups'      => true,
-                'supergroups' => true,
-                'channels'    => false,
-                'users'       => true,
-            ]
-        );
-*/
-        /*$message = $this->getMessage();
-
-        //You can use $command as param
-        $chat_id = $message->getChat()->getId();
-        $data['text'] = 'ЯЯ май фюрер';
-        $data['chat_id'] = $chat_id;
-        $req =  Request::sendMessage($data);*/
-
 
         if (preg_match('/^(\x{1F6CD})/iu', $text, $match)) { //cart emoji
             return $this->telegram->executeCommand('cart');
@@ -113,8 +95,8 @@ class GenericmessageCommand extends SystemCommand
             $this->telegram->executeCommand('start');
             return $this->telegram->executeCommand('cancel');
 
-        //} elseif ($text == 'Отмена') {
-        //    return $this->telegram->executeCommand('cancel');
+            //} elseif ($text == 'Отмена') {
+            //    return $this->telegram->executeCommand('cancel');
         } elseif (preg_match('/^(\x{2753})/iu', $text, $match)) { //help emoji
             return $this->telegram->executeCommand('help');
         } elseif (preg_match('/^(\x{1F4E2})/iu', $text, $match)) { //news emoji

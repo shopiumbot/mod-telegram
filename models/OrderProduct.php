@@ -4,6 +4,7 @@ namespace shopium\mod\telegram\models;
 
 use app\modules\shop\models\Product;
 use Yii;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "actions".
@@ -12,7 +13,7 @@ use Yii;
  * @property string $action
  * @property string $param
  */
-class OrderProduct extends \yii\db\ActiveRecord
+class OrderProduct extends ActiveRecord
 {
     /**
      * @inheritdoc

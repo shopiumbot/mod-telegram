@@ -1,8 +1,7 @@
 <?php
 
-namespace shopium\mod\telegram\controllers\admin;
+namespace shopium\mod\telegram\controllers;
 
-use panix\engine\CMS;
 use Yii;
 use shopium\mod\telegram\models\Message;
 use core\components\controllers\AdminController;
@@ -13,11 +12,11 @@ class MessageController extends AdminController
 {
 
     public $icon = 'settings';
+
     public $layout = '@theme/views/layouts/dashboard_fluid';
 
     public function actionIndex()
     {
-
         $api = new Api(Yii::$app->user->token);
         $this->pageName = Yii::t('app/default', 'SETTINGS');
         $this->breadcrumbs = [

@@ -13,7 +13,7 @@ class m160808_112253_telegram extends Migration
     {
 
 
-        $this->loadSettings();
+        //$this->loadSettings();
 
         $this->createTable('{{%tlgrm_actions}}', [
             'chat_id' => $this->primaryKey(),
@@ -21,14 +21,6 @@ class m160808_112253_telegram extends Migration
             'param' => $this->string(62)
         ]);
 
-
-        $this->createTable('{{%tlgrm_messages}}', [
-            'time' => $this->timestamp(),
-            'client_chat_id' => $this->string(16)->notNull(),
-            'message' => $this->string(4100),
-            'direction' => $this->smallInteger(1)
-        ]);
-        $this->addPrimaryKey('tlgrm_messages_PK', '{{%tlgrm_messages}}', 'time');
 
 
         $this->createTable('{{%tlgrm_auth_mngr_chats}}', [
@@ -53,7 +45,6 @@ class m160808_112253_telegram extends Migration
         try {
             $this->dropTable('{{%tlgrm_actions}}');
             $this->dropTable('{{%tlgrm_auth_mngr_chats}}');
-            $this->dropTable('{{%tlgrm_messages}}');
             $this->dropTable('{{%tlgrm_usernames}}');
         } catch (Exception $e){
             var_dump($e->getMessage());

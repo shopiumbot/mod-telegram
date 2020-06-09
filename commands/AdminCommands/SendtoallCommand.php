@@ -1,14 +1,5 @@
 <?php
 
-/**
- * This file is part of the TelegramBot package.
- *
- * (c) Avtandil Kikabidze aka LONGMAN <akalongman@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 namespace shopium\mod\telegram\commands\AdminCommands;
 
 use shopium\mod\telegram\components\AdminCommand;
@@ -31,12 +22,12 @@ class SendtoallCommand extends AdminCommand
     /**
      * @var string
      */
-    protected $description = 'Send the message to all of the bot\'s users';
+    protected $description = 'Отправить сообщение всем пользователям бота';
 
     /**
      * @var string
      */
-    protected $usage = '/sendtoall <message to send>';
+    protected $usage = '/sendtoall <ваше сообщение>';
 
     /**
      * @var string

@@ -2,13 +2,8 @@
 
 namespace shopium\mod\telegram\commands;
 
-use Longman\TelegramBot\Commands\UserCommands\CatalogCommand;
-use Longman\TelegramBot\Conversation;
-use Longman\TelegramBot\Request;
-use Longman\TelegramBot\Telegram;
 use yii\console\Controller;
 use Yii;
-use yii\console\Exception;
 use shopium\mod\telegram\components\Api;
 
 class IndexController extends Controller
@@ -46,7 +41,7 @@ class IndexController extends Controller
         ];
         try {
 
-            $telegram = new Api();
+            $telegram = new Api('1268221529:AAGtVcw8e8jJdC8ir-GFDlQVobxhYWDy92s','shopium');
 
             // Add commands paths containing your custom commands
             $telegram->addCommandsPaths($commands_paths);
@@ -61,9 +56,6 @@ class IndexController extends Controller
 
 
 
-            // Logging (Error, Debug and Raw Updates)
-            // https://github.com/php-telegram-bot/core/blob/master/doc/01-utils.md#logging
-            //
             // Set custom Upload and Download paths
             //$telegram->setDownloadPath(Yii::getAlias('@app/web/downloads/telegram'));
             //$telegram->setUploadPath(Yii::getAlias('@app/web/uploads/telegram'));
@@ -73,9 +65,9 @@ class IndexController extends Controller
                 sleep(2);
                 // Create Telegram API object
 
-                $telegram->setCommandConfig('weather', [
-                    'owm_api_key' => '41b3ffa90fad3fb24efcd8f32c6102fa',
-                ]);
+                //$telegram->setCommandConfig('weather', [
+                //    'owm_api_key' => '41b3ffa90fad3fb24efcd8f32c6102fa',
+               // ]);
 
                 // Here you can set some command specific parameters
                 // e.g. Google geocode/timezone api key for /date command

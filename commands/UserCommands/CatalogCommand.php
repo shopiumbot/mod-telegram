@@ -1,12 +1,4 @@
 <?php
-/**
- * This file is part of the TelegramBot package.
- *
- * (c) Avtandil Kikabidze aka LONGMAN <akalongman@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
 
 namespace shopium\mod\telegram\commands\UserCommands;
 
@@ -92,27 +84,30 @@ class CatalogCommand extends UserCommand
         if ($categories) {
             foreach ($categories as $category) {
                 $count = $category->countItems;
-				$icon = ($category->icon) ? $category->icon.' ' : '';
+                $icon = ($category->icon) ? $category->icon . ' ' : '';
                 $child = $category->children()->count();
+
                 if ($child) {
+
                     $keyboards[] = [
                         new InlineKeyboardButton([
                             'text' => $icon . $category->name,
                             'callback_data' => 'query=openCatalog&id=' . $category->id
                         ])
                     ];
+
                 } else {
                     if ($count) {
                         $keyboards[] = [
                             new InlineKeyboardButton([
                                 'text' => $icon . $category->name . ' (' . $count . ')',
-                                // 'callback_data' => 'getCatalogList/' . $category->id
                                 'callback_data' => 'query=getCatalogList&category_id=' . $category->id
                             ])
                         ];
                     }
                 }
             }
+
         } else {
             return $this->notify('В каталоге нет продукции', 'info');
         }
@@ -151,12 +146,6 @@ class CatalogCommand extends UserCommand
             $result = $data;
 
         }
-
-
         return Request::sendMessage($result);
-
-
     }
-
-
 }

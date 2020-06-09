@@ -11,6 +11,7 @@
 namespace shopium\mod\telegram\commands\SystemCommands;
 
 use shopium\mod\telegram\components\SystemCommand;
+use Longman\TelegramBot\Request;
 
 
 /**
@@ -43,9 +44,9 @@ class PinnedmessageCommand extends SystemCommand
      */
     public function execute()
     {
-        //$message = $this->getMessage();
-        //$pinned_message = $message->getPinnedMessage();
+        $message = $this->getMessage();
+        $pinned_message = $message->getPinnedMessage();
 
-        return parent::execute();
+        return Request::emptyResponse();
     }
 }
