@@ -21,7 +21,7 @@ class EditmessageCommand extends AdminCommand
     /**
      * @var string
      */
-    protected $description = 'Edit message';
+    protected $description = 'Редактирование сообщения';
 
     /**
      * @var string
@@ -69,7 +69,7 @@ class EditmessageCommand extends AdminCommand
 
         $data = [
             'chat_id' => $chat_id,
-            'text'    => sprintf("Reply to any bots' message and use /%s <your text> to edit it.", $this->name),
+            'text'    => sprintf("Ответьте на любое сообщение бота и используйте /%s <ваш текст> для его редактирования.", $this->name),
         ];
 
         return Request::sendMessage($data);

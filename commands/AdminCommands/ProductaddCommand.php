@@ -9,9 +9,9 @@ use Longman\TelegramBot\Entities\Keyboard;
 use Longman\TelegramBot\Entities\KeyboardButton;
 use Longman\TelegramBot\Request;
 use panix\engine\CMS;
-use app\modules\shop\models\Category;
-use app\modules\shop\models\Product;
-use app\modules\shop\models\ProductType;
+use core\modules\shop\models\Category;
+use core\modules\shop\models\Product;
+use core\modules\shop\models\ProductType;
 use shopium\mod\telegram\components\AdminCommand;
 use Yii;
 
@@ -46,7 +46,7 @@ class ProductaddCommand extends AdminCommand
      * @var bool
      */
     protected $need_mysql = true;
-
+    protected $show_in_help = false;
 
     /**
      * Conversation Object

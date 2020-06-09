@@ -7,7 +7,9 @@ use Longman\TelegramBot\Entities\File;
 use Longman\TelegramBot\Entities\Keyboard;
 use Longman\TelegramBot\Entities\KeyboardButton;
 use Longman\TelegramBot\Entities\PhotoSize;
+use Longman\TelegramBot\Entities\ServerResponse;
 use Longman\TelegramBot\Entities\UserProfilePhotos;
+use Longman\TelegramBot\Exception\TelegramException;
 use Longman\TelegramBot\Request;
 use Yii;
 
@@ -83,7 +85,6 @@ class MeCommand extends UserCommand
                 /** @var PhotoSize $photo */
                 $photo = $photos[0][2];
                 $file_id = $photo->getFileId();
-
                 $data['photo'] = $file_id;
                 $data['caption'] = $caption;
 
@@ -103,8 +104,7 @@ class MeCommand extends UserCommand
 
         //No Photo just send text
         $data['text'] = $caption;
-
-
         return Request::sendMessage($data);
     }
+
 }

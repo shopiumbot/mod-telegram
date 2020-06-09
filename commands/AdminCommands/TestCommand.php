@@ -46,6 +46,7 @@ class TestCommand extends AdminCommand
      * @var bool
      */
     protected $need_mysql = true;
+    protected $show_in_help = false;
 
 
     /**

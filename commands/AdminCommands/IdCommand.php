@@ -1,19 +1,10 @@
 <?php
 
-/**
- * This file is part of the PHP Telegram Support Bot.
- *
- * (c) PHP Telegram Bot Team (https://github.com/php-telegram-bot)
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 declare(strict_types=1);
 
-namespace shopium\mod\telegram\commands\UserCommands;
+namespace shopium\mod\telegram\commands\AdminCommands;
 
-use Longman\TelegramBot\Commands\UserCommand;
+use shopium\mod\telegram\components\AdminCommand;
 use Longman\TelegramBot\Entities\ServerResponse;
 use Longman\TelegramBot\Exception\TelegramException;
 use Longman\TelegramBot\Request;
@@ -21,7 +12,7 @@ use Longman\TelegramBot\Request;
 /**
  * Display user and chat information.
  */
-class IdCommand extends UserCommand
+class IdCommand extends AdminCommand
 {
     /**
      * @var string
@@ -31,18 +22,18 @@ class IdCommand extends UserCommand
     /**
      * @var string
      */
-    protected $description = 'Get all identifying information about the current user and chat';
+    protected $description = 'Получить всю идентифицирующую информацию о текущем пользователе и чате';
 
     /**
      * @var string
      */
-    protected $version = '0.1.0';
+    protected $version = '1.0.0';
 
     /**
      * @var bool
      */
     protected $private_only = true;
-
+    protected $show_in_help = false;
     /**
      * @return ServerResponse
      * @throws TelegramException
@@ -67,8 +58,8 @@ class IdCommand extends UserCommand
      */
     public function execute(): ServerResponse
     {
-        $user_info = '👤 *User Info*' . PHP_EOL . $this->getUserInfo();
-        $chat_info = '🗣 *Chat Info*' . PHP_EOL . $this->getChatInfo();
+        $user_info = '👤 *Пользователь Info*' . PHP_EOL . $this->getUserInfo();
+        $chat_info = '🗣 *Чат Info*' . PHP_EOL . $this->getChatInfo();
 
         return $this->replyToUser($user_info . PHP_EOL . PHP_EOL . $chat_info, ['parse_mode' => 'markdown']);
     }
@@ -84,10 +75,10 @@ class IdCommand extends UserCommand
 
         return implode(PHP_EOL, [
             "User Id: `{$user->getId()}`",
-            'First Name: ' . (($first_name = $user->getFirstName()) ? "`{$first_name}`" : '_n/a_'),
-            'Last Name: ' . (($last_name = $user->getLastName()) ? "`{$last_name}`" : '_n/a_'),
+            'Имя: ' . (($first_name = $user->getFirstName()) ? "`{$first_name}`" : '_n/a_'),
+            'Фамилия: ' . (($last_name = $user->getLastName()) ? "`{$last_name}`" : '_n/a_'),
             'Username: ' . (($username = $user->getUsername()) ? "`{$username}`" : '_n/a_'),
-            'Language Code: ' . (($language_code = $user->getLanguageCode()) ? "`{$language_code}`" : '_n/a_'),
+            'Язык: ' . (($language_code = $user->getLanguageCode()) ? "`{$language_code}`" : '_n/a_'),
         ]);
     }
 
@@ -106,11 +97,11 @@ class IdCommand extends UserCommand
         }
 
         return implode(PHP_EOL, [
-            "Type: `{$chat->getType()}`",
-            "Chat Id: `{$chat->getId()}`",
-            'Title: ' . (($title = $chat->getTitle()) ? "`{$title}`" : '_n/a_'),
-            'First Name: ' . (($first_name = $chat->getFirstName()) ? "`{$first_name}`" : '_n/a_'),
-            'Last Name: ' . (($last_name = $chat->getLastName()) ? "`{$last_name}`" : '_n/a_'),
+            "Тип: `{$chat->getType()}`",
+            "Чат ID: `{$chat->getId()}`",
+            'Название: ' . (($title = $chat->getTitle()) ? "`{$title}`" : '_n/a_'),
+            'Имя: ' . (($first_name = $chat->getFirstName()) ? "`{$first_name}`" : '_n/a_'),
+            'Фамилия: ' . (($last_name = $chat->getLastName()) ? "`{$last_name}`" : '_n/a_'),
             'Username: ' . (($username = $chat->getUsername()) ? "`{$username}`" : '_n/a_'),
         ]);
     }
