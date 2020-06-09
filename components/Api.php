@@ -27,8 +27,8 @@ class Api extends \Longman\TelegramBot\Telegram
         parent::__construct($api_key, 'shopiumbot');
         $this->enableAdmins();
 
-        $this->setDownloadPath(Yii::getAlias('@app/web/downloads/telegram'));
-        $this->setUploadPath(Yii::getAlias('@app/web/uploads/telegram'));
+        $this->setDownloadPath(Yii::getAlias('@app/web/telegram/downloads'));
+        $this->setUploadPath(Yii::getAlias('@app/web/telegram/uploads'));
 
     }
 

@@ -84,7 +84,7 @@ class User extends ActiveRecord
                 if (!file_exists(Yii::getAlias('@app/web/downloads/telegram') . DIRECTORY_SEPARATOR . $file->getResult()->file_path)) {
                     $download = Request::downloadFile($file->getResult());
                 }
-                return '/downloads/telegram/' . $file->getResult()->file_path;
+                return '/telegram/downloads/' . $file->getResult()->file_path;
             }
         } catch (Exception $e) {
 

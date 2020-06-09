@@ -89,7 +89,7 @@ class Message extends ActiveRecord
                             $download = Request::downloadFile($file->getResult());
                         }
                         $this->photoCache[$this->user_id] = $file->getResult()->file_path;
-                        return '/downloads/telegram/' . $file->getResult()->file_path;
+                        return '/telegram/downloads/' . $file->getResult()->file_path;
                     }
                 }
             }
