@@ -2,8 +2,12 @@
 
 namespace shopium\mod\telegram\components;
 
+use Longman\TelegramBot\Conversation;
 use Longman\TelegramBot\Entities\Keyboard;
 use Longman\TelegramBot\Entities\KeyboardButton;
+use Longman\TelegramBot\Entities\ServerResponse;
+use Longman\TelegramBot\Exception\TelegramException;
+use Longman\TelegramBot\Request;
 
 abstract class SystemCommand extends Command
 {

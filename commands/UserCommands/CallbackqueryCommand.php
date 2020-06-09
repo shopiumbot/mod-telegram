@@ -23,13 +23,10 @@ use yii\helpers\Url;
  */
 class CallbackqueryCommand extends SystemCommand
 {
-    /**#@+
-     * {@inheritdoc}
-     */
+
     protected $name = 'callbackquery';
     protected $description = 'Reply to callback query';
     protected $version = '1.0.0';
-    /**#@-*/
 
     /**
      * {@inheritdoc}

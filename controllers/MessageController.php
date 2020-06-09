@@ -2,16 +2,17 @@
 
 namespace shopium\mod\telegram\controllers;
 
-use Longman\TelegramBot\Exception\TelegramException;
-use shopium\mod\telegram\models\User;
 use Yii;
-use shopium\mod\telegram\models\Message;
-use core\components\controllers\AdminController;
-use shopium\mod\telegram\models\search\MessageSearch;
-use shopium\mod\telegram\components\Api;
 use yii\base\UserException;
 use yii\web\ForbiddenHttpException;
 use yii\web\Response;
+use Longman\TelegramBot\Exception\TelegramException;
+use core\components\controllers\AdminController;
+use shopium\mod\telegram\models\forms\SendMessageForm;
+use shopium\mod\telegram\models\search\MessageSearch;
+use shopium\mod\telegram\components\Api;
+use shopium\mod\telegram\models\Message;
+use shopium\mod\telegram\models\User;
 
 class MessageController extends AdminController
 {
@@ -34,7 +35,7 @@ class MessageController extends AdminController
         $searchModel = new MessageSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->getQueryParams());
 
-        $sendForm = new \shopium\mod\telegram\models\forms\SendMessageForm();
+        $sendForm = new SendMessageForm();
         if($sendForm->load(Yii::$app->request->post())){
             if($sendForm->validate()){
                 $sendForm->send();
@@ -53,7 +54,12 @@ class MessageController extends AdminController
 
         $user_id = Yii::$app->request->get('user_id');
         $user = User::find()->where(['id'=>$user_id])->one();
-        $model = Message::find()->where(['chat_id'=>$user_id])->limit(50)->all();
+        $model = Message::find()
+            ->where(['chat_id'=>$user_id])
+            ->limit(10)
+            ->orderBy(['date'=>SORT_DESC])
+            //->groupBy(['user_id','chat_id'])
+            ->all();
 
 
 

@@ -11,6 +11,7 @@
 namespace shopium\mod\telegram\commands\UserCommands;
 
 
+use Longman\TelegramBot\DB;
 use Longman\TelegramBot\Entities\InlineKeyboard;
 use Longman\TelegramBot\Entities\InlineKeyboardButton;
 use Longman\TelegramBot\Request;
@@ -155,17 +156,16 @@ class CartCommand extends UserCommand
                     ];
 
 
-
                     $imageData = $product->originalProduct->getImage();
 
                     $text = '*Ваша корзина*' . PHP_EOL;
-                    if($imageData){
-                        $text .= '[' . $product->name . '](https://' . Yii::$app->request->getServerName() . ''.$imageData->getUrlToOrigin() . ')' . PHP_EOL;
-                    }else{
+                    if ($imageData) {
+                        $text .= '[' . $product->name . '](https://' . Yii::$app->request->getServerName() . '' . $imageData->getUrlToOrigin() . ')' . PHP_EOL;
+                    } else {
                         $text .= '[' . $product->name . '](https://' . Yii::$app->request->getServerName() . '/uploads/no-image.jpg)' . PHP_EOL;
                     }
 
-                   // $text .= '_описание товара_ ' . PHP_EOL;
+                    // $text .= '_описание товара_ ' . PHP_EOL;
                     $text .= '`' . $this->number_format($product->price) . ' грн / ' . $product->quantity . ' шт = ' . $this->number_format(($product->price * $product->quantity)) . ' грн`' . PHP_EOL;
 
                     //  $data['chat_id'] = $chat_id;
@@ -206,7 +206,11 @@ class CartCommand extends UserCommand
 
         }
 
-        return Request::sendMessage($response);
+        $result = Request::sendMessage($response);
+        if ($result->isOk()) {
+            $db = DB::insertMessageRequest($result->getResult());
+        }
+        return $result;
     }
 
     public function keywords()

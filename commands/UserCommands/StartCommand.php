@@ -47,6 +47,7 @@ class StartCommand extends SystemCommand
      * @var bool
      */
     protected $private_only = true;
+    protected $need_mysql = true;
 
     /**
      * Command execute method
@@ -73,13 +74,11 @@ class StartCommand extends SystemCommand
             'text' => $text,
         ];
 
-        $adsData['chat_id']=$chat_id;
-        $adsData['parse_mode']='Markdown';
-        $adsData['text']='Бот работает на платформе 🥇 @shopiumbot'.PHP_EOL;
-        $adsData['text'].='👉 https://shopiumbot.com'.PHP_EOL;
+        $adsData['chat_id'] = $chat_id;
+        $adsData['parse_mode'] = 'Markdown';
+        $adsData['text'] = 'Бот работает на платформе 🥇 @shopiumbot' . PHP_EOL;
+        $adsData['text'] .= '👉 https://shopiumbot.com' . PHP_EOL;
         $ads = Request::sendMessage($adsData);
-
-
 
 
         /*$limit = 10;
@@ -116,15 +115,10 @@ class StartCommand extends SystemCommand
         }*/
 
 
-
-
-
-
         //$adsData2['chat_id']=343987970;
         //$adsData2['parse_mode']='Markdown';
         //$adsData2['text']='test message';
         //$ads2 = Request::sendMessage($adsData2);
-
 
 
         /*$cmd = Request::setMyCommands([
@@ -154,13 +148,12 @@ class StartCommand extends SystemCommand
         ]);
         print_r($poll);*/
         //$test = Request::getMyCommands();
-       // print_r($test);
+        // print_r($test);
         $data['reply_markup'] = $this->startKeyboards();
 
 
         return Request::sendMessage($data);
     }
-
 
 
 }

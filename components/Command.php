@@ -2,6 +2,7 @@
 
 namespace shopium\mod\telegram\components;
 
+use Longman\TelegramBot\DB;
 use Longman\TelegramBot\Entities\InlineKeyboardButton;
 use Longman\TelegramBot\Entities\Keyboard;
 use Longman\TelegramBot\Entities\KeyboardButton;
@@ -123,8 +124,13 @@ abstract class Command extends \Longman\TelegramBot\Commands\Command
         if ($reply_markup) {
             $data['reply_markup'] = $reply_markup;
         }
+        $response = Request::sendMessage($data);
 
-        return Request::sendMessage($data);
+        if($response->isOk()){
+            $db = DB::insertMessageRequest($response->getResult());
+        }
+
+        return $response;
     }
 
     public function catalogKeyboards()

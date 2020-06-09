@@ -3,6 +3,7 @@
 namespace shopium\mod\telegram\commands\UserCommands;
 
 
+use Longman\TelegramBot\DB;
 use Longman\TelegramBot\Entities\InlineKeyboard;
 use Longman\TelegramBot\Entities\InlineKeyboardButton;
 use Longman\TelegramBot\Request;
@@ -42,8 +43,8 @@ class CatalogCommand extends UserCommand
      * @var string
      */
     public $id;
-
-    public $private_only = true;
+    public $need_mysql=true;
+    public $private_only = false;
 
     /**
      * Command execute method
@@ -127,6 +128,7 @@ class CatalogCommand extends UserCommand
             $dataEdit['reply_markup'] = new InlineKeyboard([
                 'inline_keyboard' => $keyboards
             ]);
+
             return Request::editMessageReplyMarkup($dataEdit);
         } else {
             $data = [
@@ -143,9 +145,18 @@ class CatalogCommand extends UserCommand
             $dataCatalog['reply_markup'] = $this->catalogKeyboards();
             $buttonsResponse = Request::sendMessage($dataCatalog);
 
+            if($buttonsResponse->isOk()){
+                $db = DB::insertMessageRequest($buttonsResponse->getResult());
+            }
             $result = $data;
 
         }
-        return Request::sendMessage($result);
+        $response = Request::sendMessage($result);
+        if ($response->isOk()) {
+            $db = DB::insertMessageRequest($response->getResult());
+        }
+
+
+        return $response;
     }
 }

@@ -38,12 +38,12 @@ class DefaultController extends Controller
 
         Yii::$app->response->format = Response::FORMAT_JSON;
         $db = Yii::$app->db;
-        $mysql_credentials = [
+        /*$mysql_credentials = [
             'host' => Yii::$app->getModule('telegram')->getDsnAttribute('host'),
             'user' => $db->username,
             'password' => $db->password,
             'database' => Yii::$app->getModule('telegram')->getDsnAttribute('dbname'),
-        ];
+        ];*/
 
         try {
 
@@ -56,7 +56,8 @@ class DefaultController extends Controller
                 realpath($basePath . '/commands') . '/UserCommands',
             ];
 
-            $telegram->enableMySql($mysql_credentials, $db->tablePrefix . 'telegram__');
+            $telegram->enableExternalMySql($db->pdo,$db->tablePrefix . 'telegram__');
+           // $telegram->enableMySql($mysql_credentials, $db->tablePrefix . 'telegram__');
             $telegram->addCommandsPaths($commands_paths);
 
             // Handle telegram webhook request

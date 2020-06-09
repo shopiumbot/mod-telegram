@@ -22,8 +22,6 @@ class Api extends \Longman\TelegramBot\Telegram
         if (empty($api_key))
             $api_key = Yii::$app->user->token;
 
-
-        Yii::info('token:' . $api_key);
         parent::__construct($api_key, 'shopiumbot');
         $this->enableAdmins();
 

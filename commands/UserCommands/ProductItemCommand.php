@@ -4,6 +4,7 @@ namespace shopium\mod\telegram\commands\UserCommands;
 
 
 use core\modules\shop\models\Attribute;
+use Longman\TelegramBot\DB;
 use shopium\mod\telegram\components\InlineKeyboardPager;
 use shopium\mod\telegram\components\KeyboardPagination;
 use shopium\mod\telegram\components\SystemCommand;
@@ -294,6 +295,10 @@ class ProductItemCommand extends SystemCommand
                         $imageData->save(false);
                     }
                 }
+
+
+
+
             } else {
                 $errorCode = $reqPhoto->getErrorCode();
                 $description = $reqPhoto->getDescription();
@@ -316,7 +321,7 @@ class ProductItemCommand extends SystemCommand
     {
 
         $eav = $product;
-        /** @var \app\modules\shop\components\EavBehavior $eav */
+        /** @var \core\modules\shop\components\EavBehavior $eav */
         $this->_attributes = $eav->getEavAttributes();
 
 

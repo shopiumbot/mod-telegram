@@ -4,6 +4,7 @@ namespace shopium\mod\telegram\commands\UserCommands;
 
 
 use Longman\TelegramBot\Conversation;
+use Longman\TelegramBot\DB;
 use Longman\TelegramBot\Entities\InlineKeyboard;
 use Longman\TelegramBot\Entities\InlineKeyboardButton;
 use Longman\TelegramBot\Entities\Keyboard;
@@ -119,6 +120,9 @@ class SearchCommand extends UserCommand
                         $data['text'] = 'Введите название товара или артикул:';
                     }
                     $result = Request::sendMessage($data);
+                    if($result->isOk()){
+                        $db = DB::insertMessageRequest($result->getResult());
+                    }
                     break;
                 }
 
@@ -150,7 +154,9 @@ class SearchCommand extends UserCommand
                         $data['text'] = 'Результат поиска';
                         $data['reply_markup'] = $this->catalogKeyboards();
                         $result2 = Request::sendMessage($data);
-
+                        if($result2->isOk()){
+                            $db = DB::insertMessageRequest($result2->getResult());
+                        }
                         $data = [];
                         $data['chat_id'] = $chat_id;
                         $data['parse_mode'] = 'Markdown';
@@ -161,7 +167,9 @@ class SearchCommand extends UserCommand
                         $data['reply_markup'] = new InlineKeyboard(['inline_keyboard' => $buttons]);
 
                         $result = Request::sendMessage($data);
-
+                        if($result->isOk()){
+                            $db = DB::insertMessageRequest($result->getResult());
+                        }
 
                     } else {
                         $data = [];
@@ -173,6 +181,9 @@ class SearchCommand extends UserCommand
                         ]);
                         $data['reply_markup'] = $this->catalogKeyboards();
                         $result = Request::sendMessage($data);
+                        if($result->isOk()){
+                            $db = DB::insertMessageRequest($result->getResult());
+                        }
                     }
                     $notes['status'] = ($count) ? true : false;
                     $this->conversation->update();
