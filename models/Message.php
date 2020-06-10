@@ -61,7 +61,7 @@ class Message extends ActiveRecord
 
     public function getCallback()
     {
-        return $this->hasMany(CallbackQuery::class, ['message_id' => 'id']);
+        return $this->hasMany(CallbackQuery::class, ['message_id' => 'id'])->orderBy(['created_at'=>SORT_ASC]);
     }
 
     /**
