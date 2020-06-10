@@ -189,7 +189,7 @@ class CheckOutCommand extends SystemCommand
                         $notes['state'] = 1;
                         $this->conversation->update();
 
-                        $data['reply_markup'] = (new Keyboard([$user->getFirstName() . ' ' . $user->getLastName(), '❌ Отмена']))
+                        $data['reply_markup'] = (new Keyboard(['👤 '.$user->getFirstName() . ' ' . $user->getLastName(), '❌ Отмена']))
                             ->setResizeKeyboard(true)
                             ->setOneTimeKeyboard(true)
                             ->setSelective(true);
