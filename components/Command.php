@@ -6,11 +6,26 @@ use Longman\TelegramBot\DB;
 use Longman\TelegramBot\Entities\InlineKeyboardButton;
 use Longman\TelegramBot\Entities\Keyboard;
 use Longman\TelegramBot\Entities\KeyboardButton;
+use Longman\TelegramBot\Entities\Update;
 use Longman\TelegramBot\Request;
 use panix\engine\CMS;
+use shopium\mod\cart\models\Order;
 
 abstract class Command extends \Longman\TelegramBot\Commands\Command
 {
+    public $orderHistoryCount = 0;
+    public $orderProductCount = 0;
+
+    public function __construct(Api $telegram, Update $update = null)
+    {
+        $this->orderHistoryCount = Order::find()->where(['checkout' => 1])->count();
+        $orderProductCount = Order::find()->where(['checkout' => 0])->one();
+        if ($orderProductCount) {
+            $this->orderProductCount = $orderProductCount->productsCount;
+        }
+        parent::__construct($telegram, $update);
+    }
+
     public function isSystemCommand()
     {
         return ($this instanceof SystemCommand);
@@ -61,14 +76,24 @@ abstract class Command extends \Longman\TelegramBot\Commands\Command
 
     public function startKeyboards()
     {
+        $textMyOrders = '📦 Мои покупки';
+        $textMyCart = '🛍 Корзина';
+        if ($this->orderHistoryCount) {
+            $textMyOrders .= ' (' . $this->orderHistoryCount . ')';
+        }
+        if ($this->orderProductCount) {
+            $textMyCart .= ' (' . $this->orderProductCount . ')';
+        }
+
+
         $keyboards[] = [
             new KeyboardButton(['text' => '📂 Каталог']),
             new KeyboardButton(['text' => '🔎 Поиск']),
-            new KeyboardButton(['text' => '🛍 Корзина'])
+            new KeyboardButton(['text' => $textMyCart])
         ];
         $keyboards[] = [
             //  new KeyboardButton(['text' => '📢 Новости']),
-            new KeyboardButton(['text' => '📦 Мои заказы']),
+            new KeyboardButton(['text' => $textMyOrders]),
             new KeyboardButton(['text' => '❓ Помощь'])
         ];
         // $keyboards[] = [
@@ -126,7 +151,7 @@ abstract class Command extends \Longman\TelegramBot\Commands\Command
         }
         $response = Request::sendMessage($data);
 
-        if($response->isOk()){
+        if ($response->isOk()) {
             $db = DB::insertMessageRequest($response->getResult());
         }
 
@@ -135,6 +160,15 @@ abstract class Command extends \Longman\TelegramBot\Commands\Command
 
     public function catalogKeyboards()
     {
+        $textMyOrders = '📦 Мои покупки';
+        $textMyCart = '🛍 Корзина';
+        if ($this->orderHistoryCount) {
+            $textMyOrders .= ' (' . $this->orderHistoryCount . ')';
+        }
+        if ($this->orderProductCount) {
+            $textMyCart .= ' (' . $this->orderProductCount . ')';
+        }
+
         $keyboards[] = [
             new KeyboardButton(['text' => '🏠 Начало']),
             new KeyboardButton(['text' => '📂 Каталог']),
@@ -142,8 +176,8 @@ abstract class Command extends \Longman\TelegramBot\Commands\Command
         ];
 
         $keyboards[] = [
-            new KeyboardButton(['text' => '🛍 Корзина']),
-            new KeyboardButton(['text' => '📦 Мои заказы']),
+            new KeyboardButton(['text' => $textMyCart]),
+            new KeyboardButton(['text' => $textMyOrders]),
             new KeyboardButton(['text' => '❓ Помощь'])
         ];
 

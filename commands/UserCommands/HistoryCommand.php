@@ -3,6 +3,7 @@
 namespace shopium\mod\telegram\commands\UserCommands;
 
 
+use Longman\TelegramBot\DB;
 use Longman\TelegramBot\Entities\InlineKeyboard;
 use Longman\TelegramBot\Entities\InlineKeyboardButton;
 use Longman\TelegramBot\Request;
@@ -95,19 +96,18 @@ class HistoryCommand extends UserCommand
         if ($orders) {
 
 
-
             $text = '*История заказа*' . PHP_EOL . PHP_EOL;
             foreach ($orders as $order) {
                 if ($pager->buttons)
                     $keyboards[] = $pager->buttons;
 
-                if($order->paid) {
+                if ($order->paid) {
                     $keyboards[] = [
                         new InlineKeyboardButton([
                             'text' => Yii::t('telegram/command', '✅ ОПЛАЧЕНО!'),
                             'callback_data' => time()
                         ])];
-                }else{
+                } else {
                     $keyboards[] = [
                         new InlineKeyboardButton([
                             'text' => Yii::t('telegram/command', 'BUTTON_PAY', $this->number_format($order->total_price)),
@@ -151,6 +151,11 @@ class HistoryCommand extends UserCommand
             $response = $data;
 
         }
-        return Request::sendMessage($response);
+
+        $result = Request::sendMessage($response);
+        if ($result->isOk()) {
+            $db = DB::insertMessageRequest($result->getResult());
+        }
+        return $result;
     }
 }
