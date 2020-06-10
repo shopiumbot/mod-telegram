@@ -20,6 +20,7 @@ $botName = $api->getBotUsername();
 if($model){
 
         foreach ($model as $message) {
+            /** @var \shopium\mod\telegram\models\Message $message */
             // CMS::dump($message);die;
             $odd = ($message->user_id == $message->chat_id) ? 'odd' : '';
             $imageClass = ($message->user_id == $message->chat_id) ? 'float-right' : '';
@@ -38,7 +39,7 @@ if($model){
                 </div>
                 <div class="chat-content">
                     <h6 class="font-medium"><?= $userName; ?></h6>
-                    <div class="box bg-light-info"><?= $message->text; ?></div>
+                    <div class="box bg-light-info"><?= \shopium\mod\telegram\components\Helper::parseMarkdown($message->text,$message->entities); ?></div>
                     <?php
 
                     ?>

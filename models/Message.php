@@ -13,10 +13,12 @@ use yii\db\ActiveRecord;
 /**
  * This is the model class for table "actions".
  *
- * @property integer $client_chat_id
+ * @property integer $chat_id
+ * @property integer $user_id
+ * @property integer $id
  * @property string $message
- * @property string $time
- * @property string $direction
+ * @property string $text
+ * @property string $entities
  */
 class Message extends ActiveRecord
 {
