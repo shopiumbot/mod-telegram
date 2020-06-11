@@ -503,7 +503,7 @@ class CallbackqueryCommand extends SystemCommand
                     'totalCount' => $query->count(),
                     // 'defaultPageSize' => 5,
                     'pageSize' => Yii::$app->settings->get('app','pagenum_telegram'),
-                    'currentPage' => (isset($params['page'])) ? $params['page'] : 1
+                    'currentPage' => (isset($params['page'])) ? (int) $params['page'] : 1
                 ]);
 
                 if (isset($params['page'])) {
@@ -513,7 +513,12 @@ class CallbackqueryCommand extends SystemCommand
                     $pages->setPage(1);
                 }
 
-                $products1 = $query->offset($pages->offset - Yii::$app->settings->get('app','pagenum_telegram'))
+                if((int) Yii::$app->settings->get('app','pagenum_telegram') > 1){
+                    $offset= $pages->offset - (int) Yii::$app->settings->get('app','pagenum_telegram');
+                }else{
+                    $offset= $pages->offset;
+                }
+                $products1 = $query->offset($offset)
                     ->limit($pages->limit);
 
 
