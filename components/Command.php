@@ -19,8 +19,12 @@ abstract class Command extends \Longman\TelegramBot\Commands\Command
 
     public function __construct(Api $telegram, Update $update = null)
     {
-        $this->orderHistoryCount = Order::find()->where(['checkout' => 1])->count();
-        $orderProductCount = Order::find()->where(['checkout' => 0])->one();
+        $this->orderHistoryCount = Order::find()
+            ->where(['checkout' => 1, 'user_id' => $update->getMessage()->getFrom()->getId()])
+            ->count();
+        $orderProductCount = Order::find()
+            ->where(['checkout' => 0, 'user_id' => $update->getMessage()->getFrom()->getId()])
+            ->one();
         if ($orderProductCount) {
             $this->orderProductCount = $orderProductCount->productsCount;
         }
