@@ -502,7 +502,7 @@ class CallbackqueryCommand extends SystemCommand
                 $pages = new KeyboardPagination([
                     'totalCount' => $query->count(),
                     // 'defaultPageSize' => 5,
-                    'pageSize' => 5,
+                    'pageSize' => Yii::$app->settings->get('app','pagenum_telegram'),
                     'currentPage' => (isset($params['page'])) ? $params['page'] : 1
                 ]);
 
@@ -513,7 +513,7 @@ class CallbackqueryCommand extends SystemCommand
                     $pages->setPage(1);
                 }
 
-                $products1 = $query->offset($pages->offset - 5)
+                $products1 = $query->offset($pages->offset - Yii::$app->settings->get('app','pagenum_telegram'))
                     ->limit($pages->limit);
 
 

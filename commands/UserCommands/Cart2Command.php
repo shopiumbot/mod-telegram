@@ -257,7 +257,7 @@ print_r($response);
 
             //$response = true;
         } else {
-            $data['text'] = Yii::$app->settings->get('telegram', 'empty_cart_text');
+            $data['text'] = Yii::$app->settings->get('app', 'empty_cart_text');
             $data['reply_markup'] = $this->startKeyboards();
             return Request::sendMessage($data);
         }

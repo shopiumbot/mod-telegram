@@ -124,7 +124,7 @@ class CheckOutCommand extends SystemCommand
                 $data_edit = [
                     'chat_id' => $chat_id,
                     'message_id' => $message->getMessageId(),
-                    'text' => Yii::$app->settings->get('telegram', 'empty_cart_text'),
+                    'text' => Yii::$app->settings->get('app', 'empty_cart_text'),
                 ];
                 return Request::editMessageText($data_edit);
 

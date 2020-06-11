@@ -195,12 +195,12 @@ class CartCommand extends UserCommand
                     $deleleMessage = Request::deleteMessage(['chat_id' => $chat_id, 'message_id' => $update->getCallbackQuery()->getMessage()->getMessageId()]);
                 }
 
-                $data['text'] = Yii::$app->settings->get('telegram', 'empty_cart_text');
+                $data['text'] = Yii::$app->settings->get('app', 'empty_cart_text');
                 $data['reply_markup'] = $this->startKeyboards();
                 $response = $data;
             }
         } else {
-            $data['text'] = Yii::$app->settings->get('telegram', 'empty_cart_text');
+            $data['text'] = Yii::$app->settings->get('app', 'empty_cart_text');
             $data['reply_markup'] = $this->startKeyboards();
             $response = $data;
 

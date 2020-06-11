@@ -10,6 +10,7 @@ use Longman\TelegramBot\Entities\Update;
 use Longman\TelegramBot\Request;
 use panix\engine\CMS;
 use shopium\mod\cart\models\Order;
+use Yii;
 
 abstract class Command extends \Longman\TelegramBot\Commands\Command
 {
@@ -76,8 +77,9 @@ abstract class Command extends \Longman\TelegramBot\Commands\Command
 
     public function startKeyboards()
     {
-        $textMyOrders = '📦 Мои покупки';
-        $textMyCart = '🛍 Корзина';
+        $config = Yii::$app->settings->get('app');
+        $textMyOrders = $config->button_text_history;
+        $textMyCart = $config->button_text_cart;
         if ($this->orderHistoryCount) {
             $textMyOrders .= ' (' . $this->orderHistoryCount . ')';
         }
@@ -87,8 +89,8 @@ abstract class Command extends \Longman\TelegramBot\Commands\Command
 
 
         $keyboards[] = [
-            new KeyboardButton(['text' => '📂 Каталог']),
-            new KeyboardButton(['text' => '🔎 Поиск']),
+            new KeyboardButton(['text' => $config->button_text_catalog]),
+            new KeyboardButton(['text' => $config->button_text_search]),
             new KeyboardButton(['text' => $textMyCart])
         ];
         $keyboards[] = [
@@ -160,8 +162,9 @@ abstract class Command extends \Longman\TelegramBot\Commands\Command
 
     public function catalogKeyboards()
     {
-        $textMyOrders = '📦 Мои покупки';
-        $textMyCart = '🛍 Корзина';
+        $config = Yii::$app->settings->get('app');
+        $textMyOrders = $config->button_text_history;
+        $textMyCart = $config->button_text_cart;
         if ($this->orderHistoryCount) {
             $textMyOrders .= ' (' . $this->orderHistoryCount . ')';
         }
@@ -170,9 +173,9 @@ abstract class Command extends \Longman\TelegramBot\Commands\Command
         }
 
         $keyboards[] = [
-            new KeyboardButton(['text' => '🏠 Начало']),
-            new KeyboardButton(['text' => '📂 Каталог']),
-            new KeyboardButton(['text' => '🔎 Поиск']),
+            new KeyboardButton(['text' => $config->button_text_home]),
+            new KeyboardButton(['text' => $config->button_text_catalog]),
+            new KeyboardButton(['text' => $config->button_text_search]),
         ];
 
         $keyboards[] = [
