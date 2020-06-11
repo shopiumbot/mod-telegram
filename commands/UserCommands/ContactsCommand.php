@@ -6,6 +6,7 @@ namespace shopium\mod\telegram\commands\UserCommands;
 use core\modules\contacts\models\SettingsForm;
 use Longman\TelegramBot\DB;
 use Longman\TelegramBot\Request;
+use panix\engine\CMS;
 use panix\engine\Html;
 use shopium\mod\telegram\components\UserCommand;
 use Yii;
@@ -52,31 +53,60 @@ class ContactsCommand extends UserCommand
         $text = trim($message->getText(true));
         $chat_id = $chat->getId();
         $user_id = $user->getId();
-
+        $config = Yii::$app->settings->get('contacts');
         $data['chat_id'] = $chat_id;
-        $data['text'] = '*Контактная информация*' . PHP_EOL . PHP_EOL;
-
+        $data['text']='';
+        if (!$config->latitude && !$config->longitude) {
+            $data['text'] .= '*Контактная информация*' . PHP_EOL . PHP_EOL;
+        }
         $address = Yii::$app->getModule('contacts')->getAddress();
         $phones = Yii::$app->getModule('contacts')->getPhones();
         $emails = Yii::$app->getModule('contacts')->getEmails();
 
-        foreach ($address as $addr) {
-            $data['text'] .= '🌍 Адрес: *' . $addr . '*' . PHP_EOL;
-        }
-        foreach ($phones as $phone) {
-            $data['text'] .= '📞 Телефон: ' . $phone['number'] . ' ' . $phone['name'] . '' . PHP_EOL;
-        }
-        foreach ($emails as $email) {
-            $data['text'] .= '✉ Почта: *' . $email . '*' . PHP_EOL;
-        }
-        $data['parse_mode'] = 'Markdown';
 
-        $data['reply_markup'] = $this->homeKeyboards();
-        $response= Request::sendMessage($data);
-        if($response->isOk()){
-            $db = DB::insertMessageRequest($response->getResult());
+        if ($address) {
+            foreach ($address as $addr) {
+                if (!empty($addr)) {
+                    if ($config->latitude && $config->longitude) {
+                        $title = 'Контактная информация' . PHP_EOL . PHP_EOL;
+                        $venue = Request::sendVenue([
+                            'chat_id' => $chat_id,
+                            'latitude' => $config->latitude,
+                            'longitude' => $config->longitude,
+                            'title' => $title,
+                            'address' => '🌍 ' . $addr,
+                            'reply_markup'=>$this->homeKeyboards()
+                        ]);
+
+                    } else {
+                        $data['text'] .= '🌍 ' . $addr . '' . PHP_EOL;
+                    }
+                }
+            }
         }
-        $config = Yii::$app->settings->get('contacts');
+
+
+
+
+
+            if ($phones) {
+                foreach ($phones as $phone) {
+                    $data['text'] .= '📞 *' . CMS::phone_format($phone['number']) . '* (' . $phone['name'] . ')' . PHP_EOL;
+                }
+            }
+            if ($emails) {
+                foreach ($emails as $email) {
+                    $data['text'] .= '✉ *' . $email . '*' . PHP_EOL;
+                }
+            }
+            $data['parse_mode'] = 'Markdown';
+
+            $data['reply_markup'] = $this->homeKeyboards();
+            $response = Request::sendMessage($data);
+            if ($response->isOk()) {
+                $db = DB::insertMessageRequest($response->getResult());
+            }
+
 
 
         if (isset($config->schedule)) {
@@ -85,7 +115,7 @@ class ContactsCommand extends UserCommand
 
             foreach ($config->schedule as $key => $schedule) {
 
-                $isStatus='';
+                $isStatus = '';
                 /*
                 if (date('N') == $key + 1) {
                     if (Yii::$app->getModule('contacts')->getTodayOpen($key)) {
@@ -98,16 +128,16 @@ class ContactsCommand extends UserCommand
 
                 $data2['text'] .= '🕗 *' . SettingsForm::dayList()[$key] . '* ';
                 if (!empty($schedule['start_time']) || !empty($schedule['end_time'])) {
-                    $data2['text'] .= 'с ' . $schedule['start_time'] . ' до ' . $schedule['end_time'].$isStatus. PHP_EOL;
+                    $data2['text'] .= 'с ' . $schedule['start_time'] . ' до ' . $schedule['end_time'] . $isStatus . PHP_EOL;
                 } else {
-                    $data2['text'] .= SettingsForm::t('DAY_OFF'). PHP_EOL;
+                    $data2['text'] .= SettingsForm::t('DAY_OFF') . PHP_EOL;
                 }
 
 
-             }
+            }
             $data2['parse_mode'] = 'Markdown';
             $responseSchedule = Request::sendMessage($data2);
-            if($responseSchedule->isOk()){
+            if ($responseSchedule->isOk()) {
                 $db = DB::insertMessageRequest($responseSchedule->getResult());
             }
         }
