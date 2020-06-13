@@ -1,15 +1,13 @@
 <?php
 
-namespace shopium\mod\telegram\commands\AdminCommands;
+namespace shopium\mod\telegram\commands\SystemCommands;
 
 
 use Longman\TelegramBot\Conversation;
 use Longman\TelegramBot\Entities\Keyboard;
-use Longman\TelegramBot\Entities\KeyboardButton;
 use Longman\TelegramBot\Request;
-use panix\engine\CMS;
 use core\modules\shop\models\Product;
-use shopium\mod\telegram\components\AdminCommand;
+use shopium\mod\telegram\components\SystemCommand;
 use Yii;
 
 /**
@@ -17,7 +15,7 @@ use Yii;
  *
  * Command that demonstrated the Conversation funtionality in form of a simple survey.
  */
-class ProductremoveCommand extends AdminCommand
+class ProductremoveCommand extends SystemCommand
 {
     /**
      * @var string
@@ -28,11 +26,6 @@ class ProductremoveCommand extends AdminCommand
      * @var string
      */
     protected $description = 'Удаление товара';
-
-    /**
-     * @var string
-     */
-    protected $usage = '/productremove <id>';
 
     /**
      * @var string
