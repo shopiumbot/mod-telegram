@@ -98,7 +98,7 @@ class ProductItemCommand extends SystemCommand
             $caption .= '🔥🔥🔥';
         }
 
-        $caption .= '*' . $product->name . '*' . PHP_EOL;
+        $caption .= '*' . $product->name . '* '.((!$product->switch)?'`(наименование скрыто)`':'').' ' . PHP_EOL;
         $caption .= $this->number_format($product->price) . ' грн' . PHP_EOL . PHP_EOL;
 
         if ($product->hasDiscount) {
@@ -187,7 +187,7 @@ class ProductItemCommand extends SystemCommand
             ];
         }
 
-        $keyboards[] = $this->productAdminKeywords($chat_id, $product->id);
+        $keyboards[] = $this->productAdminKeywords($chat_id, $product);
 
         if ($images) {
             $imageData = $images[$this->photo_index];

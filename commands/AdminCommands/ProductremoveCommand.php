@@ -69,8 +69,9 @@ class ProductremoveCommand extends AdminCommand
             $chat = $message->getChat();
             $user = $callbackQuery->getFrom();
             parse_str($callbackQuery->getData(), $params);
-            echo $this->product_id.PHP_EOL;
-print_r($params);die;
+            echo $this->product_id . PHP_EOL;
+            print_r($params);
+            die;
         } else {
             $message = $this->getMessage();
             $chat = $message->getChat();
@@ -84,8 +85,8 @@ print_r($params);die;
         //if ($text === '') {
         //    $text = Yii::t('telegram/command','USAGE',$this->getUsage());
         //    $data['text']=$text;
-       //     return Request::sendMessage($data);
-       // }
+        //     return Request::sendMessage($data);
+        // }
 
 
         //Conversation start
@@ -105,8 +106,6 @@ print_r($params);die;
         $product = null;
 
 
-
-
         //State machine
         //Entrypoint of the machine state if given by the track
         //Every time a step is achieved the track is updated
@@ -115,30 +114,29 @@ print_r($params);die;
                 if (!is_numeric($text)) {
 
                 }
-                /*if ($text === '' || !in_array($text, ['Да', 'Нет'], true)) {
-                    $notes['state'] = 0;
-                    $notes['confirm']=false;
-                    $this->conversation->update();
+            /*if ($text === '' || !in_array($text, ['Да', 'Нет'], true)) {
+                $notes['state'] = 0;
+                $notes['confirm']=false;
+                $this->conversation->update();
 
 
-                    $data['reply_markup'] = (new Keyboard(['Да', 'Нет']))
-                        ->setResizeKeyboard(true)
-                        ->setOneTimeKeyboard(true)
-                        ->setSelective(true);
+                $data['reply_markup'] = (new Keyboard(['Да', 'Нет']))
+                    ->setResizeKeyboard(true)
+                    ->setOneTimeKeyboard(true)
+                    ->setSelective(true);
 
-                    $data['text'] = 'Укажите ID товара';
-                    if ($text !== '') {
-                        $data['text'] = 'ID товара должен быть числом:';
-                    }
-
-
-                    $result = Request::sendMessage($data);
-                    break;
+                $data['text'] = 'Укажите ID товара';
+                if ($text !== '') {
+                    $data['text'] = 'ID товара должен быть числом:';
                 }
-                $notes['confirm'] = true;
 
-                $text = '';*/
 
+                $result = Request::sendMessage($data);
+                break;
+            }
+            $notes['confirm'] = true;
+
+            $text = '';*/
 
 
             // no break

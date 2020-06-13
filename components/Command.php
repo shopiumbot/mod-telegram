@@ -2,6 +2,7 @@
 
 namespace shopium\mod\telegram\components;
 
+use core\modules\pages\models\Pages;
 use Longman\TelegramBot\DB;
 use Longman\TelegramBot\Entities\InlineKeyboardButton;
 use Longman\TelegramBot\Entities\Keyboard;
@@ -57,22 +58,22 @@ abstract class Command extends \Longman\TelegramBot\Commands\Command
     }
 
 
-    public function productAdminKeywords($chat_id, $product_id)
+    public function productAdminKeywords($chat_id, $product)
     {
         $keyboards = [];
         if ($this->telegram->isAdmin($chat_id)) {
             $keyboards = [
                 new InlineKeyboardButton([
                     'text' => '✏',
-                    'callback_data' => 'query=productUpdate&id=' . $product_id
+                    'callback_data' => 'query=productUpdate&id=' . $product->id
                 ]),
                 new InlineKeyboardButton([
-                    'text' => '👁',
-                    'callback_data' => 'query=productSwitch&id=' . $product_id
+                    'text' => ($product->switch) ? '🔴 скрыть' : '🟢 ⚪ показать',
+                    'callback_data' => 'query=productSwitch&id=' . $product->id . '&switch=' . (($product->switch) ? 0 : 1)
                 ]),
                 new InlineKeyboardButton([
                     'text' => '❌',
-                    'callback_data' => 'query=productDelete&id=' . $product_id
+                    'callback_data' => 'query=productDelete&id=' . $product->id
                 ]),
             ];
         }
@@ -84,11 +85,11 @@ abstract class Command extends \Longman\TelegramBot\Commands\Command
         $config = Yii::$app->settings->get('app');
         $textMyOrders = $config->button_text_history;
         $textMyCart = $config->button_text_cart;
-       // if ($this->orderHistoryCount) {
-           // $textMyOrders .= ' (' . $this->orderHistoryCount . ')';
-       // }
+        // if ($this->orderHistoryCount) {
+        // $textMyOrders .= ' (' . $this->orderHistoryCount . ')';
+        // }
         //if ($this->orderProductCount) {
-            //$textMyCart .= ' (' . $this->orderProductCount . ')';
+        //$textMyCart .= ' (' . $this->orderProductCount . ')';
         //}
 
 
@@ -106,7 +107,15 @@ abstract class Command extends \Longman\TelegramBot\Commands\Command
         //  new KeyboardButton(['text' => '⚙ Настройки']),
         //   new KeyboardButton(['text' => '❓ Помощь'])
         // ];
+        $pages = Pages::find()->asArray()->all();
+        $pagesKeywords = [];
+        foreach ($pages as $page) {
+            $pagesKeywords[] = new KeyboardButton(['text' => $page['name']]);
 
+        }
+        if ($pagesKeywords) {
+            $keyboards[] = $pagesKeywords;
+        }
         $data = (new Keyboard([
             'keyboard' => $keyboards
         ]))->setResizeKeyboard(true)->setOneTimeKeyboard(true)->setSelective(true);
@@ -169,7 +178,7 @@ abstract class Command extends \Longman\TelegramBot\Commands\Command
         $config = Yii::$app->settings->get('app');
         $textMyOrders = $config->button_text_history;
         $textMyCart = $config->button_text_cart;
-       // if ($this->orderHistoryCount) {
+        // if ($this->orderHistoryCount) {
         //    $textMyOrders .= ' (' . $this->orderHistoryCount . ')';
         //}
         //if ($this->orderProductCount) {
@@ -187,7 +196,15 @@ abstract class Command extends \Longman\TelegramBot\Commands\Command
             new KeyboardButton(['text' => $textMyOrders]),
             new KeyboardButton(['text' => '❓ Помощь'])
         ];
+        $pages = Pages::find()->asArray()->all();
+        $pagesKeywords = [];
+        foreach ($pages as $page) {
+            $pagesKeywords[] = new KeyboardButton(['text' => $page['name']]);
 
+        }
+        if ($pagesKeywords) {
+            $keyboards[] = $pagesKeywords;
+        }
         $data = (new Keyboard([
             'keyboard' => $keyboards
         ]))->setResizeKeyboard(true)->setOneTimeKeyboard(true)->setSelective(true);

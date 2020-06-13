@@ -11,6 +11,7 @@
 
 namespace shopium\mod\telegram\commands\SystemCommands;
 
+use core\modules\pages\models\Pages;
 use Yii;
 use Longman\TelegramBot\Commands\SystemCommand;
 use Longman\TelegramBot\Entities\ServerResponse;
@@ -82,6 +83,23 @@ class GenericmessageCommand extends SystemCommand
         $chat_id = $this->getMessage()->getChat()->getId();
 
         $text = trim($this->getMessage()->getText());
+
+
+        $page = Pages::find()->where(['name' => $text])->asArray()->one();
+        if ($page) {
+            $data['chat_id'] = $chat_id;
+            $data['text'] = $page['text'];
+            $data['parse_mode'] = 'Markdown';
+            $send = Request::sendMessage($data);
+           if(!$send->isOk()){
+               $data['chat_id'] = $chat_id;
+               $data['text'] = $send->getResult();
+               $data['parse_mode'] = 'Markdown';
+               $send = Request::sendMessage($data);
+           }
+           return $send;
+        }
+
 
         if ($config->button_text_cart === $text) { //cart emoji //preg_match('/^(\x{1F6CD})/iu', $text, $match)
             return $this->telegram->executeCommand('cart');

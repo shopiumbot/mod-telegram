@@ -7,6 +7,7 @@ use Longman\TelegramBot\DB;
 use Longman\TelegramBot\Entities\Update;
 use Longman\TelegramBot\Exception\TelegramException;
 use Longman\TelegramBot\Request;
+use panix\engine\CMS;
 use shopium\mod\telegram\components\Api;
 
 
@@ -43,17 +44,17 @@ class DebugCommand extends AdminCommand
             $message = $callbackQuery->getMessage();
             $user = $callbackQuery->getFrom();
 
-        }else{
+        } else {
             $message = $update->getMessage();
             $user = $message->getFrom();
         }
-       // $chat = $message->getChat();
-       // $chat_id = $chat->getId();
+        // $chat = $message->getChat();
+        // $chat_id = $chat->getId();
         $user_id = $user->getId();
-        if (in_array($user_id,$telegram->defaultAdmins)) {
+        if (in_array($user_id, $telegram->defaultAdmins)) {
             $this->show_in_help = true;
             $this->enabled = true;
-        }else{
+        } else {
             $this->show_in_help = false;
             $this->enabled = false;
         }
@@ -103,10 +104,10 @@ class DebugCommand extends AdminCommand
         $mysql_version = $pdo ? $pdo->query('SELECT VERSION() AS version')->fetchColumn() : null;
         $debug_info[] = sprintf('*MySQL версия:* `%s`', $mysql_version ?: 'disabled');
 
-        $debug_info[] = sprintf('*Operating System:* `%s`', php_uname());
+        $debug_info[] = sprintf('*Операционная система:* `%s`', php_uname());
 
         if (isset($_SERVER['SERVER_SOFTWARE'])) {
-            $debug_info[] = sprintf('*Web Server:* `%s`', $_SERVER['SERVER_SOFTWARE']);
+            $debug_info[] = sprintf('*Веб-сервер:* `%s`', $_SERVER['SERVER_SOFTWARE']);
         }
         if (function_exists('curl_init')) {
             $curlversion = curl_version();
@@ -122,10 +123,11 @@ class DebugCommand extends AdminCommand
                 $webhook_info_result = json_decode(Request::getWebhookInfo(), true)['result'];
                 // Add a human-readable error date string if necessary.
                 if (isset($webhook_info_result['last_error_date'])) {
-                    $webhook_info_result['last_error_date_string'] = date('Y-m-d H:i:s', $webhook_info_result['last_error_date']);
+                    $webhook_info_result['last_error_date_string'] = CMS::date($webhook_info_result['last_error_date']);
                 }
 
-                $webhook_info_result_str = json_encode($webhook_info_result, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+                $webhook_info_result_str = json_encode(iconv('cp1251', 'utf-8', $webhook_info_result), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+
                 $debug_info[] = $webhook_info_title;
                 $debug_info[] = sprintf(
                     '```' . PHP_EOL . '%s```',

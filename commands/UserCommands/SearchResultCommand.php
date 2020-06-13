@@ -201,7 +201,7 @@ class SearchResultCommand extends SystemCommand
                     ];
                 }
 
-                $keyboards[] = $this->productAdminKeywords($chat_id, $product->id);
+                $keyboards[] = $this->productAdminKeywords($chat_id, $product);
 
 
                 $imageData = $product->getImage();

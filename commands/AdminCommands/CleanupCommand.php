@@ -54,6 +54,7 @@ class CleanupCommand extends AdminCommand
      * @var bool
      */
     protected $need_mysql = true;
+    protected $show_in_help = false;
 
     /**
      * Default tables to clean, cleaning 'chat', 'user' and 'user_chat' by default is bad practice!

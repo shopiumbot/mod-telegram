@@ -87,7 +87,7 @@ class CatalogproductquantityCommand extends SystemCommand
                 ]),
             ];
         }
-        $keyboards[] = $this->productAdminKeywords($chat_id, $this->product_id);
+        $keyboards[] = $this->productAdminKeywords($chat_id, $product->originalProduct);
 
         $dataEdit['chat_id'] = $chat_id;
         $dataEdit['message_id'] = $message->getMessageId();

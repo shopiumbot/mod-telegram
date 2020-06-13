@@ -6,6 +6,7 @@ namespace shopium\mod\telegram\commands\UserCommands;
 use Longman\TelegramBot\Entities\InlineKeyboard;
 use core\modules\shop\models\Attribute;
 use core\modules\shop\models\Product;
+use Longman\TelegramBot\Entities\InlineKeyboardButton;
 use shopium\mod\telegram\components\InlineKeyboardMorePager;
 use shopium\mod\telegram\components\InlineKeyboardPager;
 use shopium\mod\telegram\components\KeyboardPagination;
@@ -119,13 +120,10 @@ class CallbackqueryCommand extends SystemCommand
                 $notify = Request::answerCallbackQuery($data);
 
 
-
-
-
                 return $this->telegram
                     ->setCommandConfig('productitem', [
                         'product' => $product,
-                        'photo_index'=>$photo_index,
+                        'photo_index' => $photo_index,
                         // 'order_id' => $order->id,
                         //'quantity' => $quantity
                     ])
@@ -195,7 +193,7 @@ class CallbackqueryCommand extends SystemCommand
                 return $this->telegram
                     ->setCommandConfig('productitem', [
                         'product' => $orderProduct->originalProduct,
-                        'photo_index'=>(isset($params['img']))?$params['img']:0,
+                        'photo_index' => (isset($params['img'])) ? $params['img'] : 0,
                         // 'order_id' => $order->id,
                         //'quantity' => $quantity
                     ])
@@ -247,13 +245,12 @@ class CallbackqueryCommand extends SystemCommand
                 $notify = Request::answerCallbackQuery($data);
 
 
-
                 return $this->telegram
                     ->setCommandConfig('productitem', [
                         'product' => $product,
-                        'photo_index'=>$photo_index,
+                        'photo_index' => $photo_index,
                         // 'order_id' => $order->id,
-                         //'quantity' => $quantity
+                        //'quantity' => $quantity
                     ])
                     ->executeCommand('productitem');
 
@@ -370,121 +367,170 @@ class CallbackqueryCommand extends SystemCommand
 
             $this->telegram
                 ->setCommandConfig('productitem', [
-                    'photo_index'=>$page,
-                    'product'=>$product
+                    'photo_index' => $page,
+                    'product' => $product
                 ])
                 ->executeCommand('productitem');
 
-           /* if ($order) {
-                $orderProduct = OrderProduct::findOne(['product_id' => $product->id, 'order_id' => $order->id]);
-            } else {
-                $orderProduct = null;
-            }
-            if ($orderProduct) {
-                $keyboards[] = [
-                    new InlineKeyboardButton([
-                        'text' => '—',
-                        // 'callback_data' => "spinner/{$order->id}/{$product->id}/down/catalog"
-                        'callback_data' => "query=productSpinner&order_id={$order->id}&product_id={$product->id}&type=down"
-                    ]),
-                    new InlineKeyboardButton([
-                        'text' => '' . $orderProduct->quantity . ' шт.',
-                        'callback_data' => time()
-                    ]),
-                    new InlineKeyboardButton([
-                        'text' => '+',
-                        // 'callback_data' => "spinner/{$order->id}/{$product->id}/up/catalog",
-                        'callback_data' => "query=productSpinner&order_id={$order->id}&product_id={$product->id}&type=up"
-                    ]),
-                    new InlineKeyboardButton([
-                        'text' => '❌',
-                        'callback_data' => "query=deleteInCart&id={$orderProduct->id}"
-                    ]),
-                ];
-                //   $keyboards[] = $this->telegram->executeCommand('cartproductquantity')->getKeywords();
-            } else {
+            /* if ($order) {
+                 $orderProduct = OrderProduct::findOne(['product_id' => $product->id, 'order_id' => $order->id]);
+             } else {
+                 $orderProduct = null;
+             }
+             if ($orderProduct) {
+                 $keyboards[] = [
+                     new InlineKeyboardButton([
+                         'text' => '—',
+                         // 'callback_data' => "spinner/{$order->id}/{$product->id}/down/catalog"
+                         'callback_data' => "query=productSpinner&order_id={$order->id}&product_id={$product->id}&type=down"
+                     ]),
+                     new InlineKeyboardButton([
+                         'text' => '' . $orderProduct->quantity . ' шт.',
+                         'callback_data' => time()
+                     ]),
+                     new InlineKeyboardButton([
+                         'text' => '+',
+                         // 'callback_data' => "spinner/{$order->id}/{$product->id}/up/catalog",
+                         'callback_data' => "query=productSpinner&order_id={$order->id}&product_id={$product->id}&type=up"
+                     ]),
+                     new InlineKeyboardButton([
+                         'text' => '❌',
+                         'callback_data' => "query=deleteInCart&id={$orderProduct->id}"
+                     ]),
+                 ];
+                 //   $keyboards[] = $this->telegram->executeCommand('cartproductquantity')->getKeywords();
+             } else {
 
 
-                $keyboards[] = [
-                    new InlineKeyboardButton([
-                        'text' => Yii::t('telegram/command', 'BUTTON_BUY', $this->number_format($product->getFrontPrice())),
-                        // 'callback_data' => "addCart/{$product->id}"
-                        'callback_data' => "query=addCart&product_id={$product->id}"
-                    ])
-                ];
-            }
+                 $keyboards[] = [
+                     new InlineKeyboardButton([
+                         'text' => Yii::t('telegram/command', 'BUTTON_BUY', $this->number_format($product->getFrontPrice())),
+                         // 'callback_data' => "addCart/{$product->id}"
+                         'callback_data' => "query=addCart&product_id={$product->id}"
+                     ])
+                 ];
+             }
 
-            $dataEdit['chat_id'] = $chat_id;
-            $dataEdit['message_id'] = $message->getMessageId();
-            $dataEdit['reply_markup'] = new InlineKeyboard([
-                'inline_keyboard' => $keyboards
-            ]);
-
-
-
+             $dataEdit['chat_id'] = $chat_id;
+             $dataEdit['message_id'] = $message->getMessageId();
+             $dataEdit['reply_markup'] = new InlineKeyboard([
+                 'inline_keyboard' => $keyboards
+             ]);
 
 
 
-            $caption = '';
-            if ($product->hasDiscount) {
-                $caption .= '🔥🔥🔥';
-            }
-
-            $caption .= '*' . $product->name . '*' . PHP_EOL;
-            $caption .= $this->number_format($product->price) . ' грн' . PHP_EOL . PHP_EOL;
-
-            if ($product->hasDiscount) {
-                $caption .= '*🎁 Скидка*: ' . $product->discountSum . PHP_EOL . PHP_EOL;
-            }
-
-            if ($product->manufacturer_id) {
-                $caption .= '*Производитель*: ' . $product->manufacturer->name . PHP_EOL;
-            }
-            if ($product->sku) {
-                $caption .= '*Артикул*: ' . $product->sku . PHP_EOL;
-            }
 
 
-            $attributes = $this->attributes($product);
-            if ($attributes) {
-                $caption .= '*Характеристики:*' . PHP_EOL;
-                foreach ($attributes as $name => $data) {
-                    if (!empty($data['value'])) {
-                        $caption .= '*' . $name . '*: ' . $data['value'] . ' ' . $data['abbreviation'] . PHP_EOL;
-                    }
+
+             $caption = '';
+             if ($product->hasDiscount) {
+                 $caption .= '🔥🔥🔥';
+             }
+
+             $caption .= '*' . $product->name . '*' . PHP_EOL;
+             $caption .= $this->number_format($product->price) . ' грн' . PHP_EOL . PHP_EOL;
+
+             if ($product->hasDiscount) {
+                 $caption .= '*🎁 Скидка*: ' . $product->discountSum . PHP_EOL . PHP_EOL;
+             }
+
+             if ($product->manufacturer_id) {
+                 $caption .= '*Производитель*: ' . $product->manufacturer->name . PHP_EOL;
+             }
+             if ($product->sku) {
+                 $caption .= '*Артикул*: ' . $product->sku . PHP_EOL;
+             }
+
+
+             $attributes = $this->attributes($product);
+             if ($attributes) {
+                 $caption .= '*Характеристики:*' . PHP_EOL;
+                 foreach ($attributes as $name => $data) {
+                     if (!empty($data['value'])) {
+                         $caption .= '*' . $name . '*: ' . $data['value'] . ' ' . $data['abbreviation'] . PHP_EOL;
+                     }
+                 }
+             }
+             if ($product->description) {
+                 $caption .= PHP_EOL . Html::encode($product->description) . PHP_EOL . PHP_EOL;
+             }
+
+
+             $dataCaption = [
+                 'chat_id' => $user_id,
+                 'message_id' => $message->getMessageId(),
+                 'media' => new InputMediaPhoto([
+                     'media' => 'https://images.pexels.com/photos/2236713/pexels-photo-2236713.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940'
+                 ]),
+                 'caption' => $caption,
+                 'parse_mode' => 'Markdown'
+             ];
+
+
+
+             Request::editMessageMedia($dataCaption);
+             return Request::editMessageReplyMarkup($dataEdit);
+ */
+            // $data['chat_id'] = $user_id;
+            // $data['text'] = $callback_data;
+            //return Request::sendMessage($data);
+
+        } elseif (preg_match('/productSwitch/iu', trim($callback_data), $match)) {
+            parse_str($callback_data, $params);
+
+            $user_id = $callback_query->getFrom()->getId();
+            $message = $callback_query->getMessage();
+
+            if (isset($params['id']) && isset($params['switch'])) {
+                $product = Product::findOne((int)$params['id']);
+                if ($product) {
+                    $product->switch = $params['switch'];
+                    $product->save(false);
+
+                    $keyboards[] = [
+                        new InlineKeyboardButton([
+                            'text' => '—',
+                            //'callback_data' => "spinner/{$this->order_id}/{$this->product_id}/down/catalog"
+                            'callback_data' => "query=product_id}&type=down"
+                        ]),
+                        new InlineKeyboardButton([
+                            'text' => "❌",
+                            //'callback_data' => "cartDeleteInCatalog/{$this->order_id}/{$this->product_id}"
+                            'callback_data' => "query=deleteInCartsda"
+                        ]),
+                    ];
+                    $dataEdit['chat_id'] = $chat_id;
+                    $dataEdit['message_id'] = $message->getMessageId();
+                    $dataEdit['reply_markup'] = new InlineKeyboard([
+                        'inline_keyboard' => $keyboards
+                    ]);
+
+
+                    return Request::editMessageReplyMarkup($dataEdit);
+
+
+
+                    $data = [
+                        'callback_query_id' => $callback_query_id,
+                        'text' => ($product->switch) ? 'Вы успешно показали' : 'Вы успешно скрыли',
+                        // 'show_alert' => true,
+                        'cache_time' => 100,
+                    ];
+
+                    return Request::answerCallbackQuery($data);
                 }
             }
-            if ($product->description) {
-                $caption .= PHP_EOL . Html::encode($product->description) . PHP_EOL . PHP_EOL;
-            }
 
+            return Request::emptyResponse();
 
-            $dataCaption = [
-                'chat_id' => $user_id,
-                'message_id' => $message->getMessageId(),
-                'media' => new InputMediaPhoto([
-                    'media' => 'https://images.pexels.com/photos/2236713/pexels-photo-2236713.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940'
-                ]),
-                'caption' => $caption,
-                'parse_mode' => 'Markdown'
-            ];
-
-
-
-            Request::editMessageMedia($dataCaption);
-            return Request::editMessageReplyMarkup($dataEdit);
-*/
-           // $data['chat_id'] = $user_id;
-           // $data['text'] = $callback_data;
-            //return Request::sendMessage($data);
-        } elseif (preg_match('/(productDelete|productUpdate|productSwitch)/iu', trim($callback_data), $match)) {
+        } elseif (preg_match('/(productDelete|productUpdate)/iu', trim($callback_data), $match)) {
             parse_str($callback_data, $params);
 
             $data = [
                 'callback_query_id' => $callback_query_id,
                 'text' => 'Это демо версия!',
                 // 'show_alert' => true,
-                'cache_time' => 100,
+                'cache_time' => 5000,
             ];
 
             return Request::answerCallbackQuery($data);
@@ -497,32 +543,39 @@ class CallbackqueryCommand extends SystemCommand
 
             if (isset($params['category_id'])) {
 
-                /** @var ActiveQuery $query */
-                $query = Product::find()->published()->sort()->applyCategories($params['category_id']);
+                /** @var Product|\yii\db\ActiveQuery $query */
+                $query = Product::find()->sort()->applyCategories($params['category_id']);
+
+                if(!in_array($user_id,$this->telegram->getAdminList())){
+                    $query->published();
+                }
+
                 $pages = new KeyboardPagination([
                     'totalCount' => $query->count(),
                     // 'defaultPageSize' => 5,
-                    'pageSize' => Yii::$app->settings->get('app','pagenum_telegram'),
-                    'currentPage' => (isset($params['page'])) ? (int) $params['page'] : 1
+                    'pageSize' => Yii::$app->settings->get('app', 'pagenum_telegram'),
+                    'currentPage' => (isset($params['page'])) ? (int)$params['page'] : 1
                 ]);
 
                 if (isset($params['page'])) {
                     $pages->setPage($params['page']);
-                    $deleleMessage = Request::deleteMessage(['chat_id' => $chat_id, 'message_id' => $update->getCallbackQuery()->getMessage()->getMessageId()]);
+                    $deleleMessage = Request::deleteMessage([
+                        'chat_id' => $chat_id,
+                        'message_id' => $update->getCallbackQuery()->getMessage()->getMessageId()
+                    ]);
                 } else {
                     $pages->setPage(1);
                 }
 
-                if((int) Yii::$app->settings->get('app','pagenum_telegram') > 1){
-                    $offset= $pages->offset - (int) Yii::$app->settings->get('app','pagenum_telegram');
-                }else{
-                    $offset= $pages->offset;
+                if ((int)Yii::$app->settings->get('app', 'pagenum_telegram') > 1) {
+                    $offset = $pages->offset - (int)Yii::$app->settings->get('app', 'pagenum_telegram');
+                } else {
+                    $offset = 0;
                 }
-                $products1 = $query->offset($offset)
-                    ->limit($pages->limit);
+                $query->offset($offset)->limit($pages->limit);
 
 
-                $products = $products1->all();
+                $products = $query->all();
 
 
                 $pager = new InlineKeyboardMorePager([
@@ -544,8 +597,8 @@ class CallbackqueryCommand extends SystemCommand
 
                         $s = $this->telegram
                             ->setCommandConfig('productitem', [
-                                'photo_index'=>(isset($params['photo_index']))?$params['photo_index']:0,
-                                'product'=>$product
+                                'photo_index' => (isset($params['photo_index'])) ? $params['photo_index'] : 0,
+                                'product' => $product
                             ])
                             ->executeCommand('productitem');
 
@@ -687,6 +740,15 @@ class CallbackqueryCommand extends SystemCommand
                             $s = $this->notify("{$errorCode} {$description} " . $image, 'error');
                         }*/
                     }
+                }else{
+                    $data = [
+                        'callback_query_id' => $callback_query_id,
+                        'text' => 'Товаров нет',
+                        //'show_alert' => true,
+                        'cache_time' => 100,
+                    ];
+
+                    return Request::answerCallbackQuery($data);
                 }
 
 
