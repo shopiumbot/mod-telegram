@@ -51,7 +51,7 @@ class ProductremoveCommand extends AdminCommand
      * @var \Longman\TelegramBot\Conversation
      */
     protected $conversation;
-    public $product_id;
+    public $id;
 
     /**
      * Command execute method
@@ -61,6 +61,11 @@ class ProductremoveCommand extends AdminCommand
      */
     public function execute()
     {
+
+        if (($this->id = trim($this->getConfig('id'))) === '') {
+            $this->id = NULL;
+        }
+
         $message = $this->getMessage();
         $update = $this->getUpdate();
         if ($update->getCallbackQuery()) {
@@ -68,10 +73,10 @@ class ProductremoveCommand extends AdminCommand
             $message = $callbackQuery->getMessage();
             $chat = $message->getChat();
             $user = $callbackQuery->getFrom();
-            parse_str($callbackQuery->getData(), $params);
-            echo $this->product_id . PHP_EOL;
-            print_r($params);
-            die;
+            // parse_str($callbackQuery->getData(), $params);
+            // echo $this->id . PHP_EOL;
+            // print_r($params);
+            // die;
         } else {
             $message = $this->getMessage();
             $chat = $message->getChat();
@@ -82,11 +87,6 @@ class ProductremoveCommand extends AdminCommand
         $user_id = $user->getId();
         $text = trim($message->getText(false));
         $data['chat_id'] = $chat_id;
-        //if ($text === '') {
-        //    $text = Yii::t('telegram/command','USAGE',$this->getUsage());
-        //    $data['text']=$text;
-        //     return Request::sendMessage($data);
-        // }
 
 
         //Conversation start
@@ -100,109 +100,66 @@ class ProductremoveCommand extends AdminCommand
         if (isset($notes['state'])) {
             $state = $notes['state'];
         }
+        if ($this->id)
+            $notes['id'] = $this->id;
+
+        if (!isset($notes['callback_message_id']))
+            $notes['callback_message_id'] = $update->getCallbackQuery()->getMessage()->getMessageId();
 
 
-        $result = Request::emptyResponse();
-        $product = null;
+        $product = Product::findOne($notes['id']);
 
+        if ($text === 'Нет') {
+            $this->telegram->executeCommand('cancel');
+            return Request::emptyResponse();
+        }
 
-        //State machine
-        //Entrypoint of the machine state if given by the track
-        //Every time a step is achieved the track is updated
-        switch ($state) {
-            case 0:
-                if (!is_numeric($text)) {
+        if ($product) {
 
-                }
-            /*if ($text === '' || !in_array($text, ['Да', 'Нет'], true)) {
-                $notes['state'] = 0;
-                $notes['confirm']=false;
-                $this->conversation->update();
-
-
-                $data['reply_markup'] = (new Keyboard(['Да', 'Нет']))
-                    ->setResizeKeyboard(true)
-                    ->setOneTimeKeyboard(true)
-                    ->setSelective(true);
-
-                $data['text'] = 'Укажите ID товара';
-                if ($text !== '') {
-                    $data['text'] = 'ID товара должен быть числом:';
-                }
-
-
-                $result = Request::sendMessage($data);
-                break;
-            }
-            $notes['confirm'] = true;
-
-            $text = '';*/
-
-
-            // no break
-            case 1:
-
-                if ($notes['confirm']) {
-                    $notes['state'] = 1;
-                    if (!is_numeric($text)) {
+            $result = Request::emptyResponse();
+            $product = null;
+            switch ($state) {
+                case 0:
+                    if ($text === '' || !in_array($text, ['Да', 'Нет'], true)) {
+                        $notes['state'] = 0;
                         $this->conversation->update();
 
-                        $data['text'] = 'Укажите ID товара';
+                        $data['reply_markup'] = (new Keyboard(['Да', 'Нет']))
+                            ->setResizeKeyboard(true)
+                            ->setOneTimeKeyboard(true)
+                            ->setSelective(true);
+
+                        $data['text'] = 'Вы уверены что хотите удалить этот товар?';
                         if ($text !== '') {
-                            $data['text'] = 'ID товара должен быть числом:';
+                            $data['text'] = 'Выберите вариант!';
                         }
+
+
                         $result = Request::sendMessage($data);
                         break;
-                    } else {
-
-                        $this->conversation->update();
-                        //  echo $text;
-                        $product = Product::findOne($text);
-
+                    }
+                    $notes['state'] = 1;
+                    $this->conversation->update();
+                    $text = '';
+                // no break
+                case 1:
+                    if ($notes['state']) {
+                        $product = Product::findOne((int)$notes['id']);
                         if ($product) {
-                            $data['text'] = 'Товар найден';
-                            $data['reply_markup'] = (new Keyboard(['Отмена']))
-                                ->setResizeKeyboard(true)
-                                ->setOneTimeKeyboard(true)
-                                ->setSelective(true);
-                            $result = Request::sendMessage($data);
-                            break;
-                        } else {
-                            $data['text'] = 'Товар не найден';
-                            $result = Request::sendMessage($data);
+                            if($product->delete()){
+                                Request::deleteMessage(['chat_id' => $chat_id, 'message_id' => $notes['callback_message_id']]);
+                                $result = $this->notify('Вы успешно удалили *' . $product->name . '*.', 'success', $this->catalogKeyboards());
+                            }
 
                         }
                     }
-                }
-
-
-                $notes['product'] = $product;
-                $notes['id'] = $text;
-
-                $text = '';
-            // no break
-
-            case 2:
-                $notes['state'] = 2;
-                $this->conversation->update();
-                $content = '✅ Товар успешно удален' . PHP_EOL;
-
-                $product = new Product;
-
-                unset($notes['state']);
-                foreach ($notes as $k => $v) {
-                    $content .= PHP_EOL . '<strong>' . ucfirst($k) . '</strong>: ' . $v;
-                }
-
-
-                $data['parse_mode'] = 'HTML';
-                $data['reply_markup'] = Keyboard::remove(['selective' => true]);
-                $data['text'] = $content;
-                $this->conversation->stop();
-
-                $result = Request::sendMessage($data);
-                break;
+                    $this->conversation->stop();
+                    break;
+            }
+        } else {
+            $result = $this->notify('Товар не найден!');
         }
+
 
         return $result;
     }

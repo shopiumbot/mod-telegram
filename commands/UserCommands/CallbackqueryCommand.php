@@ -522,8 +522,17 @@ class CallbackqueryCommand extends SystemCommand
             }
 
             return Request::emptyResponse();
+        } elseif (preg_match('/(productDelete)/iu', trim($callback_data), $match)) {
+            parse_str($callback_data, $params);
 
-        } elseif (preg_match('/(productDelete|productUpdate)/iu', trim($callback_data), $match)) {
+            $s = $this->telegram
+                ->setCommandConfig('productremove', [
+                    'id' => $params['id']
+                ])
+                ->executeCommand('productremove');
+
+
+        } elseif (preg_match('/(productUpdate)/iu', trim($callback_data), $match)) {
             parse_str($callback_data, $params);
 
             $data = [

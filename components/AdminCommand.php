@@ -5,7 +5,7 @@ namespace shopium\mod\telegram\components;
 use Longman\TelegramBot\Entities\Keyboard;
 use Longman\TelegramBot\Entities\KeyboardButton;
 
-abstract class AdminCommand extends \Longman\TelegramBot\Commands\AdminCommand
+abstract class AdminCommand extends Command
 {
     /**
      * @var bool
