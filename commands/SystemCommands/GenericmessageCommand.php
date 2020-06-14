@@ -85,7 +85,7 @@ class GenericmessageCommand extends SystemCommand
         $text = trim($this->getMessage()->getText());
 
 
-        $page = Pages::find()->where(['name' => $text])->asArray()->one();
+        $page = Pages::find()->published()->where(['name' => $text])->asArray()->one();
         if ($page) {
             $data['chat_id'] = $chat_id;
             $data['text'] = $page['text'];
