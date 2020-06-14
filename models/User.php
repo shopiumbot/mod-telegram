@@ -8,7 +8,7 @@ use shopium\mod\telegram\models\query\UserQuery;
 use Longman\TelegramBot\Request;
 use Yii;
 use yii\base\Exception;
-use yii\db\ActiveRecord;
+use core\components\ActiveRecord;
 
 /**
  * This is the model class for table "actions".
@@ -62,15 +62,7 @@ class User extends ActiveRecord
         return $this->hasOne(Message::class, ['user_id' => 'id'])->orderBy(['date' => SORT_DESC]);
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function attributeLabels()
-    {
-        return [
 
-        ];
-    }
 
     public function getPhoto()
     {

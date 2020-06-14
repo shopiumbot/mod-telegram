@@ -55,9 +55,11 @@ class ContactsCommand extends UserCommand
         $user_id = $user->getId();
         $config = Yii::$app->settings->get('contacts');
         $data['chat_id'] = $chat_id;
-        $data['text']='';
-        if (!$config->latitude && !$config->longitude) {
-            $data['text'] .= '*Контактная информация*' . PHP_EOL . PHP_EOL;
+        $data['text'] = '';
+        if (!isset($config->latitude) && !isset($config->longitude)) {
+            if (!$config->latitude && !$config->longitude) {
+                $data['text'] .= '*Контактная информация*' . PHP_EOL . PHP_EOL;
+            }
         }
         $address = Yii::$app->getModule('contacts')->getAddress();
         $phones = Yii::$app->getModule('contacts')->getPhones();
@@ -67,7 +69,7 @@ class ContactsCommand extends UserCommand
         if ($address) {
             foreach ($address as $addr) {
                 if (!empty($addr)) {
-                    if ($config->latitude && $config->longitude) {
+                    if (isset($config->latitude) && isset($config->longitude)) {
                         $title = 'Контактная информация' . PHP_EOL . PHP_EOL;
                         $venue = Request::sendVenue([
                             'chat_id' => $chat_id,
@@ -75,7 +77,7 @@ class ContactsCommand extends UserCommand
                             'longitude' => $config->longitude,
                             'title' => $title,
                             'address' => '🌍 ' . $addr,
-                            'reply_markup'=>$this->homeKeyboards()
+                            'reply_markup' => $this->homeKeyboards()
                         ]);
 
                     } else {
@@ -86,30 +88,33 @@ class ContactsCommand extends UserCommand
         }
 
 
-
-
-
-            if ($phones) {
-                foreach ($phones as $phone) {
-                    $data['text'] .= '📞 *' . CMS::phone_format($phone['number']) . '* (' . $phone['name'] . ')' . PHP_EOL;
+        if ($phones) {
+            foreach ($phones as $phone) {
+                if(!empty($phone['number'])){
+                    $name='';
+                    if(!empty($phone['name'])){
+                        $name .= '(' . $phone['name'] . ')';
+                    }
+                    $data['text'] .= '📞 *' . CMS::phone_format($phone['number']) . '* ' . $name . '' . PHP_EOL;
                 }
+
             }
-            if ($emails) {
-                foreach ($emails as $email) {
-                    $data['text'] .= '✉ *' . $email . '*' . PHP_EOL;
-                }
+        }
+        if ($emails) {
+            foreach ($emails as $email) {
+                $data['text'] .= '✉ *' . $email . '*' . PHP_EOL;
             }
-            $data['parse_mode'] = 'Markdown';
+        }
+        $data['parse_mode'] = 'Markdown';
 
-            $data['reply_markup'] = $this->homeKeyboards();
-            $response = Request::sendMessage($data);
-            if ($response->isOk()) {
-                $db = DB::insertMessageRequest($response->getResult());
-            }
+        $data['reply_markup'] = $this->homeKeyboards();
+        $response = Request::sendMessage($data);
+        if ($response->isOk()) {
+            $db = DB::insertMessageRequest($response->getResult());
+        }
 
 
-
-        if (isset($config->schedule)) {
+        if (isset($config->schedule) && $config->enable_schedule) {
             $data2['chat_id'] = $chat_id;
             $data2['text'] = '🗒 *' . Yii::t('contacts/default', 'SCHEDULE') . '*' . PHP_EOL . PHP_EOL;
 

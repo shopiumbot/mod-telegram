@@ -3,6 +3,7 @@
 use panix\engine\widgets\Pjax;
 use panix\engine\grid\GridView;
 use panix\engine\Html;
+use panix\engine\CMS;
 
 /*$limit    = 10;
 $offset   = null;
@@ -22,28 +23,45 @@ Pjax::begin([
     'dataProvider' => $dataProvider
 ]);
 echo GridView::widget([
-    'layoutPath' => '@user/views/layouts/_grid_layout',
+    //'layoutPath' => '@user/views/layouts/_grid_layout',
     'tableOptions' => ['class' => 'table table-striped'],
     'dataProvider' => $dataProvider,
     'filterModel' => $searchModel,
     'columns' => [
-        'id',
         [
+            'header' => 'Фото',
+            'format' => 'raw',
+            'contentOptions'=>['class'=>'text-center','style'=>'width:50px'],
+            'value' => function ($model) {
+                $content='';
+                $content.= Html::img($model->getPhoto(),['class'=>'rounded-circle','width'=>50]).'<br/>';
+                $content .= '<span class="badge badge-secondary">ID: '.$model->id.'</span>';
+                return $content;
+            }
+        ],
+        [
+            'header'=>'Имя',
             'attribute' => 'username',
             'format' => 'raw',
             'value' => function ($model) {
-                if ($model->username)
-                    return Html::a('@' . $model->username, 'tg://@' . $model->username);
+                $isBot = ($model->is_bot) ? ' <span class="badge badge-warning">Бот</span>' : '';
+                $content='';
+                if ($model->username) {
+                    $content.= Html::a('@' . $model->username, 'tg://@' . $model->username) . '' . $isBot.'<br/>';
+                }
+                $content.= $model->first_name . ' ' . $model->last_name;
+                return $content;
             }
         ],
-        'last_name',
+        'language_code',
+
         [
-            'attribute' => 'first_name',
+            'attribute' => 'updated_at',
             'format' => 'raw',
             'value' => function ($model) {
-                return $model->first_name;
+                return CMS::date(strtotime($model->updated_at));
             }
-        ]
+        ],
     ]
 ]);
 Pjax::end();
