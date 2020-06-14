@@ -2,7 +2,13 @@
   "name": "shopium/mod-telegram",
   "description": "Telegram bot",
   "type": "yii2-extension",
-  "keywords": ["yii2","extension","module","telegram", "bot"],
+  "keywords": [
+    "yii2",
+    "extension",
+    "module",
+    "telegram",
+    "bot"
+  ],
   "license": "MIT",
   "authors": [
     {
@@ -15,7 +21,7 @@
     "php": ">=5.5.0",
     "yiisoft/yii2": ">=2.0.1",
     "longman/telegram-bot": "~0.61",
-    "bower/simplemde":"~1"
+    "bower/simplemde": "~1"
   },
   "autoload": {
     "psr-4": {
