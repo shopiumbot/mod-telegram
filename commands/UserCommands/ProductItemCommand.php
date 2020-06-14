@@ -188,7 +188,7 @@ class ProductItemCommand extends SystemCommand
         }
 
         $keyboards[] = $this->productAdminKeywords($chat_id, $product);
-
+        $image = Yii::getAlias('@uploads') . DIRECTORY_SEPARATOR . 'no-image.jpg';
         if ($images) {
             $imageData = $images[$this->photo_index];
             if ($imageData) {
@@ -196,17 +196,15 @@ class ProductItemCommand extends SystemCommand
                     list($bot_id, $file_id) = explode(':', $imageData->telegram_file_id);
                     if($file_id == $this->getTelegram()->getBotId()){
                         //todo check to bots ids
+
+
                     }
                     $image = $file_id;
                 } else {
                     $image = $imageData->getPathToOrigin();
                 }
 
-            } else {
-                $image = Yii::getAlias('@uploads') . DIRECTORY_SEPARATOR . 'no-image.jpg';
             }
-        } else {
-            $image = Yii::getAlias('@uploads') . DIRECTORY_SEPARATOR . 'no-image.jpg';
         }
 
 

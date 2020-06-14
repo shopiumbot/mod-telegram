@@ -478,54 +478,19 @@ class CallbackqueryCommand extends SystemCommand
         } elseif (preg_match('/productSwitch/iu', trim($callback_data), $match)) {
             parse_str($callback_data, $params);
 
-            $user_id = $callback_query->getFrom()->getId();
-            $message = $callback_query->getMessage();
-
-            if (isset($params['id']) && isset($params['switch'])) {
-                $product = Product::findOne((int)$params['id']);
-                if ($product) {
-                    $product->switch = $params['switch'];
-                    $product->save(false);
-
-                    $keyboards[] = [
-                        new InlineKeyboardButton([
-                            'text' => '—',
-                            //'callback_data' => "spinner/{$this->order_id}/{$this->product_id}/down/catalog"
-                            'callback_data' => "query=product_id}&type=down"
-                        ]),
-                        new InlineKeyboardButton([
-                            'text' => "❌",
-                            //'callback_data' => "cartDeleteInCatalog/{$this->order_id}/{$this->product_id}"
-                            'callback_data' => "query=deleteInCartsda"
-                        ]),
-                    ];
-                    $dataEdit['chat_id'] = $chat_id;
-                    $dataEdit['message_id'] = $message->getMessageId();
-                    $dataEdit['reply_markup'] = new InlineKeyboard([
-                        'inline_keyboard' => $keyboards
-                    ]);
-
-
-                    return Request::editMessageReplyMarkup($dataEdit);
-
-
-
-                    $data = [
-                        'callback_query_id' => $callback_query_id,
-                        'text' => ($product->switch) ? 'Вы успешно показали' : 'Вы успешно скрыли',
-                        // 'show_alert' => true,
-                        'cache_time' => 100,
-                    ];
-
-                    return Request::answerCallbackQuery($data);
-                }
-            }
-
+            $this->telegram
+                ->setCommandConfig('productswitch', [
+                    'id' => $params['id'],
+                    'switch' => $params['switch']
+                ])
+                ->executeCommand('productswitch');
             return Request::emptyResponse();
+
+
         } elseif (preg_match('/(productDelete)/iu', trim($callback_data), $match)) {
             parse_str($callback_data, $params);
 
-            $s = $this->telegram
+            return $this->telegram
                 ->setCommandConfig('productremove', [
                     'id' => $params['id']
                 ])
