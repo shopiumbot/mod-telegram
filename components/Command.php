@@ -107,7 +107,7 @@ abstract class Command extends \Longman\TelegramBot\Commands\Command
         //  new KeyboardButton(['text' => '⚙ Настройки']),
         //   new KeyboardButton(['text' => '❓ Помощь'])
         // ];
-        $pages = Pages::find()->asArray()->all();
+        $pages = Pages::find()->published()->asArray()->all();
         $pagesKeywords = [];
         foreach ($pages as $page) {
             $pagesKeywords[] = new KeyboardButton(['text' => $page['name']]);
@@ -196,7 +196,7 @@ abstract class Command extends \Longman\TelegramBot\Commands\Command
             new KeyboardButton(['text' => $textMyOrders]),
             new KeyboardButton(['text' => '❓ Помощь'])
         ];
-        $pages = Pages::find()->asArray()->all();
+        $pages = Pages::find()->published()->asArray()->all();
         $pagesKeywords = [];
         foreach ($pages as $page) {
             $pagesKeywords[] = new KeyboardButton(['text' => $page['name']]);
