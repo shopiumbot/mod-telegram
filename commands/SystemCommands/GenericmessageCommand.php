@@ -93,7 +93,7 @@ class GenericmessageCommand extends SystemCommand
             $send = Request::sendMessage($data);
            if(!$send->isOk()){
                $data['chat_id'] = $chat_id;
-               $data['text'] = $send->getResult();
+               $data['text'] = $send->getDescription();
                $data['parse_mode'] = 'Markdown';
                $send = Request::sendMessage($data);
            }

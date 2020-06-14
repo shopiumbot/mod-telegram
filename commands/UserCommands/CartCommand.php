@@ -156,7 +156,7 @@ class CartCommand extends UserCommand
                     ];
 
 
-                    $imageData = $product->originalProduct->getImage();
+                    $imageData = ($product->originalProduct) ? $product->originalProduct->getImage() : false;
 
                     $text = '*Ваша корзина*' . PHP_EOL;
                     if ($imageData) {
@@ -192,18 +192,20 @@ class CartCommand extends UserCommand
                 }
             } else {
                 if ($update->getCallbackQuery()) {
-                    $deleleMessage = Request::deleteMessage(['chat_id' => $chat_id, 'message_id' => $update->getCallbackQuery()->getMessage()->getMessageId()]);
+                    Request::deleteMessage([
+                        'chat_id' => $chat_id,
+                        'message_id' => $update->getCallbackQuery()->getMessage()->getMessageId()
+                    ]);
                 }
-
                 $data['text'] = Yii::$app->settings->get('app', 'empty_cart_text');
                 $data['reply_markup'] = $this->startKeyboards();
                 $response = $data;
+
             }
         } else {
             $data['text'] = Yii::$app->settings->get('app', 'empty_cart_text');
             $data['reply_markup'] = $this->startKeyboards();
             $response = $data;
-
         }
 
         $result = Request::sendMessage($response);
