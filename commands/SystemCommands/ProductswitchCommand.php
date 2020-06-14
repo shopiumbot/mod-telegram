@@ -118,7 +118,7 @@ class ProductswitchCommand extends SystemCommand
         }
         //$accept = ($notes['switch']) ? 'Показать' : 'Скрыть';
 
-        $question = ($this->switch) ? 'Вы уверены что хотите *скрыть* этот товар?' : 'Вы уверены что хотите *показать* этот товар?';
+        $question = (!$this->switch) ? 'Вы уверены что хотите *скрыть* этот товар?' : 'Вы уверены что хотите *показать* этот товар?';
         $result = Request::emptyResponse();
         if ($product) {
 
