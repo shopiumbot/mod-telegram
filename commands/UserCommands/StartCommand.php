@@ -87,28 +87,10 @@ class StartCommand extends SystemCommand
 
 
 
-
-        $commands = Request::getMyCommands();
-            $this->notify(json_encode($commands->getResult()));
-
         //$adsData2['chat_id']=343987970;
         //$adsData2['parse_mode']='Markdown';
         //$adsData2['text']='test message';
         //$ads2 = Request::sendMessage($adsData2);
-
-
-        /*$cmd = Request::setMyCommands([
-            'commands' => [
-                new BotCommand([
-                    'command' => 'start',
-                    'description' => 'Start command'
-                ]),
-                new BotCommand([
-                    'command' => 'help',
-                    'description' => 'Помощь'
-                ]),
-            ]
-        ]);*/
 
 
 
