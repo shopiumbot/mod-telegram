@@ -8,6 +8,7 @@ use Longman\TelegramBot\Entities\File;
 use Longman\TelegramBot\Entities\InputMedia\InputMediaPhoto;
 use Longman\TelegramBot\Entities\PhotoSize;
 use Longman\TelegramBot\Entities\Poll;
+use Longman\TelegramBot\Entities\PollAnswer;
 use Longman\TelegramBot\Entities\PollOption;
 use Longman\TelegramBot\Entities\UserProfilePhotos;
 use Longman\TelegramBot\Exception\TelegramException;
@@ -84,39 +85,11 @@ class StartCommand extends SystemCommand
             $db = DB::insertMessageRequest($ads->getResult());
         }
 
-        /*$limit = 10;
-        $offset = null;
-        $response = Request::getUserProfilePhotos(
-            [
-                'user_id' => $user_id,
-                'limit' => $limit,
-                'offset' => $offset,
-            ]
-        );
 
-        if ($response->isOk()) {
-            $user_profile_photos = $response->getResult();
 
-            if ($user_profile_photos->getTotalCount() > 0) {
-                $photos = $user_profile_photos->getPhotos();
 
-                $photo = $photos[0][2];
-                $file_id = $photo->getFileId();
-
-                //Download the photo after send message response to speedup response
-                $response2 = Request::getFile(['file_id' => $file_id]);
-                if ($response2->isOk()) {
-                    $photo_file = $response2->getResult();
-                    $s = Request::downloadFile($photo_file);
-                }
-            }
-
-            Request::sendMessage([
-                'chat_id' => $user_id,
-                'text' => json_encode($file_id)
-            ]);
-        }*/
-
+        $commands = Request::getMyCommands();
+            $this->notify(json_encode($commands->getResult()));
 
         //$adsData2['chat_id']=343987970;
         //$adsData2['parse_mode']='Markdown';
@@ -135,21 +108,35 @@ class StartCommand extends SystemCommand
                     'description' => 'Помощь'
                 ]),
             ]
+        ]);*/
+
+
+
+        /*$answer = new PollAnswer([
+            'id' => '5420566903024254986',
         ]);
-
-
         $pp = new Poll([
-            'id' => CMS::gen(11),
-            'question' => 'test?',
-            'options' => new PollOption(['text'=>'test','voter_count'=>0]),
+            'id' => '5420566903024254986',
+            'question' => 'Оцените бота',
+            'options' => new PollOption(['text'=>'test','voter_count'=>4]),
         ]);
+        $this->notify(json_encode($answer->getOptionIds()));*/
 
-        $poll = Request::sendPoll([
+        /*$dataPoll = [
             'chat_id' => $chat_id,
-            'question' => 'test?',
-            'options' => json_encode(['text','test','voter_count']),
-        ]);
-        print_r($poll);*/
+            'question' => 'Оцените бота',
+            'is_anonymous' => false,
+            'type' => 'regular', //quiz, regular
+            'allows_multiple_answers' => false,
+            'options' => json_encode(['👍 Классно','👌 Нормально','👎 Не очень'])
+        ];
+        $poll = Request::sendPoll($dataPoll);
+        if(!$poll->isOk()){
+            $this->notify($poll->getDescription());
+        }else{
+            $this->notify('ok');
+        }*/
+      //  print_r($poll);
         //$test = Request::getMyCommands();
         // print_r($test);
         $data['reply_markup'] = $this->startKeyboards();
