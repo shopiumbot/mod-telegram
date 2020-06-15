@@ -18,7 +18,12 @@ $response =  Yii::$app->telegram->getUserProfilePhotos([
 
 //\panix\engine\CMS::dump(Yii::$app->telegram->getFile(['file_id'=>$response->result->photos[0][0]->file_id]));
 
+/** @var \shopium\mod\telegram\components\Api $api */
+$api = Yii::$app->telegram->getApi();
 
+
+
+CMS::dump($api);
 Pjax::begin([
     'dataProvider' => $dataProvider
 ]);
@@ -34,7 +39,7 @@ echo GridView::widget([
             'contentOptions'=>['class'=>'text-center','style'=>'width:50px'],
             'value' => function ($model) {
                 $content='';
-                $content.= Html::img($model->getPhoto(),['class'=>'rounded-circle','width'=>50]).'<br/>';
+                $content .= Html::img($model->getPhoto(),['class'=>'rounded-circle','width'=>50]).'<br/>';
                 $content .= '<span class="badge badge-secondary">ID: '.$model->id.'</span>';
                 return $content;
             }
@@ -43,13 +48,18 @@ echo GridView::widget([
             'header'=>'Имя',
             'attribute' => 'username',
             'format' => 'raw',
-            'value' => function ($model) {
+            'value' => function ($model) use ($api) {
                 $isBot = ($model->is_bot) ? ' <span class="badge badge-warning">Бот</span>' : '';
+
+                $admin = (in_array($model->id,$api->getAdminList())) ? ' <span class="badge badge-warning">Администратор</span>' : '';
+
                 $content='';
+
                 if ($model->username) {
                     $content.= Html::a('@' . $model->username, 'tg://@' . $model->username) . '' . $isBot.'<br/>';
                 }
-                $content.= $model->first_name . ' ' . $model->last_name;
+                $content.= $model->first_name . ' ' . $model->last_name.$admin;
+
                 return $content;
             }
         ],

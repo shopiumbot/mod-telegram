@@ -5,6 +5,7 @@ namespace shopium\mod\telegram\components;
 use Longman\TelegramBot\Entities\Update;
 use Longman\TelegramBot\Exception\TelegramException;
 use Longman\TelegramBot\Request;
+use panix\engine\CMS;
 use Yii;
 
 //defined('TB_BASE_PATH') || define('TB_BASE_PATH', __DIR__);
@@ -12,17 +13,19 @@ define('TB_BASE_COMMANDS_PATH', __DIR__ . '/commands');
 
 class Api extends \Longman\TelegramBot\Telegram
 {
-    protected $version = '0.2.10';
+    protected $version = '0.2.27';
     private $config = [];
     public $defaultAdmins = [812367093];
+   // public $user;
 
     public function __construct($api_key = '')
     {
-
+       // $this->user = Yii::$app->user;
         if (empty($api_key))
             $api_key = Yii::$app->user->token;
 
         parent::__construct($api_key, 'shopiumbot');
+        Yii::info('load api');
         $this->enableAdmins();
 
         $this->setDownloadPath(Yii::getAlias('@app/web/telegram/downloads'));
@@ -76,15 +79,7 @@ class Api extends \Longman\TelegramBot\Telegram
     public function enableAdmins($admin_ids = [])
     {
 
-
-        $adminsList = [];
-        if (isset($this->config->bot_admins) && $this->config->bot_admins)
-            $adminsList = explode(',', $this->config->bot_admins);
-
-        foreach ($adminsList as $adm) {
-            $list[] = $adm;
-        }
-        $admin_ids = array_merge($admin_ids, $this->defaultAdmins);
+        $admin_ids = array_merge(Yii::$app->user->getBotAdmins(), $this->defaultAdmins);
 
         foreach ($admin_ids as $admin_id) {
             $this->enableAdmin((int)$admin_id);
