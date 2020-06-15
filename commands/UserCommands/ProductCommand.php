@@ -1,6 +1,6 @@
 <?php
 
-namespace shopium\mod\telegram\commands\AdminCommands;
+namespace shopium\mod\telegram\commands\UserCommands;
 
 
 use core\modules\shop\models\Product;

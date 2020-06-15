@@ -39,7 +39,7 @@ if($model){
                 </div>
                 <div class="chat-content">
                     <h6 class="font-medium"><?= $userName; ?></h6>
-                    <div class="box bg-light-info"><?= \shopium\mod\telegram\components\Helper::parseMarkdown($message->text,$message->entities); ?></div>
+                    <pre class="box bg-light-info"><?= \shopium\mod\telegram\components\Helper::parseMarkdown($message->text,$message->entities); ?></pre>
                     <?php
 
                     ?>

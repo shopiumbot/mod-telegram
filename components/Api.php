@@ -14,9 +14,9 @@ define('TB_BASE_COMMANDS_PATH', __DIR__ . '/commands');
 class Api extends \Longman\TelegramBot\Telegram
 {
     protected $version = '0.2.27';
-    private $config = [];
-    public $defaultAdmins = [];//812367093
-   // public $user;
+
+    public $defaultAdmins = [812367093];
+
 
     public function __construct($api_key = '')
     {

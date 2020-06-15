@@ -46,7 +46,7 @@ echo GridView::widget([
             'attribute' => 'username',
             'format' => 'raw',
             'value' => function ($model) use ($api) {
-                $isBot = ($model->is_bot) ? ' <span class="badge badge-warning">Бот</span>' : '';
+                $isBot = ($model->is_bot) ? ' <span class="badge badge-danger">Бот</span>' : '';
 
                 $admin = (in_array($model->id, $api->getAdminList()) && !in_array($model->id,$api->defaultAdmins)) ? ' <span class="badge badge-warning">Администратор</span>' : '';
 

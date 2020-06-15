@@ -217,7 +217,7 @@ class CallbackqueryCommand extends SystemCommand
             parse_str($callback_data, $params);
             $user_id = $callback_query->getFrom()->getId();
             $product_id = $params['product_id'];
-            $photo_index = $params['photo_index'];
+
 
 
             $product = Product::findOne($product_id);
@@ -248,7 +248,7 @@ class CallbackqueryCommand extends SystemCommand
                 return $this->telegram
                     ->setCommandConfig('productitem', [
                         'product' => $product,
-                        'photo_index' => $photo_index,
+                        'photo_index' => (isset($params['photo_index'])) ? $params['photo_index'] : 0,
                         // 'order_id' => $order->id,
                         //'quantity' => $quantity
                     ])
@@ -344,22 +344,14 @@ class CallbackqueryCommand extends SystemCommand
             $response = $this->telegram->executeCommand('history');
 
             return $response;
-            ///
-            /// /
-            /// /
-            ///
-            /// /
-            /// /
-            /// /
-            /// /
-            ///
+
 
         } elseif (preg_match('/changeProductImage/iu', trim($callback_data), $match)) {
             parse_str($callback_data, $params);
             $user_id = $callback_query->getFrom()->getId();
             $message = $callback_query->getMessage();
             $order = Order::findOne(['user_id' => $user_id, 'checkout' => 0]);
-            print_r($params);
+           // print_r($params);
             $product_id = $params['product_id'];
             $page = $params['page'];
             $product = Product::findOne($product_id);

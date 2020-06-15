@@ -74,19 +74,19 @@ class MessageController extends AdminController
             // Create Telegram API object
             $telegram = new Api;
 
-            if (!empty(\Yii::$app->modules['telegram']->userCommandsPath)) {
+            /*if (!empty(\Yii::$app->modules['telegram']->userCommandsPath)) {
                 if (!$commandsPath = realpath(\Yii::getAlias(\Yii::$app->modules['telegram']->userCommandsPath))) {
                     $commandsPath = realpath(\Yii::getAlias('@app') . \Yii::$app->modules['telegram']->userCommandsPath);
                 }
 
                 if (!is_dir($commandsPath)) throw new UserException('dir ' . \Yii::$app->modules['telegram']->userCommandsPath . ' not found!');
-            }
+            }*/
 
             // Set webhook
 
             $result = $telegram->setWebHook(Yii::$app->user->webhookUrl);
             if ($result->isOk()) {
-                Yii::$app->session->setFlash("success-webhook", Yii::t("user/default", 'Бот успешно подписан'));
+                Yii::$app->session->setFlash("success-webhook", Yii::t("telegram/default", 'Бот успешно подписан'));
                 return $this->redirect(['/admin']);
             }
         } catch (TelegramException $e) {
@@ -112,7 +112,7 @@ class MessageController extends AdminController
             $result = $telegram->deleteWebhook();
 
             if ($result->isOk()) {
-                Yii::$app->session->setFlash("success-webhook", Yii::t("user/default",'Бот успешно отписан'));
+                Yii::$app->session->setFlash("success-webhook", Yii::t("telegram/default",'Бот успешно отписан'));
                 return $this->redirect(['/admin']);
             }
         } catch (TelegramException $e) {
