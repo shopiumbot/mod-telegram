@@ -74,11 +74,13 @@ class User extends ActiveRecord
             foreach ($models as $model) {
                 $name = '';
 
-                if($model['first_name']){
-                    $name .= ''.$model['first_name'].' '.$model['last_name'].'';
-                }
+
                 if($model['username']){
                     $name .= '@'.$model['username'];
+                }else{
+                    if($model['first_name']){
+                        $name .= ''.$model['first_name'].' '.$model['last_name'].'';
+                    }
                 }
                 $dropdown[$model['id']] = $name;
             }
