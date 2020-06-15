@@ -5,12 +5,12 @@ use panix\engine\CMS;
  * @var \shopium\mod\telegram\components\Api $api
  * @var \shopium\mod\telegram\models\User $user
  **/
-$api = $this->context->api;
+$telegram = Yii::$app->telegram;
 //print_r($api);die;
-$botPhoto = $api->getBotPhoto();
+$botPhoto = $telegram->getPhoto();
 $userPhoto = $user->getPhoto();
 $userName = $user->username;
-$botName = $api->getBotUsername();
+$botName = $telegram->api->getBotUsername();
 ?>
 
 <ul id="chat-id-<?= Yii::$app->request->get('user_id');?>" class="chat-list chat active-chat" data-user-id="<?= Yii::$app->request->get('user_id');?>">

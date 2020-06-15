@@ -6,6 +6,8 @@ use Longman\TelegramBot\Request;
 use panix\engine\Html;
 use panix\engine\CMS;
 use yii\widgets\ActiveForm;
+
+$api = Yii::$app->telegram->getApi();
 ?>
 
 <div class="chat-application">
@@ -35,7 +37,7 @@ use yii\widgets\ActiveForm;
 
                         <?php
 
-                        $users = \shopium\mod\telegram\models\User::find()->where(['is_bot' => 0])->all();
+                        $users = \shopium\mod\telegram\models\User::find()->where(['is_bot' => 0])->orderBy(['updated_at'=>SORT_DESC])->all();
                         if ($users) {
                             foreach ($users as $user) {
 
