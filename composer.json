@@ -20,6 +20,7 @@
   "require": {
     "php": ">=5.5.0",
     "yiisoft/yii2": ">=2.0.1",
+    "panix/wgt-bootstrap-select": "dev-master",
     "longman/telegram-bot": "~0.61"
   },
   "autoload": {

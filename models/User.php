@@ -63,6 +63,29 @@ class User extends ActiveRecord
     }
 
 
+    public static function dropdown()
+    {
+        // get and cache data
+        static $dropdown;
+        if ($dropdown === null) {
+
+            // get all records from database and generate
+            $models = static::find()->where(['is_bot'=>0])->asArray()->all();
+            foreach ($models as $model) {
+                $name = '';
+
+                if($model['first_name']){
+                    $name .= ''.$model['first_name'].' '.$model['last_name'].'';
+                }
+                if($model['username']){
+                    $name .= '@'.$model['username'];
+                }
+                $dropdown[$model['id']] = $name;
+            }
+        }
+
+        return $dropdown;
+    }
 
     public function getPhoto()
     {
