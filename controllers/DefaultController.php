@@ -1,21 +1,14 @@
 <?php
 
-
 namespace shopium\mod\telegram\controllers;
 
 use Longman\TelegramBot\Request;
 use panix\engine\CMS;
-use shopium\mod\telegram\components\Api;
 use Yii;
-use Longman\TelegramBot\Exception\TelegramException;
-use Longman\TelegramBot\Telegram;
-use yii\base\UserException;
-use yii\filters\VerbFilter;
-use yii\helpers\ArrayHelper;
 use yii\web\Controller;
-use yii\web\ForbiddenHttpException;
 use yii\web\Response;
-
+use shopium\mod\telegram\components\Api;
+use Longman\TelegramBot\Exception\TelegramException;
 
 /**
  * Default controller for the `telegram` module
@@ -45,10 +38,19 @@ class DefaultController extends Controller
             'database' => Yii::$app->getModule('telegram')->getDsnAttribute('dbname'),
         ];*/
 
+
+        $login = Yii::$app->user->loginById(Yii::$app->params['client_id']);
+
         try {
 
             // Create Telegram API object
+            // $telegram = new Api();
+            /** @var Api $telegram */
+           // $telegram = Yii::$app->telegram->getApi();
             $telegram = new Api();
+
+
+          //  $telegram->enableAdmins(Yii::$app->user->token);
             $basePath = \Yii::$app->getModule('telegram')->basePath;
             $commands_paths = [
                 realpath($basePath . '/commands') . '/SystemCommands',
@@ -56,9 +58,12 @@ class DefaultController extends Controller
                 realpath($basePath . '/commands') . '/UserCommands',
             ];
 
-            $telegram->enableExternalMySql($db->pdo,$db->tablePrefix . 'telegram__');
-           // $telegram->enableMySql($mysql_credentials, $db->tablePrefix . 'telegram__');
+            $telegram->enableExternalMySql($db->pdo, $db->tablePrefix . 'telegram__');
+            // $telegram->enableMySql($mysql_credentials, $db->tablePrefix . 'telegram__');
             $telegram->addCommandsPaths($commands_paths);
+
+
+
 
             // Handle telegram webhook request
             $telegram->handle();

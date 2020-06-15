@@ -15,7 +15,7 @@ class Api extends \Longman\TelegramBot\Telegram
 {
     protected $version = '0.2.27';
     private $config = [];
-    public $defaultAdmins = [812367093];
+    public $defaultAdmins = [];//812367093
    // public $user;
 
     public function __construct($api_key = '')

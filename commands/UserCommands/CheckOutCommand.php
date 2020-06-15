@@ -361,8 +361,9 @@ class CheckOutCommand extends SystemCommand
 
                     //$test = $order->sendAdminEmail();
                     $titleOwner = '*✅ Новый заказ '.CMS::idToNumber($order->id).'*' . PHP_EOL . PHP_EOL;
-                    $this->telegram->getAdminList();
-                    foreach ($this->telegram->getAdminList() as $admin){
+                    $admins = $this->telegram->getAdminList();
+                    $this->notify(json_encode($admins));
+                    foreach ($admins as $admin){
                         $data2['chat_id'] = $admin;
                         $data2['parse_mode'] = 'Markdown';
                         $data2['text'] = $titleOwner.$content;
