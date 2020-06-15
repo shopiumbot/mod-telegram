@@ -1,19 +1,17 @@
 <?php
 
-namespace shopium\mod\telegram\commands\UserCommands;
+namespace shopium\mod\telegram\commands\AdminCommands;
 
 
-use Longman\TelegramBot\Entities\InlineKeyboard;
-use Longman\TelegramBot\Entities\InlineKeyboardButton;
-use Longman\TelegramBot\Request;
 use core\modules\shop\models\Product;
+use Longman\TelegramBot\Entities\ServerResponse;
+use Longman\TelegramBot\Exception\TelegramException;
+use Longman\TelegramBot\Request;
 use shopium\mod\telegram\components\UserCommand;
-use Yii;
+
 
 /**
- * User "/product" command
- *
- * Display an inline keyboard with a few buttons.
+ * Admin "/product" command
  */
 class ProductCommand extends UserCommand
 {
@@ -25,7 +23,7 @@ class ProductCommand extends UserCommand
     /**
      * @var string
      */
-    protected $description = 'get product';
+    protected $description = 'Информации о товаре';
 
     /**
      * @var string
@@ -35,77 +33,62 @@ class ProductCommand extends UserCommand
     /**
      * @var string
      */
-    protected $version = '1.0';
-    public $enabled=false;
+    protected $version = '1.0.0';
+    protected $show_in_help = false;
+    /**
+     * @var bool
+     */
+    protected $need_mysql = true;
+
     /**
      * Command execute method
      *
-     * @return \Longman\TelegramBot\Entities\ServerResponse
-     * @throws \Longman\TelegramBot\Exception\TelegramException
+     * @return ServerResponse
+     * @throws TelegramException
      */
     public function execute()
     {
         $message = $this->getMessage();
 
-        $chat = $message->getChat();
-        $user = $message->getFrom();
+        $chat_id = $message->getChat()->getId();
+        $command = $message->getCommand();
         $text = trim($message->getText(true));
-        $chat_id = $chat->getId();
-        $user_id = $user->getId();
-
-       // $telegram = new \Longman\TelegramBot\Telegram('835652742:AAEBdMpPg9TgakFa2o8eduRSkynAZxipg-c', 'pixelion');
-
-        $preg = preg_match('/^\/product\s+([0-9]+)/iu', trim($message->getText()), $match);
-        if ($preg) {
-            if (isset($match[1])) {
 
 
+        $data = ['chat_id' => $chat_id];
 
 
+        if ($command !== 'product') {
+            $text = substr($command, 7);
 
-                $product = Product::find()->published()->where(['id' => $match[1]])->one();
-                if($product) {
-                    $sendPhoto = Yii::$app->telegram->sendPhoto([
-                        'photo' => $product->getImage()->getPathToOrigin(),
-                        'chat_id' => $chat_id,
-                        'parse_mode' => 'HTML',
-                        'caption' => '<strong>'.$product->name.'</strong>',
-                        //'reply_markup' => $inline_keyboard,
-                    ]);
-
-                    $keyboards[] = [new InlineKeyboardButton(['text' => '👉 '.$product->price . ' UAH. Купить 👈', 'callback_data' => 'callbackqueryproduct'])];
-                    $keyboards[] = [new InlineKeyboardButton(['text' => 'Характеристики', 'callback_data' => 'product_attributes'])];
-
-                    if ($this->telegram->isAdmin($chat_id)) {
-                        $keyboards[] = [new InlineKeyboardButton(['text' => '✏ 📝  ⚙ Редактировать', 'callback_data' => 'get']),new InlineKeyboardButton(['text' => '❌ Удалить', 'callback_data' => 'get'])];
-                        $keyboards[] = [new InlineKeyboardButton(['text' => '❓ 👤  👥 🛍 ✅ 🟢 🔴Удалить', 'callback_data' => 'get'])];
-                    }
-
-
-                    $data = [
-                        'chat_id' => $chat_id,
-                        'text' => '⬇ Каталог продукции',
-                        'reply_markup' => new InlineKeyboard([
-                            'inline_keyboard' => $keyboards
-                        ]),
-                    ];
-
-
-                }else{
-                    $data = [
-                        'chat_id' => $chat_id,
-                        'parse_mode' => 'HTML',
-                        'text' => '🚫 '. Yii::t('shop/default','NOT_FOUND_PRODUCT').' ⚠',
-                        // 'reply_markup' => $inline_keyboard,
-                    ];
-                }
-                return Request::sendMessage($data);
-            }
         }
 
 
+        if ($text === '') {
+            $text = 'Укажите ID для поиска товара: /product <id>';
 
 
-        // return Yii::$app->telegram->sendMessage($data);
+        } else {
+            if (is_numeric($text)) {
+                $product = Product::findOne($text);
+                if ($product) {
+                    return $this->telegram
+                        ->setCommandConfig('productitem', [
+                            'product' => $product,
+                            'photo_index' => 0
+                        ])
+                        ->executeCommand('productitem');
+                } else {
+                    $text = 'Товар не найден';
+                }
+            } else {
+                $text = 'ID должен быть числом';
+            }
+
+        }
+
+        $data['text'] = $text;
+
+        return Request::sendMessage($data);
     }
 }

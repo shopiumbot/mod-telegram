@@ -7,11 +7,13 @@ use Longman\TelegramBot\DB;
 use Longman\TelegramBot\Entities\InlineKeyboard;
 use Longman\TelegramBot\Entities\InlineKeyboardButton;
 use Longman\TelegramBot\Request;
+use panix\engine\CMS;
 use shopium\mod\telegram\components\InlineKeyboardPager;
 use shopium\mod\telegram\components\KeyboardPagination;
 use shopium\mod\telegram\components\UserCommand;
 use shopium\mod\cart\models\Order;
 use Yii;
+use yii\helpers\Url;
 
 /**
  * User "/history" command
@@ -115,11 +117,17 @@ class HistoryCommand extends UserCommand
                         ])];
                 }
                 foreach ($order->products as $product) {
-                    $text .= '*' . $product->name . '* `' . $product->quantity . 'шт. / ' . $product->price . ' грн. `' . PHP_EOL;
+                   // $text .= '[' . $product->name . ']('.Url::to($product->originalProduct->getImage()->getUrlToOrigin(),true).') *(' . $product->quantity . ' шт.)*: ' . Yii::$app->currency->number_format($product->price) . ' грн. ' . PHP_EOL;
+                    $text .= '*' . $product->name . ' (' . $product->quantity . ' шт.)*: ' . Yii::$app->currency->number_format($product->price) . ' грн. ' . PHP_EOL;
                 }
-                $text .= PHP_EOL . PHP_EOL . 'Доставка: *' . $order->deliveryMethod->name . '*' . PHP_EOL;
-                $text .= 'Оплата: *' . $order->paymentMethod->name . '*' . PHP_EOL;
-                $text .= 'Общая стоимость заказа: *' . $order->total_price . ' грн.*' . PHP_EOL;
+
+                $text .= PHP_EOL.'Дата заказа: *' . CMS::date($order->created_at) . '*' . PHP_EOL;
+                $text .= 'Статус: *' . $order->status->name . '*' . PHP_EOL;
+
+
+                $text .= PHP_EOL . PHP_EOL . '🚚 Доставка: *' . $order->deliveryMethod->name . '*' . PHP_EOL;
+                $text .= '💰 Оплата: *' . $order->paymentMethod->name . '*' . PHP_EOL;
+                $text .= 'Общая стоимость заказа: *' . Yii::$app->currency->number_format($order->total_price) . ' грн.*' . PHP_EOL;
 
             }
             $data['text'] = $text;

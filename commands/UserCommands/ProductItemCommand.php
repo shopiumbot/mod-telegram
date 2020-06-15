@@ -2,9 +2,7 @@
 
 namespace shopium\mod\telegram\commands\UserCommands;
 
-
 use core\modules\shop\models\Attribute;
-use Longman\TelegramBot\DB;
 use shopium\mod\telegram\components\InlineKeyboardPager;
 use shopium\mod\telegram\components\KeyboardPagination;
 use shopium\mod\telegram\components\SystemCommand;
@@ -17,11 +15,7 @@ use shopium\mod\cart\models\OrderProduct;
 use panix\engine\Html;
 use Yii;
 
-/**
- * User "/checkout" command TTTTTTTTTTTTTTTTTTTTTEST command
- *
- * Command that demonstrated the Conversation funtionality in form of a simple survey.
- */
+
 class ProductItemCommand extends SystemCommand
 {
     /**
