@@ -13,21 +13,22 @@ $userName = $user->username;
 $botName = $telegram->api->getBotUsername();
 ?>
 
-<ul id="chat-id-<?= Yii::$app->request->get('user_id');?>" class="chat-list chat active-chat" data-user-id="<?= Yii::$app->request->get('user_id');?>">
+<ul id="chat-id-<?= Yii::$app->request->get('user_id'); ?>" class="chat-list chat active-chat"
+    data-user-id="<?= Yii::$app->request->get('user_id'); ?>">
     <!--chat Row -->
 
     <?php
-if($model){
+    if ($model) {
 
         foreach ($model as $message) {
             /** @var \shopium\mod\telegram\models\Message $message */
             // CMS::dump($message);die;
             $odd = ($message->user_id == $message->chat_id) ? 'odd' : '';
             $imageClass = ($message->user_id == $message->chat_id) ? 'float-right' : '';
-            if($message->user_id == $message->chat_id){
+            if ($message->user_id == $message->chat_id) {
                 $photo = $userPhoto;
                 $userName = $userName;
-            }else{
+            } else {
                 $userName = $botName;
                 $photo = $botPhoto;
             }
@@ -39,7 +40,7 @@ if($model){
                 </div>
                 <div class="chat-content">
                     <h6 class="font-medium"><?= $userName; ?></h6>
-                    <pre class="box bg-light-info"><?= \shopium\mod\telegram\components\Helper::parseMarkdown($message->text,$message->entities); ?></pre>
+                    <pre class="box bg-light-info"><?= \shopium\mod\telegram\components\Helper::parseMarkdown($message->text, $message->entities); ?></pre>
                     <?php
 
                     ?>
@@ -55,18 +56,19 @@ if($model){
                     }
                     ?>
                     <?php if ($message->callback) {
-                        foreach ($message->callback as $callback){
-                        ?>
-                        <div>
-                            <div class="box bg-light-info"><?= $callback->data ?></div>
-                        </div>
-                    <?php }
+                        foreach ($message->callback as $callback) {
+                            ?>
+                            <div>
+                                <div class="box bg-light-info"><?= $callback->data ?></div>
+                            </div>
+                        <?php }
                     }
                     ?>
                 </div>
-                <div class="chat-time"><?= date('H:i',strtotime($message->date));?></div>
+                <div class="chat-time"><?= date('H:i', strtotime($message->date)); ?></div>
             </li>
 
 
-        <?php } }  ?>
+        <?php }
+    } ?>
 </ul>

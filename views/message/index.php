@@ -11,13 +11,9 @@ $api = Yii::$app->telegram->getApi();
 ?>
 
 <div class="chat-application">
-    <!-- ============================================================== -->
-    <!-- Left Part  -->
-    <!-- ============================================================== -->
+
     <div class="left-part bg-white fixed-left-part user-chat-box">
-        <!-- Mobile toggle button -->
-        <a class="ti-menu ti-close btn btn-success show-left-part d-block d-md-none" href="javascript:void(0)"></a>
-        <!-- Mobile toggle button -->
+        <a class="icon-menu icon-close btn btn-success show-left-part d-block d-md-none" href="javascript:void(0)"></a>
         <div class="p-3">
             <h4>Chat Sidebar</h4>
         </div>
@@ -37,7 +33,7 @@ $api = Yii::$app->telegram->getApi();
 
                         <?php
 
-                        $users = \shopium\mod\telegram\models\User::find()->where(['is_bot' => 0])->orderBy(['updated_at'=>SORT_DESC])->all();
+                        $users = \shopium\mod\telegram\models\User::find()->where(['is_bot' => 0])->orderBy(['updated_at' => SORT_DESC])->all();
                         if ($users) {
                             foreach ($users as $user) {
 
@@ -65,12 +61,7 @@ $api = Yii::$app->telegram->getApi();
             </ul>
         </div>
     </div>
-    <!-- ============================================================== -->
-    <!-- End Left Part  -->
-    <!-- ============================================================== -->
-    <!-- ============================================================== -->
-    <!-- Right Part  Mail Compose -->
-    <!-- ============================================================== -->
+
     <div class="right-part chat-container">
         <div class="p-3 chat-box-inner-part">
             <div class="chat-not-selected">
@@ -81,44 +72,43 @@ $api = Yii::$app->telegram->getApi();
             </div>
             <div class="card chatting-box mb-0">
                 <div class="card-body">
+
                     <div class="chat-meta-user pb-3 border-bottom">
                         <div class="current-chat-user-name">
                                         <span>
-                                            <img src="/uploads/no-image.jpg"
-                                                 alt="dynamic-image" class="rounded-circle" width="45">
+                                            <img src="/uploads/no-image.jpg" alt="dynamic-image" class="rounded-circle"
+                                                 width="45">
                                             <span class="name font-medium ml-2"></span>
                                         </span>
                         </div>
                     </div>
                     <!-- <h4 class="card-title">Chat Messages</h4> -->
-                    <div class="chat-box scrollable" style="height:calc(100vh - 300px);">
+                    <div class="chat-box scrollable" style="height:calc(100vh - 350px);">
 
 
                     </div>
                 </div>
                 <?php
                 $form = ActiveForm::begin();
-
+                echo Html::activeHiddenInput($sendForm, 'user_id');
                 ?>
                 <div class="card-body border-top border-bottom chat-send-message-footer">
                     <div class="row">
                         <div class="col-12">
                             <div class="input-field mt-0 mb-0">
-                                <?php echo $form->field($sendForm, 'user_id')->hiddenInput()->label(false); ?>
-                                <?php echo Html::activeLabel($sendForm,'text');?>
+
+                                <?php echo Html::activeLabel($sendForm, 'text'); ?>
                                 <div class="input-group">
-                                    <?php echo Html::activeTextInput($sendForm,'text',['class'=>'message-type-box form-control']);?>
-                                    <?php echo Html::error($sendForm,'text');?>
+                                    <?php echo Html::activeTextInput($sendForm, 'text', ['class' => 'message-type-box form-control']); ?>
+                                    <?php echo Html::error($sendForm, 'text'); ?>
                                     <div class="input-group-append">
-                                        <?= Html::submitButton(Yii::t('app/default','SEND'),['class'=>'btn btn-success']); ?>
+                                        <?= Html::submitButton(Yii::t('app/default', 'SEND'), ['class' => 'btn btn-success']); ?>
                                     </div>
                                 </div>
 
 
-
-
                             </div>
-<small class="text-muted">сообщение будет отправлено от имени Бота.</small>
+                            <small class="text-muted">сообщение будет отправлено от имени Бота.</small>
 
                         </div>
                     </div>
