@@ -4,14 +4,9 @@
 namespace shopium\mod\telegram\components;
 
 use Longman\TelegramBot\Entities\InlineKeyboardButton;
-use Longman\TelegramBot\Entities\KeyboardButton;
-use panix\engine\CMS;
-use Yii;
 use yii\base\Component;
 use yii\base\InvalidConfigException;
 use yii\data\Pagination;
-use yii\helpers\ArrayHelper;
-use yii\helpers\Html;
 
 
 class InlineKeyboardPager extends Component

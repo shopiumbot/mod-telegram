@@ -24,6 +24,7 @@ class m000004_000000_telegram_message extends Migration
             'forward_date' => $this->timestamp()->null()->defaultValue(NULL)->comment('date the original message was sent in timestamp format'),
             'reply_to_chat' => $this->bigInteger()->null()->defaultValue(NULL)->comment('Unique chat identifier'),
             'reply_to_message' => $this->bigInteger()->unsigned()->defaultValue(NULL)->comment('Message that this message is reply to'),
+            'via_bot' => $this->bigInteger()->unsigned()->defaultValue(NULL)->comment('Optional. Bot through which the message was sent'),
             'edit_date' => $this->bigInteger()->unsigned()->defaultValue(NULL)->comment('Date the message was last edited in Unix time'),
             'media_group_id' => $this->text()->comment('The unique identifier of a media message group this message belongs to'),
             'author_signature' => $this->text()->comment('Signature of the post author for messages in channels'),
@@ -74,6 +75,7 @@ class m000004_000000_telegram_message extends Migration
         $this->createIndex('left_chat_member', '{{%telegram__message}}', 'left_chat_member');
         $this->createIndex('migrate_from_chat_id', '{{%telegram__message}}', 'migrate_from_chat_id');
         $this->createIndex('migrate_to_chat_id', '{{%telegram__message}}', 'migrate_to_chat_id');
+        $this->createIndex('via_bot', '{{%telegram__message}}', 'via_bot');
 
 
         $this->addForeignKey(
@@ -84,6 +86,13 @@ class m000004_000000_telegram_message extends Migration
             'id'
         );
 
+        $this->addForeignKey(
+            'fk_via_bot',
+            '{{%telegram__message}}',
+            'via_bot',
+            '{{%telegram__user}}',
+            'id'
+        );
 
         $this->addForeignKey(
             'fk_chat_id',
@@ -92,7 +101,7 @@ class m000004_000000_telegram_message extends Migration
             '{{%telegram__chat}}',
             'id'
         );
-
+/*
         $this->addForeignKey(
             'fk_forward_from',
             '{{%telegram__message}}',
@@ -100,7 +109,7 @@ class m000004_000000_telegram_message extends Migration
             '{{%telegram__user}}',
             'id'
         );
-
+*/
 
         $this->addForeignKey(
             'fk_forward_from_chat',

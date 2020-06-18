@@ -31,39 +31,21 @@ class DefaultController extends Controller
 
         Yii::$app->response->format = Response::FORMAT_JSON;
         $db = Yii::$app->db;
-        /*$mysql_credentials = [
-            'host' => Yii::$app->getModule('telegram')->getDsnAttribute('host'),
-            'user' => $db->username,
-            'password' => $db->password,
-            'database' => Yii::$app->getModule('telegram')->getDsnAttribute('dbname'),
-        ];*/
-
-
         $login = Yii::$app->user->loginById(Yii::$app->params['client_id']);
-
         try {
 
             // Create Telegram API object
-            // $telegram = new Api();
-            /** @var Api $telegram */
-           // $telegram = Yii::$app->telegram->getApi();
             $telegram = new Api();
 
-
-          //  $telegram->enableAdmins(Yii::$app->user->token);
             $basePath = \Yii::$app->getModule('telegram')->basePath;
             $commands_paths = [
-                realpath($basePath . '/commands') . '/SystemCommands',
-                realpath($basePath . '/commands') . '/AdminCommands',
-                realpath($basePath . '/commands') . '/UserCommands',
+                realpath($basePath . '/components/Commands') . '/SystemCommands',
+                realpath($basePath . '/components/Commands') . '/AdminCommands',
+                realpath($basePath . '/components/Commands') . '/UserCommands',
             ];
 
             $telegram->enableExternalMySql($db->pdo, $db->tablePrefix . 'telegram__');
-            // $telegram->enableMySql($mysql_credentials, $db->tablePrefix . 'telegram__');
             $telegram->addCommandsPaths($commands_paths);
-
-
-
 
             // Handle telegram webhook request
             $telegram->handle();

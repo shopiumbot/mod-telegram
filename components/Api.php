@@ -2,14 +2,12 @@
 
 namespace shopium\mod\telegram\components;
 
-use Longman\TelegramBot\Entities\Update;
 use Longman\TelegramBot\Exception\TelegramException;
 use Longman\TelegramBot\Request;
-use panix\engine\CMS;
 use Yii;
 
 //defined('TB_BASE_PATH') || define('TB_BASE_PATH', __DIR__);
-define('TB_BASE_COMMANDS_PATH', __DIR__ . '/commands');
+//define('TB_BASE_COMMANDS_PATH', __DIR__ . '/commands');
 
 class Api extends \Longman\TelegramBot\Telegram
 {
@@ -33,46 +31,79 @@ class Api extends \Longman\TelegramBot\Telegram
 
     }
 
-
-    public function handle()
-    {
-        if (empty($this->bot_username)) {
-            throw new TelegramException('Bot Username is not defined!');
-        }
-
-        $this->input = Request::getInput();
-
-        if (empty($this->input)) {
-            throw new TelegramException('Input is empty!');
-        }
-
-        $post = json_decode($this->input, true);
-        if (empty($post)) {
-            throw new TelegramException('Invalid JSON!');
-        }
-
-        if ($response = $this->processUpdate(new Update($post, $this->bot_username))) {
-            return $response->isOk();
-        }
-
-        return false;
-    }
-
-    public function getCommandObject($command)
+    /**
+     * @inheritdoc
+     */
+    public function getCommandObject($command, $filepath = null)
     {
         $which = ['System'];
         $this->isAdmin() && $which[] = 'Admin';
         $which[] = 'User';
 
         foreach ($which as $auth) {
-            $command_namespace = 'shopium\\mod\\telegram\\commands\\' . $auth . 'Commands\\' . $this->ucfirstUnicode($command) . 'Command';
 
-            if (class_exists($command_namespace)) {
-                return new $command_namespace($this, $this->update);
+            if ($filepath) {
+                $command_namespace = $this->getFileNamespace($filepath);
+            } else {
+                $command_namespace = __NAMESPACE__ . '\\Commands\\' . $auth . 'Commands';
+            }
+          //  $command_namespace = 'shopium\\mod\\telegram\\commands\\' . $auth . 'Commands';
+            $command_class = $command_namespace . '\\' . $this->ucfirstUnicode($command) . 'Command';
+
+            if (class_exists($command_class)) {
+                $command_obj = new $command_class($this, $this->update);
+
+                switch ($auth) {
+                    case 'System':
+                        if ($command_obj instanceof SystemCommand) {
+                            return $command_obj;
+                        }
+                        break;
+
+                    case 'Admin':
+                        if ($command_obj instanceof AdminCommand) {
+                            return $command_obj;
+                        }
+                        break;
+
+                    case 'User':
+                        if ($command_obj instanceof UserCommand) {
+                            return $command_obj;
+                        }
+                        break;
+                }
             }
         }
 
         return null;
+    }
+
+
+    public function executeCommand($command)
+    {
+
+        $command = mb_strtolower($command);
+        //if (isset($this->commands_objects[$command])) {
+        //    $command_obj = $this->commands_objects[$command];
+        //} else {
+            $command_obj = $this->getCommandObject($command);
+        //}
+
+        if (!$command_obj || !$command_obj->isEnabled()) {
+            //Failsafe in case the Generic command can't be found
+            if ($command === self::GENERIC_COMMAND) {
+                throw new TelegramException('Generic command missing!');
+            }
+
+            //Handle a generic command or non existing one
+            $this->last_command_response = $this->executeCommand(self::GENERIC_COMMAND);
+        } else {
+            //execute() method is executed after preExecute()
+            //This is to prevent executing a DB query without a valid connection
+            $this->last_command_response = $command_obj->preExecute();
+        }
+
+        return $this->last_command_response;
     }
 
 

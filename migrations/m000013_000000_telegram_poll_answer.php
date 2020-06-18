@@ -27,6 +27,7 @@ class m000013_000000_telegram_poll_answer extends Migration
             '{{%telegram__poll}}',
             'id'
         );
+
     }
 
     public function safeDown()
