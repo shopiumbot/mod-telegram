@@ -207,25 +207,4 @@ class CartCommand extends UserCommand
         return $result;
     }
 
-    public function keywords()
-    {
-        $keyboards[] = [
-            new InlineKeyboardButton(['text' => '—', 'callback_data' => 'get']),
-            new InlineKeyboardButton(['text' => '2 шт.', 'callback_data' => 'get']),
-            new InlineKeyboardButton(['text' => '+', 'callback_data' => 'get'])
-        ];
-        $keyboards[] = [
-            new InlineKeyboardButton(['text' => '⬅', 'callback_data' => 'get']),
-            new InlineKeyboardButton(['text' => '2 / 6', 'callback_data' => 'get']),
-            new InlineKeyboardButton(['text' => '➡', 'callback_data' => 'get'])
-        ];
-        $keyboards[] = [
-            new InlineKeyboardButton(['text' => '✅ Заказ на 130 грн. Оформить', 'callback_data' => 'get']),
-        ];
-        $keyboards[] = [
-            new InlineKeyboardButton(['text' => '❌', 'callback_data' => 'get']),
-        ];
-        return $keyboards;
-    }
-
 }
