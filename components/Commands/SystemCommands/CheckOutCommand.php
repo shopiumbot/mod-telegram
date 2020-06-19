@@ -566,7 +566,7 @@ class CheckOutCommand extends SystemCommand
                         if ($warehouse) {
                             $content .= '*' . $warehouse->DescriptionRu . '*' . PHP_EOL;
                         } else {
-                            $content .= 'Отделение: *' . $order->warehouse . ' ' . $order->warehouse_id . '*' . PHP_EOL;
+                            $content .= 'Отделение: *' . $order->warehouse . '*' . PHP_EOL;
                         }
                     }
                     $content .= PHP_EOL . '💰 Оплата: *' . $notes['payment'] . '*';
