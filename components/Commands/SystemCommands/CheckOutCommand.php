@@ -246,6 +246,7 @@ class CheckOutCommand extends SystemCommand
                     delivery_novaposhta:
                     if ($text === '⬅ Назад') {
                         $text = '';
+                        unset($notes['delivery'],$notes['delivery_id']);
                         goto delivery;
                     }
                     //Новая почта
@@ -258,13 +259,13 @@ class CheckOutCommand extends SystemCommand
                             //->where(['Area'=>'71508136-9b87-11de-822f-000c2965ae0e'])
                             ->orderBy(['DescriptionRu' => SORT_ASC])
                             ->asArray()
-                           // ->limit(60)
+                            // ->limit(60)
                             ->all();
-                       // $this->notify(json_encode($model));
+                        // $this->notify(json_encode($model));
                         foreach ($model as $city) {
-                            $cityList[$city['Ref']] = ((!empty($city['DescriptionRu']))?$city['DescriptionRu']:$city['Description']);
+                            $cityList[$city['Ref']] = ((!empty($city['DescriptionRu'])) ? $city['DescriptionRu'] : $city['Description']);
                             //$cityList[$city['Ref']] = $city['Ref'];
-                            $keyboards[] = new KeyboardButton(((!empty($city['DescriptionRu']))?$city['DescriptionRu']:$city['Description']));
+                            $keyboards[] = new KeyboardButton(((!empty($city['DescriptionRu'])) ? $city['DescriptionRu'] : $city['Description']));
                         }
                         $keyboards = array_chunk($keyboards, 2);
                         $keyboards[] = [
@@ -302,43 +303,40 @@ class CheckOutCommand extends SystemCommand
                     delivery_novaposhta_city:
                     if ($text === '⬅ Назад') {
                         $text = '';
+                        unset($notes['delivery_area'],$notes['delivery_area_id']);
                         goto delivery_novaposhta;
                     }
 
                     //if (isset($notes['delivery_city_id'])) {
-                        //Новая почта  warehouses
-                        $keyboards = [];
-                        $citiesList = [];
+                    //Новая почта  warehouses
+                    $keyboards = [];
+                    $citiesList = [];
 
 
+                    /* $model = NovaPoshtaWarehouses::find()
+                         ->where(['CityRef'=>$area['Ref']])
+                         ->orderBy(['DescriptionRu' => SORT_ASC])
+                         ->asArray()
+                         ->limit(50)
+                         ->all();*/
+
+                    if (isset($notes['delivery_area_id'])) {
+                        $model = NovaPoshtaCities::find()
+                            ->where(['Area' => $notes['delivery_area_id'], 'IsBranch' => 1])
+                            ->asArray()
+                            ->orderBy(['DescriptionRu' => SORT_DESC])
+                            ->limit(80)
+                            ->all();
 
 
-
-                       /* $model = NovaPoshtaWarehouses::find()
-                            ->where(['CityRef'=>$area['Ref']])
+                        /*$model = NovaPoshtaWarehouses::find()
+                            ->where(['CityRef'=>$model2['Area']])
                             ->orderBy(['DescriptionRu' => SORT_ASC])
                             ->asArray()
-                            ->limit(50)
+                            ->limit(80)
                             ->all();*/
 
-
-                    $model = NovaPoshtaCities::find()
-                        ->where(['Area'=>$notes['delivery_area_id'],'IsBranch'=>1])
-                        ->asArray()
-                        ->orderBy(['DescriptionRu'=>SORT_DESC])
-                        ->limit(80)
-                        ->all();
-
-
-
-                    /*$model = NovaPoshtaWarehouses::find()
-                        ->where(['CityRef'=>$model2['Area']])
-                        ->orderBy(['DescriptionRu' => SORT_ASC])
-                        ->asArray()
-                        ->limit(80)
-                        ->all();*/
-
-                     //   $this->notify(count($model));
+                        //   $this->notify(count($model));
 
                         foreach ($model as $warehouses) {
                             $citiesList[$warehouses['Ref']] = $warehouses['DescriptionRu'];
@@ -373,12 +371,13 @@ class CheckOutCommand extends SystemCommand
 
                         $notes['delivery_city'] = $text;
                         $notes['delivery_city_id'] = array_search($text, $citiesList);
-                    //}
+                    }
                 // no break
                 case '2.3':
                     delivery_novaposhta_warehouses:
                     if ($text === '⬅ Назад') {
                         $text = '';
+                        unset($notes['delivery_city'],$notes['delivery_city_id']);
                         goto delivery_novaposhta_city;
                     }
 
@@ -388,59 +387,58 @@ class CheckOutCommand extends SystemCommand
                     $warehousesList = [];
 
 
+                    if (isset($notes['delivery_city_id'])) {
+                        $model = NovaPoshtaWarehouses::find()
+                            ->where(['CityRef' => $notes['delivery_city_id'], 'POSTerminal' => 1])
+                            ->orderBy(['Number' => SORT_ASC])
+                            ->asArray()
+                            // ->limit(80)
+                            ->all();
 
 
+                        // $this->notify(count($model).' - '.$notes['delivery_city_id']);
 
-                     $model = NovaPoshtaWarehouses::find()
-                         ->where(['CityRef'=>$notes['delivery_city_id'],'POSTerminal'=>1])
-                         ->orderBy(['Number' => SORT_ASC])
-                         ->asArray()
-                        // ->limit(80)
-                         ->all();
-
-
-                   // $this->notify(count($model).' - '.$notes['delivery_city_id']);
-
-                    foreach ($model as $warehouses) {
-                        $warehousesList[$warehouses['Ref']] = '№'.$warehouses['Number'];
-                        $keyboards[] = new KeyboardButton('№'.$warehouses['Number']);
-                    }
-
-                    $keyboards = array_chunk($keyboards, 4);
-                    $keyboards[] = [
-                        new KeyboardButton('⬅ Назад'),
-                        new KeyboardButton('❌ Отмена')
-                    ];
-
-
-                    $buttons = (new Keyboard(['keyboard' => $keyboards]))
-                        ->setResizeKeyboard(true)
-                        ->setOneTimeKeyboard(true)
-                        ->setSelective(true);
-
-                    if ($text === '' || !in_array($text, $warehousesList, true)) {
-                        $notes['state'] = '2.3';
-                        $this->conversation->update();
-
-                        $data['reply_markup'] = $buttons;
-                        $data['text'] = 'Выберите номер отделения доставки:';
-                        if ($text !== '') {
-                            $data['text'] = 'Выберите номер отделения доставки, на клавиатуре:';
+                        foreach ($model as $warehouses) {
+                            $warehousesList[$warehouses['Ref']] = '№' . $warehouses['Number'];
+                            $keyboards[] = new KeyboardButton('№' . $warehouses['Number']);
                         }
 
-                        $result = Request::sendMessage($data);
-                        break;
-                    }
+                        $keyboards = array_chunk($keyboards, 4);
+                        $keyboards[] = [
+                            new KeyboardButton('⬅ Назад'),
+                            new KeyboardButton('❌ Отмена')
+                        ];
 
-                    $notes['delivery_warehouse'] = $text;
-                    $notes['delivery_warehouse_id'] = array_search($text, $warehousesList);
-                //}
+
+                        $buttons = (new Keyboard(['keyboard' => $keyboards]))
+                            ->setResizeKeyboard(true)
+                            ->setOneTimeKeyboard(true)
+                            ->setSelective(true);
+
+                        if ($text === '' || !in_array($text, $warehousesList, true)) {
+                            $notes['state'] = '2.3';
+                            $this->conversation->update();
+
+                            $data['reply_markup'] = $buttons;
+                            $data['text'] = 'Выберите номер отделения доставки:';
+                            if ($text !== '') {
+                                $data['text'] = 'Выберите номер отделения доставки, на клавиатуре:';
+                            }
+
+                            $result = Request::sendMessage($data);
+                            break;
+                        }
+
+                        $notes['delivery_warehouse'] = $text;
+                        $notes['delivery_warehouse_id'] = array_search($text, $warehousesList);
+                    }
                 // no break
 
                 case 3:
                     payment:
                     if ($text === '⬅ Назад') {
                         $text = '';
+                        unset($notes['delivery'],$notes['delivery_id'],$notes['delivery_area'],$notes['delivery_area_id'],$notes['delivery_city'],$notes['delivery_city_id'],$notes['delivery_warehouse'],$notes['delivery_warehouse_id']);
                         goto delivery;
                     }
                     $payments = Payment::find()->all();
@@ -531,31 +529,31 @@ class CheckOutCommand extends SystemCommand
                     //foreach ($notes as $k => $v) {
                     //    $content .= PHP_EOL . '*' . ucfirst($k) . '*: ' . $v;
                     //}
-                    if(isset($notes['delivery_city']))
+                    if (isset($notes['delivery_city']))
                         $order->city = $notes['delivery_city'];
 
-                    if(isset($notes['delivery_city_id']))
+                    if (isset($notes['delivery_city_id']))
                         $order->city_id = $notes['delivery_city_id'];
 
 
-                    if(isset($notes['delivery_area']))
+                    if (isset($notes['delivery_area']))
                         $order->area = $notes['delivery_area'];
 
-                    if(isset($notes['delivery_area_id']))
+                    if (isset($notes['delivery_area_id']))
                         $order->area_id = $notes['delivery_area_id'];
 
 
-                    if(isset($notes['delivery_warehouse']))
+                    if (isset($notes['delivery_warehouse']))
                         $order->warehouse = $notes['delivery_warehouse'];
 
-                    if(isset($notes['delivery_warehouse_id']))
+                    if (isset($notes['delivery_warehouse_id']))
                         $order->warehouse_id = $notes['delivery_warehouse_id'];
 
 
                     $content .= PHP_EOL . '*Имя*: ' . $notes['name'];
                     $content .= PHP_EOL . '*Телефон*: ' . $notes['phone_number'] . PHP_EOL;
 
-                    $content .= PHP_EOL . '🚚 Доставка: *' . $notes['delivery'].'*' . PHP_EOL;
+                    $content .= PHP_EOL . '🚚 Доставка: *' . $notes['delivery'] . '*' . PHP_EOL;
                     if ($order->area_id && $order->area) {
                         $content .= 'обл. *' . $order->area . '*, ';
                     }
@@ -567,11 +565,11 @@ class CheckOutCommand extends SystemCommand
                         $warehouse = NovaPoshtaWarehouses::findOne(['Ref' => trim($order->warehouse_id)]);
                         if ($warehouse) {
                             $content .= '*' . $warehouse->DescriptionRu . '*' . PHP_EOL;
-                        }else{
-                            $content .= 'Отделение: *' . $order->warehouse . ' '.$order->warehouse_id.'*' . PHP_EOL;
+                        } else {
+                            $content .= 'Отделение: *' . $order->warehouse . ' ' . $order->warehouse_id . '*' . PHP_EOL;
                         }
                     }
-                    $content .= PHP_EOL . '💰 Оплата: *' . $notes['payment'].'*';
+                    $content .= PHP_EOL . '💰 Оплата: *' . $notes['payment'] . '*';
 
                     $content .= PHP_EOL . PHP_EOL . 'Сумма заказа: *' . $this->number_format($order->total_price) . '* грн.';
 
@@ -580,8 +578,6 @@ class CheckOutCommand extends SystemCommand
                     $order->delivery_id = $notes['delivery_id'];
                     $order->payment_id = $notes['payment_id'];
                     $order->user_phone = $notes['phone_number'];
-
-
 
 
                     $order->status_id = 1;
