@@ -8,6 +8,7 @@ use Longman\TelegramBot\Entities\InlineKeyboard;
 use Longman\TelegramBot\Entities\InlineKeyboardButton;
 use Longman\TelegramBot\Request;
 use panix\engine\CMS;
+use shopium\mod\cart\models\NovaPoshtaWarehouses;
 use shopium\mod\telegram\components\InlineKeyboardPager;
 use shopium\mod\telegram\components\KeyboardPagination;
 use shopium\mod\telegram\components\UserCommand;
@@ -74,7 +75,10 @@ class HistoryCommand extends UserCommand
             $this->page = $this->getConfig('page');
         }
 
-        $query = Order::find()->where(['user_id' => $user_id, 'checkout' => 1]);
+        $query = Order::find()
+            ->where(['user_id' => $user_id, 'checkout' => 1])
+            ->orderBy(['id' => SORT_DESC]);
+
         $pages = new KeyboardPagination([
             'totalCount' => $query->count(),
             'defaultPageSize' => 1,
@@ -117,16 +121,31 @@ class HistoryCommand extends UserCommand
                         ])];
                 }
                 foreach ($order->products as $product) {
-                   // $text .= '[' . $product->name . ']('.Url::to($product->originalProduct->getImage()->getUrlToOrigin(),true).') *(' . $product->quantity . ' шт.)*: ' . Yii::$app->currency->number_format($product->price) . ' грн. ' . PHP_EOL;
+                    // $text .= '[' . $product->name . ']('.Url::to($product->originalProduct->getImage()->getUrlToOrigin(),true).') *(' . $product->quantity . ' шт.)*: ' . Yii::$app->currency->number_format($product->price) . ' грн. ' . PHP_EOL;
                     $text .= '*' . $product->name . ' (' . $product->quantity . ' шт.)*: ' . Yii::$app->currency->number_format($product->price) . ' грн. ' . PHP_EOL;
                 }
 
-                $text .= PHP_EOL.'Дата заказа: *' . CMS::date($order->created_at) . '*' . PHP_EOL;
+                $text .= PHP_EOL . 'Дата заказа: *' . CMS::date($order->created_at) . '*' . PHP_EOL;
                 $text .= 'Статус: *' . $order->status->name . '*' . PHP_EOL;
 
 
                 $text .= PHP_EOL . PHP_EOL . '🚚 Доставка: *' . $order->deliveryMethod->name . '*' . PHP_EOL;
-                $text .= '💰 Оплата: *' . $order->paymentMethod->name . '*' . PHP_EOL;
+                if ($order->area_id && $order->area) {
+                    $text .= 'обл. *' . $order->area . '*, ';
+                }
+                if ($order->city_id && $order->city) {
+                    $text .= 'г. *' . $order->city . '*' . PHP_EOL;
+                }
+
+                if ($order->warehouse_id && $order->warehouse) {
+                    $warehouse = NovaPoshtaWarehouses::findOne(['Ref' => trim($order->warehouse_id)]);
+                    if ($warehouse) {
+                        $text .= '*' . $warehouse->DescriptionRu . '*' . PHP_EOL;
+                    }else{
+                        $text .= 'Отделение: *' . $order->warehouse . ' '.$order->warehouse_id.'*' . PHP_EOL;
+                    }
+                }
+                $text .= PHP_EOL. '💰 Оплата: *' . $order->paymentMethod->name . '*' . PHP_EOL;
                 $text .= 'Общая стоимость заказа: *' . Yii::$app->currency->number_format($order->total_price) . ' грн.*' . PHP_EOL;
 
             }
@@ -143,8 +162,8 @@ class HistoryCommand extends UserCommand
 
                 $data['message_id'] = $message->getMessageId();
                 $response = Request::editMessageText($data);
-                if(!$response->isOk()){
-                    return $this->notify($data['message_id'].' editMessageText: '.$response->getDescription(),'error');
+                if (!$response->isOk()) {
+                    return $this->notify($data['message_id'] . ' editMessageText: ' . $response->getDescription(), 'error');
                 }
                 return $response;
 

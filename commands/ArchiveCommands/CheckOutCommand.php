@@ -12,9 +12,6 @@ use Longman\TelegramBot\Entities\PhotoSize;
 use Longman\TelegramBot\Request;
 use panix\engine\CMS;
 use shopium\mod\cart\models\Delivery;
-use shopium\mod\cart\models\NovaPoshtaArea;
-use shopium\mod\cart\models\NovaPoshtaCities;
-use shopium\mod\cart\models\NovaPoshtaWarehouses;
 use shopium\mod\cart\models\Payment;
 use shopium\mod\telegram\components\SystemCommand;
 use shopium\mod\cart\models\Order;
@@ -25,27 +22,27 @@ use Yii;
  *
  * Command that demonstrated the Conversation funtionality in form of a simple survey.
  */
-class CheckOutTestCommand extends SystemCommand
+class CheckOutCommand extends SystemCommand
 {
     /**
      * @var string
      */
-    protected $name = 'checkouttest';
+    protected $name = 'checkout';
 
     /**
      * @var string
      */
-    protected $description = 'checkouttest';
+    protected $description = 'checkout';
 
     /**
      * @var string
      */
-    protected $usage = '/checkouttest';
+    protected $usage = '/checkout';
 
     /**
      * @var string
      */
-    protected $version = '1.1.1';
+    protected $version = '1.1.0';
 
     /**
      * @var bool
@@ -105,7 +102,14 @@ class CheckOutTestCommand extends SystemCommand
         $text = trim($message->getText(true));
 
 
+        /*if (!$order || !$order->getProducts()->count()) {
+            $data['text'] = Yii::$app->settings->get('telegram', 'empty_cart_text');
+            $data['reply_markup'] = $this->startKeyboards();
+             return Request::sendMessage($data);
+        }*/
+
         //Preparing Response
+
         if ($text === '❌ Отмена') {
             $this->telegram->executeCommand('cancel');
             return Request::emptyResponse();
@@ -185,7 +189,7 @@ class CheckOutTestCommand extends SystemCommand
                         $notes['state'] = 1;
                         $this->conversation->update();
 
-                        $data['reply_markup'] = (new Keyboard(['👤 ' . $user->getFirstName() . ' ' . $user->getLastName(), '❌ Отмена']))
+                        $data['reply_markup'] = (new Keyboard(['👤 '.$user->getFirstName() . ' ' . $user->getLastName(), '❌ Отмена']))
                             ->setResizeKeyboard(true)
                             ->setOneTimeKeyboard(true)
                             ->setSelective(true);
@@ -238,195 +242,10 @@ class CheckOutTestCommand extends SystemCommand
                         $result = Request::sendMessage($data);
                         break;
                     }
+
                     $notes['delivery'] = $text;
                     $notes['delivery_id'] = array_search($text, $deliveryList);
-
-
-                case '2.1':
-                    delivery_novaposhta:
-                    if ($text === '⬅ Назад') {
-                        $text = '';
-                        goto delivery;
-                    }
-                    //Новая почта
-                    $deliverytest = Delivery::findOne((int)$notes['delivery_id']);
-
-                    if ($deliverytest->system) {
-                        $keyboards = [];
-                        $cityList = [];
-                        $model = NovaPoshtaArea::find()
-                            //->where(['Area'=>'71508136-9b87-11de-822f-000c2965ae0e'])
-                            ->orderBy(['DescriptionRu' => SORT_ASC])
-                            ->asArray()
-                           // ->limit(60)
-                            ->all();
-                       // $this->notify(json_encode($model));
-                        foreach ($model as $city) {
-                            $cityList[$city['Ref']] = ((!empty($city['DescriptionRu']))?$city['DescriptionRu']:$city['Description']);
-                            //$cityList[$city['Ref']] = $city['Ref'];
-                            $keyboards[] = new KeyboardButton(((!empty($city['DescriptionRu']))?$city['DescriptionRu']:$city['Description']));
-                        }
-                        $keyboards = array_chunk($keyboards, 2);
-                        $keyboards[] = [
-                            new KeyboardButton('⬅ Назад'),
-                            new KeyboardButton('❌ Отмена')
-                        ];
-
-
-                        $buttons = (new Keyboard(['keyboard' => $keyboards]))
-                            ->setResizeKeyboard(true)
-                            ->setOneTimeKeyboard(true)
-                            ->setSelective(true);
-
-
-                        if ($text === '' || !in_array($text, $cityList, true)) {
-                            $notes['state'] = '2.1';
-                            $this->conversation->update();
-
-                            $data['reply_markup'] = $buttons;
-                            $data['text'] = 'Выберите город доставки:';
-                            if ($text !== '') {
-                                $data['text'] = 'Выберите город доставки, на клавиатуре:';
-                            }
-
-                            $result = Request::sendMessage($data);
-                            break;
-                        }
-
-                        $notes['delivery_area'] = $text;
-                        $notes['delivery_area_id'] = array_search($text, $cityList);
-                    }
-
-
-                case '2.2':
-                    delivery_novaposhta_address:
-                    if ($text === '⬅ Назад') {
-                        $text = '';
-                        goto delivery_novaposhta;
-                    }
-
-                    //if (isset($notes['delivery_city_id'])) {
-                        //Новая почта  warehouses
-                        $keyboards = [];
-                        $warehousesList = [];
-
-
-
-
-
-                       /* $model = NovaPoshtaWarehouses::find()
-                            ->where(['CityRef'=>$area['Ref']])
-                            ->orderBy(['DescriptionRu' => SORT_ASC])
-                            ->asArray()
-                            ->limit(50)
-                            ->all();*/
-
-
-                    $model = NovaPoshtaCities::find()
-                        ->where(['Area'=>$notes['delivery_area_id']])
-                        ->asArray()
-                        ->limit(50)
-                        ->all();
-
-                        $this->notify(count($model));
-
-                        foreach ($model as $warehouses) {
-                            $warehousesList[$warehouses['Ref']] = $warehouses['DescriptionRu'];
-                            $keyboards[] = new KeyboardButton($warehouses['DescriptionRu']);
-                        }
-
-                        $keyboards = array_chunk($keyboards, 2);
-                        $keyboards[] = [
-                            new KeyboardButton('⬅ Назад'),
-                            new KeyboardButton('❌ Отмена')
-                        ];
-
-
-                        $buttons = (new Keyboard(['keyboard' => $keyboards]))
-                            ->setResizeKeyboard(true)
-                            ->setOneTimeKeyboard(true)
-                            ->setSelective(true);
-
-                        if ($text === '' || !in_array($text, $warehousesList, true)) {
-                            $notes['state'] = '2.2';
-                            $this->conversation->update();
-
-                            $data['reply_markup'] = $buttons;
-                            $data['text'] = 'Выберите отделение доставки:';
-                            if ($text !== '') {
-                                $data['text'] = 'Выберите отделение доставки, на клавиатуре:';
-                            }
-
-                            $result = Request::sendMessage($data);
-                            break;
-                        }
-
-                        $notes['delivery_city'] = $text;
-                        $notes['delivery_city_id'] = array_search($text, $warehousesList);
-                    //}
                 // no break
-                case '2.3':
-                    delivery_novaposhta_warehouses:
-                    if ($text === '⬅ Назад') {
-                        $text = '';
-                        goto delivery_novaposhta;
-                    }
-
-                    //if (isset($notes['delivery_city_id'])) {
-                    //Новая почта  warehouses
-                    $keyboards = [];
-                    $warehousesList = [];
-
-
-
-
-
-                     $model = NovaPoshtaWarehouses::find()
-                         ->where(['CityRef'=>$notes['delivery_city_id']])
-                         ->orderBy(['DescriptionRu' => SORT_ASC])
-                         ->asArray()
-                         ->limit(50)
-                         ->all();
-
-
-                    $this->notify(count($model));
-
-                    foreach ($model as $warehouses) {
-                        $warehousesList[$warehouses['Ref']] = $warehouses['DescriptionRu'];
-                        $keyboards[] = new KeyboardButton($warehouses['DescriptionRu']);
-                    }
-
-                    $keyboards = array_chunk($keyboards, 2);
-                    $keyboards[] = [
-                        new KeyboardButton('⬅ Назад'),
-                        new KeyboardButton('❌ Отмена')
-                    ];
-
-
-                    $buttons = (new Keyboard(['keyboard' => $keyboards]))
-                        ->setResizeKeyboard(true)
-                        ->setOneTimeKeyboard(true)
-                        ->setSelective(true);
-
-                    if ($text === '' || !in_array($text, $warehousesList, true)) {
-                        $notes['state'] = '2.3';
-                        $this->conversation->update();
-
-                        $data['reply_markup'] = $buttons;
-                        $data['text'] = 'Выберите отделение доставки:';
-                        if ($text !== '') {
-                            $data['text'] = 'Выберите отделение доставки, на клавиатуре:';
-                        }
-
-                        $result = Request::sendMessage($data);
-                        break;
-                    }
-
-                    $notes['delivery_address'] = $text;
-                    $notes['delivery_address_id'] = array_search($text, $warehousesList);
-                //}
-                // no break
-
                 case 3:
                     payment:
                     if ($text === '⬅ Назад') {
@@ -541,19 +360,21 @@ class CheckOutTestCommand extends SystemCommand
 
 
                     //$test = $order->sendAdminEmail();
-                    $titleOwner = '*✅ Новый заказ ' . CMS::idToNumber($order->id) . '*' . PHP_EOL . PHP_EOL;
+                    $titleOwner = '*✅ Новый заказ '.CMS::idToNumber($order->id).'*' . PHP_EOL . PHP_EOL;
                     $admins = $this->telegram->getAdminList();
-                    foreach ($admins as $admin) {
+                    foreach ($admins as $admin){
                         $data2['chat_id'] = $admin;
                         $data2['parse_mode'] = 'Markdown';
-                        $data2['text'] = $titleOwner . $content;
+                        $data2['text'] = $titleOwner.$content;
                         $result2 = Request::sendMessage($data2);
                     }
 
 
+
+
                     $data['parse_mode'] = 'Markdown';
                     $data['reply_markup'] = $this->homeKeyboards();
-                    $data['text'] = $titleClient . $content;
+                    $data['text'] = $titleClient.$content;
                     $result = Request::sendMessage($data);
 
 
