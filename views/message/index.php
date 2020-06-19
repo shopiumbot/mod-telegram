@@ -47,11 +47,13 @@ $api = Yii::$app->telegram->getApi();
                                                  class="rounded-circle">
                                             <span class="profile-status online pull-right"></span>
                                         </span>
-                                    <div class="mail-contnet">
+                                    <div class="mail-content">
                                         <h5 class="message-title"
-                                            data-username="Pavan kumar"><?= $user->first_name; ?></h5>
+                                            data-username="<?= $user->first_name; ?>"><?= $user->first_name; ?></h5>
+                                        <?php if($user->lastMessage){ ?>
                                         <span class="mail-desc"><?= $user->lastMessage->text; ?></span> <span
                                                 class="time"><?= $user->lastMessage->date; ?></span>
+                                    <?php } ?>
                                     </div>
                                 </a>
                             <?php }

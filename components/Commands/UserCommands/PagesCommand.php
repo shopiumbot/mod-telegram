@@ -35,9 +35,8 @@ class PagesCommand extends UserCommand
      * @var string
      */
     protected $version = '1.0';
- //   public $enabled=false;
-
-    // public $enabled = false;
+    protected $show_in_help = false;
+    protected $enabled=false;
 
     /**
      * Command execute method
@@ -56,9 +55,8 @@ class PagesCommand extends UserCommand
         $user_id = $user->getId();
 
 
-
         $data['chat_id'] = $chat_id;
-      //  $data['text'] = json_encode($names);
+        //  $data['text'] = json_encode($names);
 
 
         return Request::sendMessage($data);

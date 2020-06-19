@@ -12,12 +12,6 @@ class m000999_000000_telegram_update extends Migration
     public function safeUp()
     {
 
-
-        /**
-
-
-        ALTER TABLE `telegram_update` ADD FOREIGN KEY (`poll_answer_poll_id`) REFERENCES `poll_answer` (`poll_id`);
-         */
         $this->createTable('{{%telegram__telegram_update}}', [
             'id' => $this->bigPrimaryKey()->unsigned()->comment('Update\'s unique identifier'),
             'chat_id' => $this->bigInteger()->null()->defaultValue(NULL)->comment('Unique chat identifier'),
