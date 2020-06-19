@@ -17,10 +17,10 @@ class HelpCommand extends UserCommand
      * {@inheritdoc}
      */
     protected $name = 'help';
-    protected $description = 'Show bot commands help';
+    protected $description = 'Показать команды бота';
     protected $usage = '/help or /help <command>';
     protected $version = '1.0';
-
+    protected $show_in_help = false;
 
 
     /**
