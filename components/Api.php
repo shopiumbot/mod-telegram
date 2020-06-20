@@ -91,12 +91,12 @@ class Api extends \Longman\TelegramBot\Telegram
 
         if (!$command_obj || !$command_obj->isEnabled()) {
             //Failsafe in case the Generic command can't be found
-            if ($command === self::GENERIC_COMMAND) {
+            if ($command === static::GENERIC_COMMAND) {
                 throw new TelegramException('Generic command missing!');
             }
 
             //Handle a generic command or non existing one
-            $this->last_command_response = $this->executeCommand(self::GENERIC_COMMAND);
+            $this->last_command_response = $this->executeCommand(static::GENERIC_COMMAND);
         } else {
             //execute() method is executed after preExecute()
             //This is to prevent executing a DB query without a valid connection
