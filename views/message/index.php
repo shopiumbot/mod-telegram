@@ -36,7 +36,7 @@ $api = Yii::$app->telegram->getApi();
                         $users = \shopium\mod\telegram\models\User::find()->where(['is_bot' => 0])->orderBy(['updated_at' => SORT_DESC])->all();
                         if ($users) {
                             foreach ($users as $user) {
-
+                                $userName = ($user->username) ? '@'.$user->username : $user->first_name . ' ' . $user->last_name;
                                 //$member = Request::getChatMember(['chat_id'=>'812367093','user_id'=>'812367093']);
                                 ?>
                                 <a href="javascript:void(0)" class="chat-user message-item" id='chat_user_1'
@@ -49,7 +49,7 @@ $api = Yii::$app->telegram->getApi();
                                         </span>
                                     <div class="mail-content">
                                         <h5 class="message-title"
-                                            data-username="<?= $user->first_name; ?>"><?= $user->first_name; ?></h5>
+                                            data-username="<?= $userName; ?>"><?= $userName; ?></h5>
                                         <?php if($user->lastMessage){ ?>
                                         <span class="mail-desc"><?= $user->lastMessage->text; ?></span> <span
                                                 class="time"><?= $user->lastMessage->date; ?></span>

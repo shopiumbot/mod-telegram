@@ -1,5 +1,6 @@
 <?php
 use panix\engine\CMS;
+use panix\engine\Html;
 
 /**
  * @var \shopium\mod\telegram\components\Api $api
@@ -10,12 +11,19 @@ $telegram = Yii::$app->telegram;
 $botPhoto = $telegram->getPhoto();
 $userPhoto = $user->getPhoto();
 $userName = $user->username;
-$botName = $telegram->api->getBotUsername();
+
+
+$me = \Longman\TelegramBot\Request::getMe();
+if ($me->isOk()) {
+    $botName = $me->getResult()->username;
+} else {
+    $botName = $telegram->api->getBotUsername();
+}
+
 ?>
 
 <ul id="chat-id-<?= Yii::$app->request->get('user_id'); ?>" class="chat-list chat active-chat"
     data-user-id="<?= Yii::$app->request->get('user_id'); ?>">
-    <!--chat Row -->
 
     <?php
     if ($model) {
@@ -27,9 +35,10 @@ $botName = $telegram->api->getBotUsername();
             $imageClass = ($message->user_id == $message->chat_id) ? 'float-right' : '';
             if ($message->user_id == $message->chat_id) {
                 $photo = $userPhoto;
-                $userName = $userName;
+                $userName = ($user->username) ? '@'.$user->username : $user->first_name . ' ' . $user->last_name;
+
             } else {
-                $userName = $botName;
+                $userName = '@'.$botName;
                 $photo = $botPhoto;
             }
 
