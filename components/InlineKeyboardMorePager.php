@@ -128,9 +128,9 @@ class InlineKeyboardMorePager extends Component
             $callback = time();
             $label='Finish';
         }
-echo $callback.PHP_EOL;
+
         // return Html::tag($linkWrapTag, Html::a($label, $this->pagination->createUrl($page), $linkOptions), $options);
-        return new InlineKeyboardButton(['text' => $label, 'callback_data' => $callback]);
+        return new InlineKeyboardButton(['text' => $callback, 'callback_data' => $callback]);
     }
 
     /**
@@ -150,7 +150,7 @@ echo $callback.PHP_EOL;
         return [$beginPage, $endPage];
     }
 
-    public $callback_data = 'command={command}&page={page}';
+    public $callback_data = 'query={command}&page={page}';
     public $command = 'command';
 
     protected function generateCallbackData(int $page): string

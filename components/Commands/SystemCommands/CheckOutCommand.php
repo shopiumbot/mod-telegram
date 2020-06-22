@@ -508,7 +508,7 @@ class CheckOutCommand extends SystemCommand
                         break;
                     }
 
-                    $notes['phone_number'] = $message->getContact()->getPhoneNumber();
+                    $notes['phone_number'] = '+'.$message->getContact()->getPhoneNumber();
 
                 // no break
                 case 5:

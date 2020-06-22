@@ -69,7 +69,10 @@ class CallbackqueryCommand extends SystemCommand
                 'id' => (int)$params['id']
             ])->executeCommand('catalog');
 
-
+        } elseif (preg_match('/getBrandsList/iu', trim($callback_data), $match)) { //preg_match('/^getCatalog\s+([0-9]+)/iu', trim($callback_data), $match)
+            return $this->telegram->executeCommand('brands');
+        } elseif (preg_match('/getNewList/iu', trim($callback_data), $match)) { //preg_match('/^getCatalog\s+([0-9]+)/iu', trim($callback_data), $match)
+            return $this->telegram->executeCommand('new');
         } elseif (preg_match('/^cartDelete\/([0-9]+)/iu', trim($callback_data), $match)) {
             $user_id = $callback_query->getFrom()->getId();
 
@@ -303,7 +306,6 @@ class CallbackqueryCommand extends SystemCommand
 
         } elseif (preg_match('/getCart/', trim($callback_data), $match)) { //preg_match('/^getCart\/([0-9]+)/iu', trim($callback_data), $match)
 
-
             $params = InlineKeyboardPager::getParametersFromCallbackData($callback_data);
 
             if (isset($params['page'])) {
@@ -324,7 +326,6 @@ class CallbackqueryCommand extends SystemCommand
             $config['page'] = (isset($params['page'])) ? $params['page'] : 1;
             if (isset($params['string'])) {
 
-
                 return $this->telegram
                     ->setCommandConfig('searchresult', $config)
                     ->executeCommand('searchresult');
@@ -333,7 +334,6 @@ class CallbackqueryCommand extends SystemCommand
             return Request::emptyResponse();
 
         } elseif (preg_match('/getHistory/', trim($callback_data), $match)) {
-
 
             $params = InlineKeyboardPager::getParametersFromCallbackData($callback_data);
 
@@ -346,7 +346,6 @@ class CallbackqueryCommand extends SystemCommand
 
             return $response;
 
-
         } elseif (preg_match('/changeProductImage/iu', trim($callback_data), $match)) {
             parse_str($callback_data, $params);
             $user_id = $callback_query->getFrom()->getId();
@@ -358,115 +357,11 @@ class CallbackqueryCommand extends SystemCommand
             $product = Product::findOne($product_id);
 
 
-            $this->telegram
-                ->setCommandConfig('productitem', [
-                    'photo_index' => $page,
-                    'product' => $product
-                ])
+            $this->telegram->setCommandConfig('productitem', [
+                'photo_index' => $page,
+                'product' => $product
+            ])
                 ->executeCommand('productitem');
-
-            /* if ($order) {
-                 $orderProduct = OrderProduct::findOne(['product_id' => $product->id, 'order_id' => $order->id]);
-             } else {
-                 $orderProduct = null;
-             }
-             if ($orderProduct) {
-                 $keyboards[] = [
-                     new InlineKeyboardButton([
-                         'text' => '—',
-                         // 'callback_data' => "spinner/{$order->id}/{$product->id}/down/catalog"
-                         'callback_data' => "query=productSpinner&order_id={$order->id}&product_id={$product->id}&type=down"
-                     ]),
-                     new InlineKeyboardButton([
-                         'text' => '' . $orderProduct->quantity . ' шт.',
-                         'callback_data' => time()
-                     ]),
-                     new InlineKeyboardButton([
-                         'text' => '+',
-                         // 'callback_data' => "spinner/{$order->id}/{$product->id}/up/catalog",
-                         'callback_data' => "query=productSpinner&order_id={$order->id}&product_id={$product->id}&type=up"
-                     ]),
-                     new InlineKeyboardButton([
-                         'text' => '❌',
-                         'callback_data' => "query=deleteInCart&id={$orderProduct->id}"
-                     ]),
-                 ];
-                 //   $keyboards[] = $this->telegram->executeCommand('cartproductquantity')->getKeywords();
-             } else {
-
-
-                 $keyboards[] = [
-                     new InlineKeyboardButton([
-                         'text' => Yii::t('telegram/command', 'BUTTON_BUY', $this->number_format($product->getFrontPrice())),
-                         // 'callback_data' => "addCart/{$product->id}"
-                         'callback_data' => "query=addCart&product_id={$product->id}"
-                     ])
-                 ];
-             }
-
-             $dataEdit['chat_id'] = $chat_id;
-             $dataEdit['message_id'] = $message->getMessageId();
-             $dataEdit['reply_markup'] = new InlineKeyboard([
-                 'inline_keyboard' => $keyboards
-             ]);
-
-
-
-
-
-
-             $caption = '';
-             if ($product->hasDiscount) {
-                 $caption .= '🔥🔥🔥';
-             }
-
-             $caption .= '*' . $product->name . '*' . PHP_EOL;
-             $caption .= $this->number_format($product->price) . ' грн' . PHP_EOL . PHP_EOL;
-
-             if ($product->hasDiscount) {
-                 $caption .= '*🎁 Скидка*: ' . $product->discountSum . PHP_EOL . PHP_EOL;
-             }
-
-             if ($product->manufacturer_id) {
-                 $caption .= '*Производитель*: ' . $product->manufacturer->name . PHP_EOL;
-             }
-             if ($product->sku) {
-                 $caption .= '*Артикул*: ' . $product->sku . PHP_EOL;
-             }
-
-
-             $attributes = $this->attributes($product);
-             if ($attributes) {
-                 $caption .= '*Характеристики:*' . PHP_EOL;
-                 foreach ($attributes as $name => $data) {
-                     if (!empty($data['value'])) {
-                         $caption .= '*' . $name . '*: ' . $data['value'] . ' ' . $data['abbreviation'] . PHP_EOL;
-                     }
-                 }
-             }
-             if ($product->description) {
-                 $caption .= PHP_EOL . Html::encode($product->description) . PHP_EOL . PHP_EOL;
-             }
-
-
-             $dataCaption = [
-                 'chat_id' => $user_id,
-                 'message_id' => $message->getMessageId(),
-                 'media' => new InputMediaPhoto([
-                     'media' => 'https://images.pexels.com/photos/2236713/pexels-photo-2236713.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940'
-                 ]),
-                 'caption' => $caption,
-                 'parse_mode' => 'Markdown'
-             ];
-
-
-
-             Request::editMessageMedia($dataCaption);
-             return Request::editMessageReplyMarkup($dataEdit);
- */
-            // $data['chat_id'] = $user_id;
-            // $data['text'] = $callback_data;
-            //return Request::sendMessage($data);
 
         } elseif (preg_match('/productSwitch/iu', trim($callback_data), $match)) {
             parse_str($callback_data, $params);
@@ -501,17 +396,130 @@ class CallbackqueryCommand extends SystemCommand
             ];
 
             return Request::answerCallbackQuery($data);
-        } elseif (preg_match('/getCatalogList/iu', trim($callback_data), $match)) { //preg_match('/^getCatalogList\/([0-9]+)/iu', trim($callback_data), $match)
+
+        } elseif (preg_match('/getList/iu', trim($callback_data), $match)) {
+            $user_id = $callback_query->getFrom()->getId();
+            $order = Order::findOne(['user_id' => $user_id, 'checkout' => 0]);
+            $config = Yii::$app->settings->get('app');
+            parse_str($callback_data, $params);
+
+
+            /** @var Product|\yii\db\ActiveQuery $query */
+            if ($params['model'] == 'brands') {
+                if (isset($params['id'])) {
+                    $pagerCommand = 'getList&model=brands&id=' . $params['id'];
+                    $query = Product::find()->sort()->applyManufacturers($params['id']);
+                }
+            } elseif ($params['model'] == 'catalog') {
+                if (isset($params['id'])) {
+                    $pagerCommand = 'getList&model=catalog&id=' . $params['id'];
+                    $query = Product::find()->sort()->applyCategories($params['id']);
+                }
+            } elseif ($params['model'] == 'new') {
+                $pagerCommand = 'getList&model=new';
+                $query = Product::find()->sort();
+                if (isset($config->label_expire_new)) {
+                    $query->int2between(time(), time() - (86400 * $config->label_expire_new));
+                } else {
+                    $query->int2between(-1, -1);
+                }
+            }
+
+
+            if (!in_array($user_id, $this->telegram->getAdminList())) {
+                $query->published();
+            }
+
+            $pages = new KeyboardPagination([
+                'totalCount' => $query->count(),
+                // 'defaultPageSize' => 5,
+                'pageSize' => Yii::$app->settings->get('app', 'pagenum_telegram'),
+                'currentPage' => (isset($params['page'])) ? (int)$params['page'] : 1
+            ]);
+
+            if (isset($params['page'])) {
+                $pages->setPage($params['page']);
+                $deleleMessage = Request::deleteMessage([
+                    'chat_id' => $chat_id,
+                    'message_id' => $update->getCallbackQuery()->getMessage()->getMessageId()
+                ]);
+            } else {
+                $pages->setPage(1);
+            }
+
+            if ((int)Yii::$app->settings->get('app', 'pagenum_telegram') > 1) {
+                $offset = $pages->offset - (int)Yii::$app->settings->get('app', 'pagenum_telegram');
+            } else {
+                $offset = 0;
+            }
+            $query->offset($offset)->limit($pages->limit);
+
+            $products = $query->all();
+
+            $pager = new InlineKeyboardMorePager([
+                'pagination' => $pages,
+                'lastPageLabel' => false,
+                'firstPageLabel' => false,
+                'prevPageLabel' => false,
+                'maxButtonCount' => 1,
+                'internal' => false,
+                'command' => $pagerCommand,
+                'nextPageLabel' => '🔄 загрузить еще...'
+            ]);
+
+
+            if ($products) {
+                foreach ($products as $index => $product) {
+                    $s = $this->telegram->setCommandConfig('productitem', [
+                        'photo_index' => (isset($params['photo_index'])) ? $params['photo_index'] : 0,
+                        'product' => $product
+                    ])
+                        ->executeCommand('productitem');
+                }
+
+            } else {
+                $data = [
+                    'callback_query_id' => $callback_query_id,
+                    'text' => 'Товаров нет',
+                    //'show_alert' => true,
+                    'cache_time' => 100,
+                ];
+                return Request::answerCallbackQuery($data);
+            }
+
+            $begin = $pages->getPage() * $pages->pageSize;
+
+            $data['chat_id'] = $chat_id;
+            $data['parse_mode'] = 'Markdown';
+            if ($begin >= $pages->totalCount) {
+                $data['text'] = 'Все!';
+            } else {
+                $data['text'] = 'показано: *'.$begin . '* из *' . $pages->totalCount.'*';
+            }
+            $data['disable_notification'] = false;
+            //todo добавить кнопку вернуться в каталог или еще чтото, после "Все!"
+            if ($pager->buttons) {
+                $keyboards2[] = $pager->buttons;
+                $data['reply_markup'] = new InlineKeyboard([
+                    'inline_keyboard' => $keyboards2
+                ]);
+            }
+            return Request::sendMessage($data);
+
+           // return Request::emptyResponse();
+
+        } elseif (preg_match('/getBrandsList123123/iu', trim($callback_data), $match)) {
             $user_id = $callback_query->getFrom()->getId();
             $order = Order::findOne(['user_id' => $user_id, 'checkout' => 0]);
 
             parse_str($callback_data, $params);
 
-
-            if (isset($params['category_id'])) {
+            if (isset($params['id'])) {
 
                 /** @var Product|\yii\db\ActiveQuery $query */
-                $query = Product::find()->sort()->applyCategories($params['category_id']);
+
+                $pagerCommand = 'getBrandsList&id=' . $params['id'];
+                $query = Product::find()->sort()->applyManufacturers($params['id']);
 
                 if (!in_array($user_id, $this->telegram->getAdminList())) {
                     $query->published();
@@ -541,9 +549,7 @@ class CallbackqueryCommand extends SystemCommand
                 }
                 $query->offset($offset)->limit($pages->limit);
 
-
                 $products = $query->all();
-
 
                 $pager = new InlineKeyboardMorePager([
                     'pagination' => $pages,
@@ -552,160 +558,18 @@ class CallbackqueryCommand extends SystemCommand
                     'prevPageLabel' => false,
                     'maxButtonCount' => 1,
                     'internal' => false,
-                    'command' => 'getCatalogList&category_id=' . $params['category_id'],
+                    'command' => $pagerCommand,
                     'nextPageLabel' => '🔄 загрузить еще...'
                 ]);
 
 
                 if ($products) {
-
                     foreach ($products as $index => $product) {
-
-
-                        $s = $this->telegram
-                            ->setCommandConfig('productitem', [
-                                'photo_index' => (isset($params['photo_index'])) ? $params['photo_index'] : 0,
-                                'product' => $product
-                            ])
+                        $s = $this->telegram->setCommandConfig('productitem', [
+                            'photo_index' => (isset($params['photo_index'])) ? $params['photo_index'] : 0,
+                            'product' => $product
+                        ])
                             ->executeCommand('productitem');
-
-
-                        /*$keyboards = [];
-
-                        $caption = '';
-                        if ($product->hasDiscount) {
-                            $caption .= '🔥🔥🔥';
-                        }
-
-                        $caption .= '*' . $product->name . '*' . PHP_EOL;
-                        $caption .= $this->number_format($product->price) . ' грн' . PHP_EOL . PHP_EOL;
-
-                        if ($product->hasDiscount) {
-                            $caption .= '*🎁 Скидка*: ' . $product->discountSum . PHP_EOL . PHP_EOL;
-                        }
-
-                        if ($product->manufacturer_id) {
-                            $caption .= '*Производитель*: ' . $product->manufacturer->name . PHP_EOL;
-                        }
-                        if ($product->sku) {
-                            $caption .= '*Артикул*: ' . $product->sku . PHP_EOL;
-                        }
-
-
-                        $attributes = $this->attributes($product);
-                        if ($attributes) {
-                            $caption .= '*Характеристики:*' . PHP_EOL;
-                            foreach ($attributes as $name => $data) {
-                                if (!empty($data['value'])) {
-                                    $caption .= '*' . $name . '*: ' . $data['value'] . ' ' . $data['abbreviation'] . PHP_EOL;
-                                }
-                            }
-                        }
-                        if ($product->description) {
-                            $caption .= PHP_EOL . Html::encode($product->description) . PHP_EOL . PHP_EOL;
-                        }
-                        if ($order) {
-                            $orderProduct = OrderProduct::findOne(['product_id' => $product->id, 'order_id' => $order->id]);
-                        } else {
-                            $orderProduct = null;
-                        }
-
-
-                        //check tarif plan
-                        $images = $product->getImages();
-                        if (true) {
-
-
-
-                            $pages2 = new KeyboardPagination([
-                                'totalCount' => 3,
-                                'defaultPageSize' => 1,
-                                //'pageSize'=>3
-                            ]);
-                            $pages2->setPage(0);
-                            $pagerPhotos = new InlineKeyboardPager([
-                                'pagination' => $pages2,
-                                'lastPageLabel' => false,
-                                'firstPageLabel' => false,
-                                'maxButtonCount' => 1,
-                                'command' => 'changeProductImage&product_id=' . $product->id
-                                //'command' => 'getCatalogList&change=1',
-                                //'callback_data'=>'command={command}&photo_index={page}'
-                            ]);
-                            if ($pagerPhotos->buttons)
-                                $keyboards[] = $pagerPhotos->buttons;
-
-                        }
-
-
-                        if ($orderProduct) {
-                            $keyboards[] = [
-                                new InlineKeyboardButton([
-                                    'text' => '—',
-                                    // 'callback_data' => "spinner/{$order->id}/{$product->id}/down/catalog"
-                                    'callback_data' => "query=productSpinner&order_id={$order->id}&product_id={$product->id}&type=down"
-                                ]),
-                                new InlineKeyboardButton([
-                                    'text' => '' . $orderProduct->quantity . ' шт.',
-                                    'callback_data' => time()
-                                ]),
-                                new InlineKeyboardButton([
-                                    'text' => '+',
-                                    // 'callback_data' => "spinner/{$order->id}/{$product->id}/up/catalog",
-                                    'callback_data' => "query=productSpinner&order_id={$order->id}&product_id={$product->id}&type=up"
-                                ]),
-                                new InlineKeyboardButton([
-                                    'text' => '❌',
-                                    'callback_data' => "query=deleteInCart&id={$orderProduct->id}"
-                                ]),
-                            ];
-                            //   $keyboards[] = $this->telegram->executeCommand('cartproductquantity')->getKeywords();
-                        } else {
-
-
-                            $keyboards[] = [
-                                new InlineKeyboardButton([
-                                    'text' => Yii::t('telegram/command', 'BUTTON_BUY', $this->number_format($product->getFrontPrice())),
-                                    // 'callback_data' => "addCart/{$product->id}"
-                                    'callback_data' => "query=addCart&product_id={$product->id}"
-                                ])
-                            ];
-                        }
-
-                        $keyboards[] = $this->productAdminKeywords($chat_id, $product->id);
-
-                        //  echo Url::to($product->getImage()->getUrlToOrigin(), true) . PHP_EOL;
-                        // echo $product->getImage()->getPath();
-
-                       // $imageData = $product->getImage();
-                        $imageData = $images[0];
-                        if(isset($params['photo_index'])){
-                            $imageData = $images[$params['photo_index']];
-                        }
-                        if ($imageData) {
-                            $image = $imageData->getPathToOrigin();
-                        } else {
-                            $image = Yii::getAlias('@uploads') . DIRECTORY_SEPARATOR . 'no-image.jpg';
-                        }
-
-                        // $image = Url::to($product->getImage()->getUrlToOrigin(), true);
-                        $dataPhoto = [
-                            //'photo' => Url::to($product->getImage()->getUrl('800x800'), true),
-                            'photo' => $image,
-                            'chat_id' => $chat_id,
-                            'parse_mode' => 'Markdown',
-                            'caption' => $caption,
-                            'reply_markup' => new InlineKeyboard([
-                                'inline_keyboard' => $keyboards
-                            ]),
-                        ];
-                        $reqPhoto = Request::sendPhoto($dataPhoto);
-                        if (!$reqPhoto->isOk()) {
-                            $errorCode = $reqPhoto->getErrorCode();
-                            $description = $reqPhoto->getDescription();
-                            //print_r($reqPhoto);
-                            $s = $this->notify("{$errorCode} {$description} " . $image, 'error');
-                        }*/
                     }
                 } else {
                     $data = [
@@ -714,17 +578,14 @@ class CallbackqueryCommand extends SystemCommand
                         //'show_alert' => true,
                         'cache_time' => 100,
                     ];
-
                     return Request::answerCallbackQuery($data);
                 }
 
-
                 $begin = $pages->getPage() * $pages->pageSize;
-
 
                 $data['chat_id'] = $chat_id;
                 if ($begin >= $pages->totalCount) {
-                    $data['text'] = ' Все! ';
+                    $data['text'] = 'Все!';
                 } else {
                     $data['text'] = $begin . ' / ' . $pages->totalCount;
                 }
@@ -737,10 +598,7 @@ class CallbackqueryCommand extends SystemCommand
                     ]);
                 }
                 return Request::sendMessage($data);
-
-
             }
-
             return Request::emptyResponse();
         } else {
             $text = ' Hello World!';

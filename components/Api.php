@@ -87,7 +87,7 @@ class Api extends \Longman\TelegramBot\Telegram
         //    $command_obj = $this->commands_objects[$command];
         //} else {
             $command_obj = $this->getCommandObject($command);
-        //}
+       // }
 
         if (!$command_obj || !$command_obj->isEnabled()) {
             //Failsafe in case the Generic command can't be found

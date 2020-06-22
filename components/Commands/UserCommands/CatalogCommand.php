@@ -3,6 +3,8 @@
 namespace shopium\mod\telegram\components\Commands\UserCommands;
 
 
+use core\modules\shop\models\Manufacturer;
+use core\modules\shop\models\Product;
 use Longman\TelegramBot\DB;
 use Longman\TelegramBot\Entities\InlineKeyboard;
 use Longman\TelegramBot\Entities\InlineKeyboardButton;
@@ -10,6 +12,7 @@ use Longman\TelegramBot\Request;
 use core\modules\shop\models\Category;
 use shopium\mod\telegram\components\UserCommand;
 use Yii;
+use yii\helpers\ArrayHelper;
 
 /**
  * User "/catalog" command
@@ -37,13 +40,11 @@ class CatalogCommand extends UserCommand
      * @var string
      */
     protected $version = '1.1';
+
     /**
-     * The Google API Key from the command config
-     *
      * @var string
      */
     public $id;
-    public $need_mysql = true;
     public $private_only = false;
 
     /**
@@ -82,6 +83,7 @@ class CatalogCommand extends UserCommand
 
 
         $keyboards = [];
+
         if ($categories) {
             foreach ($categories as $category) {
                 $count = $category->countItems;
@@ -90,40 +92,78 @@ class CatalogCommand extends UserCommand
 
                 if ($child) {
 
-                    $keyboards[] = [
-                        new InlineKeyboardButton([
-                            'text' => $icon . $category->name,
-                            'callback_data' => 'query=openCatalog&id=' . $category->id
-                        ])
-                    ];
+                    $keyboards[] = new InlineKeyboardButton([
+                        'text' => $icon . $category->name,
+                        'callback_data' => 'query=openCatalog&id=' . $category->id
+                    ]);
 
                 } else {
                     if ($count) {
-                        $keyboards[] = [
-                            new InlineKeyboardButton([
-                                'text' => $icon . $category->name . ' (' . $count . ')',
-                                'callback_data' => 'query=getCatalogList&category_id=' . $category->id
-                            ])
-                        ];
+                        $keyboards[] = new InlineKeyboardButton([
+                            'text' => $icon . $category->name . ' (' . $count . ')',
+                            'callback_data' => 'query=getList&model=catalog&id=' . $category->id
+                        ]);
                     }
-                }
-            }
 
+                }
+
+            }
+            $keyboards = array_chunk($keyboards, $root->chunk);
         } else {
             return $this->notify('В каталоге нет продукции', 'info');
         }
 
-
+        $keyboardsFirst = [];
         if ($isCallback) {
 
             $back = $root->parent()->one();
 
             if ($back) {
-                $keyboards[] = [
-                    new InlineKeyboardButton([
-                        'text' => '↩ ' . $back->name,
-                        'callback_data' => 'query=openCatalog&id=' . $back->id
-                    ])];
+                $keyboards[] = [new InlineKeyboardButton([
+                    'text' => '↩ ' . $back->name,
+                    'callback_data' => 'query=openCatalog&id=' . $back->id
+                ])];
+            } else {
+                if (true) {
+                    $brands = Manufacturer::find()->published()->count();
+                    if ($brands) {
+                        $keyboards[] = ArrayHelper::merge($keyboards, [new InlineKeyboardButton([
+                            'text' => "💎️ Бренды ({$brands})",
+                            'callback_data' => 'query=getBrandsList'
+                        ])]);
+                    }
+                }
+                if (true) {
+                    $discounts = Product::find()
+                        ->published()
+                        ->isNotEmpty('discount')->count();
+                    if ($discounts) {
+                        $keyboardsFirst[] = [new InlineKeyboardButton([
+                            'text' => "🔥 Акции ({$discounts})",
+                            'callback_data' => 'query=getList&model=discounts'
+                        ])];
+                    }
+                }
+                if (true) {
+                    $config = Yii::$app->settings->get('app');
+                    $new = Product::find();
+                    if (isset($config->label_expire_new)) {
+                        $new->int2between(time(), time() - (86400 * $config->label_expire_new));
+                    } else {
+                        $new->int2between(-1, -1);
+                    }
+                    $newCount = $new->count();
+                    if ($newCount) {
+                        $keyboardsFirst[] = [new InlineKeyboardButton([
+                            'text' => "❇️ Новинки ({$newCount})",
+                            'callback_data' => 'query=getList&model=new'
+                        ])];
+                    }
+                }
+
+                $keyboards = ArrayHelper::merge($keyboardsFirst, $keyboards);
+
+
             }
 
             if ($keyboards) {
@@ -134,13 +174,54 @@ class CatalogCommand extends UserCommand
                 ]);
                 $request = Request::editMessageReplyMarkup($dataEdit);
                 if (!$request->isOk()) {
-                    return $this->notify($chat_id.' editcatalog:'.$message->getMessageId() . ': ' . $request->getDescription(), 'error');
+                    return $this->notify($chat_id . ' editcatalog:' . $message->getMessageId() . ': ' . $request->getDescription(), 'error');
                 }
                 return $request;
             } else {
                 return $this->notify('non-keywords', 'error');
             }
         } else {
+
+            if (true) {
+                $brands = Manufacturer::find()->published()->count();
+                if ($brands) {
+                    $keyboards[] = ArrayHelper::merge($keyboards, [new InlineKeyboardButton([
+                        'text' => "💎️ Бренды ({$brands})",
+                        'callback_data' => 'query=getBrandsList'
+                    ])]);
+                }
+            }
+
+            if (true) {
+                $discounts = Product::find()
+                    ->published()
+                    ->isNotEmpty('discount')->count();
+                if ($discounts) {
+                    $keyboardsFirst[] = [new InlineKeyboardButton([
+                        'text' => "🔥 Акции ({$discounts})",
+                        'callback_data' => 'query=getList&model=discounts'
+                    ])];
+                }
+            }
+
+            if (true) {
+                $config = Yii::$app->settings->get('app');
+                $new = Product::find();
+                if (isset($config->label_expire_new)) {
+                    $new->int2between(time(), time() - (86400 * $config->label_expire_new));
+                } else {
+                    $new->int2between(-1, -1);
+                }
+                $newCount = $new->count();
+                if ($newCount) {
+                    $keyboardsFirst[] = [new InlineKeyboardButton([
+                        'text' => "❇️ Новинки ({$newCount})",
+                        'callback_data' => 'query=getList&model=new'
+                    ])];
+                }
+            }
+            $keyboards = ArrayHelper::merge($keyboardsFirst, $keyboards);
+
             $data = [
                 'chat_id' => $chat_id,
                 'text' => 'Выберите раздел:',
