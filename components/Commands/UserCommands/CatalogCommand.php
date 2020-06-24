@@ -133,7 +133,7 @@ class CatalogCommand extends UserCommand
                         ])]);
                     }
                 }
-                if (true) {
+                if (false) {
                     $discounts = Product::find()
                         ->published()
                         ->isNotEmpty('discount')->count();
@@ -192,7 +192,7 @@ class CatalogCommand extends UserCommand
                 }
             }
 
-            if (true) {
+            if (false) {
                 $discounts = Product::find()
                     ->published()
                     ->isNotEmpty('discount')->count();

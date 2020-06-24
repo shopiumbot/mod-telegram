@@ -4,6 +4,7 @@ namespace shopium\mod\telegram\migrations;
 
 use yii\console\Exception;
 use panix\engine\db\Migration;
+use shopium\mod\telegram\models\Message;
 
 class m000004_000000_telegram_message extends Migration
 {
@@ -11,7 +12,7 @@ class m000004_000000_telegram_message extends Migration
     // Use safeUp/safeDown to run migration code within a transaction
     public function safeUp()
     {
-        $this->createTable('{{%telegram__message}}', [
+        $this->createTable(Message::tableName(), [
             'chat_id' => $this->bigInteger()->comment('Unique chat identifier'),
             'id' => $this->bigInteger()->unsigned()->comment('Unique message identifier'),
             'user_id' => $this->bigInteger()->null()->comment('Unique user identifier'),
@@ -24,7 +25,7 @@ class m000004_000000_telegram_message extends Migration
             'forward_date' => $this->timestamp()->null()->defaultValue(NULL)->comment('date the original message was sent in timestamp format'),
             'reply_to_chat' => $this->bigInteger()->null()->defaultValue(NULL)->comment('Unique chat identifier'),
             'reply_to_message' => $this->bigInteger()->unsigned()->defaultValue(NULL)->comment('Message that this message is reply to'),
-            'via_bot' => $this->bigInteger()->unsigned()->defaultValue(NULL)->comment('Optional. Bot through which the message was sent'),
+            'via_bot' => $this->bigInteger()->unsigned()->null()->defaultValue(NULL)->comment('Optional. Bot through which the message was sent'),
             'edit_date' => $this->bigInteger()->unsigned()->defaultValue(NULL)->comment('Date the message was last edited in Unix time'),
             'media_group_id' => $this->text()->comment('The unique identifier of a media message group this message belongs to'),
             'author_signature' => $this->text()->comment('Signature of the post author for messages in channels'),
@@ -65,38 +66,32 @@ class m000004_000000_telegram_message extends Migration
         ], 'CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci ENGINE=InnoDB');
 
 
-        $this->addPrimaryKey('chat_id_id', '{{%telegram__message}}', ['chat_id', 'id']);
+        $this->addPrimaryKey('chat_id_id', Message::tableName(), ['chat_id', 'id']);
 
-        $this->createIndex('user_id', '{{%telegram__message}}', 'user_id');
-        $this->createIndex('forward_from', '{{%telegram__message}}', 'forward_from');
-        $this->createIndex('forward_from_chat', '{{%telegram__message}}', 'forward_from_chat');
-        $this->createIndex('reply_to_chat', '{{%telegram__message}}', 'reply_to_chat');
-        $this->createIndex('reply_to_message', '{{%telegram__message}}', 'reply_to_message');
-        $this->createIndex('left_chat_member', '{{%telegram__message}}', 'left_chat_member');
-        $this->createIndex('migrate_from_chat_id', '{{%telegram__message}}', 'migrate_from_chat_id');
-        $this->createIndex('migrate_to_chat_id', '{{%telegram__message}}', 'migrate_to_chat_id');
-        $this->createIndex('via_bot', '{{%telegram__message}}', 'via_bot');
+        $this->createIndex('user_id', Message::tableName(), 'user_id');
+        $this->createIndex('forward_from', Message::tableName(), 'forward_from');
+        $this->createIndex('forward_from_chat', Message::tableName(), 'forward_from_chat');
+        $this->createIndex('reply_to_chat', Message::tableName(), 'reply_to_chat');
+        $this->createIndex('reply_to_message', Message::tableName(), 'reply_to_message');
+        $this->createIndex('left_chat_member', Message::tableName(), 'left_chat_member');
+        $this->createIndex('migrate_from_chat_id', Message::tableName(), 'migrate_from_chat_id');
+        $this->createIndex('migrate_to_chat_id', Message::tableName(), 'migrate_to_chat_id');
+        $this->createIndex('via_bot', Message::tableName(), 'via_bot');
 
 
         $this->addForeignKey(
             'fk_user_id',
-            '{{%telegram__message}}',
+            Message::tableName(),
             'user_id',
             '{{%telegram__user}}',
             'id'
         );
 
-        $this->addForeignKey(
-            'fk_via_bot',
-            '{{%telegram__message}}',
-            'via_bot',
-            '{{%telegram__user}}',
-            'id'
-        );
+
 
         $this->addForeignKey(
             'fk_chat_id',
-            '{{%telegram__message}}',
+            Message::tableName(),
             'chat_id',
             '{{%telegram__chat}}',
             'id'
@@ -113,7 +108,7 @@ class m000004_000000_telegram_message extends Migration
 
         $this->addForeignKey(
             'fk_forward_from_chat',
-            '{{%telegram__message}}',
+            Message::tableName(),
             'forward_from_chat',
             '{{%telegram__chat}}',
             'id'
@@ -122,27 +117,35 @@ class m000004_000000_telegram_message extends Migration
 
         $this->addForeignKey(
             'fk_reply_to_chat',
-            '{{%telegram__message}}',
+            Message::tableName(),
             ['reply_to_chat', 'reply_to_message'],
-            '{{%telegram__message}}',
+            Message::tableName(),
             ['chat_id', 'id']
         );
 
         $this->addForeignKey(
             'fk_left_chat_member',
-            '{{%telegram__message}}',
+            Message::tableName(),
             'left_chat_member',
             '{{%telegram__user}}',
             'id'
         );
 
+        //todo: Не добавляет, пишит ошибку
+        /*$this->addForeignKey(
+            'fk_via_bot',
+            Message::tableName(),
+            'via_bot',
+            '{{%telegram__user}}',
+            'id'
+        );*/
 
     }
 
     public function safeDown()
     {
         try {
-            $this->dropTable('{{%telegram__message}}');
+            $this->dropTable(Message::tableName());
         } catch (Exception $e) {
             var_dump($e->getMessage());
             return false;

@@ -89,12 +89,12 @@ class BrandsCommand extends UserCommand
         if ($items) {
             foreach ($items as $item) {
                 $count = $item->productsCount;
-                //if ($count) {
-                $keyboards[] = new InlineKeyboardButton([
-                    'text' => $item->name . ' (' . $count . ')',
-                    'callback_data' => 'query=getList&model=brands&id=' . $item->id
-                ]);
-                // }
+                if ($count) {
+                    $keyboards[] = new InlineKeyboardButton([
+                        'text' => $item->name . ' (' . $count . ')',
+                        'callback_data' => 'query=getList&model=brands&id=' . $item->id
+                    ]);
+                }
             }
 
         } else {
@@ -132,7 +132,7 @@ class BrandsCommand extends UserCommand
             if ($buttonsResponse->isOk()) {
                 $db = DB::insertMessageRequest($buttonsResponse->getResult());
             }
-          //  $result = $data;
+            //  $result = $data;
         }
 
         $response = Request::sendMessage($data);

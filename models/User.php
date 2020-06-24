@@ -66,8 +66,9 @@ class User extends ActiveRecord
     public static function dropdown()
     {
         // get and cache data
-        static $dropdown;
-        if ($dropdown === null) {
+       // static $dropdown;
+	   $dropdown=[];
+        //if ($dropdown === null) {
 
             // get all records from database and generate
             $models = static::find()->where(['is_bot'=>0])->asArray()->all();
@@ -84,7 +85,7 @@ class User extends ActiveRecord
                 }
                 $dropdown[$model['id']] = $name;
             }
-        }
+       // }
 
         return $dropdown;
     }
