@@ -4,6 +4,7 @@ namespace shopium\mod\telegram\components\Commands\SystemCommands;
 
 
 use Longman\TelegramBot\Conversation;
+use Longman\TelegramBot\DB;
 use Longman\TelegramBot\Entities\InlineKeyboard;
 use Longman\TelegramBot\Entities\InlineKeyboardButton;
 use Longman\TelegramBot\Entities\Keyboard;
@@ -246,7 +247,7 @@ class CheckOutCommand extends SystemCommand
                     delivery_novaposhta:
                     if ($text === '⬅ Назад') {
                         $text = '';
-                        unset($notes['delivery'],$notes['delivery_id']);
+                        unset($notes['delivery'], $notes['delivery_id']);
                         goto delivery;
                     }
                     //Новая почта
@@ -303,7 +304,7 @@ class CheckOutCommand extends SystemCommand
                     delivery_novaposhta_city:
                     if ($text === '⬅ Назад') {
                         $text = '';
-                        unset($notes['delivery_area'],$notes['delivery_area_id']);
+                        unset($notes['delivery_area'], $notes['delivery_area_id']);
                         goto delivery_novaposhta;
                     }
 
@@ -377,7 +378,7 @@ class CheckOutCommand extends SystemCommand
                     delivery_novaposhta_warehouses:
                     if ($text === '⬅ Назад') {
                         $text = '';
-                        unset($notes['delivery_city'],$notes['delivery_city_id']);
+                        unset($notes['delivery_city'], $notes['delivery_city_id']);
                         goto delivery_novaposhta_city;
                     }
 
@@ -438,7 +439,7 @@ class CheckOutCommand extends SystemCommand
                     payment:
                     if ($text === '⬅ Назад') {
                         $text = '';
-                        unset($notes['delivery'],$notes['delivery_id'],$notes['delivery_area'],$notes['delivery_area_id'],$notes['delivery_city'],$notes['delivery_city_id'],$notes['delivery_warehouse'],$notes['delivery_warehouse_id']);
+                        unset($notes['delivery'], $notes['delivery_id'], $notes['delivery_area'], $notes['delivery_area_id'], $notes['delivery_city'], $notes['delivery_city_id'], $notes['delivery_warehouse'], $notes['delivery_warehouse_id']);
                         goto delivery;
                     }
                     $payments = Payment::find()->all();
@@ -501,14 +502,12 @@ class CheckOutCommand extends SystemCommand
 
 
                         $data['reply_markup'] = $buttons;
-
                         $data['text'] = 'Ваши контактные данные:';
-
                         $result = Request::sendMessage($data);
                         break;
                     }
-
-                    $notes['phone_number'] = '+'.$message->getContact()->getPhoneNumber();
+                    $phone = $message->getContact()->getPhoneNumber();
+                    $notes['phone_number'] = (strpos($phone, '+')) ? $phone : '+' . $phone;
 
                 // no break
                 case 5:
@@ -600,7 +599,9 @@ class CheckOutCommand extends SystemCommand
                     $data['reply_markup'] = $this->homeKeyboards();
                     $data['text'] = $titleClient . $content;
                     $result = Request::sendMessage($data);
-
+                    if ($result->isOk()) {
+                        $db = DB::insertMessageRequest($result->getResult());
+                    }
 
                     if ($result->isOk()) {
                         $inlineKeyboards[] = [
@@ -621,6 +622,10 @@ class CheckOutCommand extends SystemCommand
             $data['reply_markup'] = $this->startKeyboards();
 
             $result = Request::sendMessage($data);
+
+        }
+        if ($result->isOk()) {
+            $db = DB::insertMessageRequest($result->getResult());
         }
         return $result;
     }

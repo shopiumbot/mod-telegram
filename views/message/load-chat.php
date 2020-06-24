@@ -49,7 +49,15 @@ if ($me->isOk()) {
                 </div>
                 <div class="chat-content">
                     <h6 class="font-medium"><?= $userName; ?></h6>
-                    <pre class="box bg-light-info"><?= \shopium\mod\telegram\components\Helper::parseMarkdown($message->text, $message->entities); ?></pre>
+                    <pre class="box bg-light-info">
+
+                        <?php
+                        echo $message->text;
+                       // $entity_decoder = new \shopium\mod\telegram\components\EntityDecoder($message->getMessageObject());
+                     //   $decoded_text   = $entity_decoder->decode();
+                        //echo \shopium\mod\telegram\components\Helper::parseMarkdown($message->text, $message->entities); ?>
+                        <?php //CMS::dump($message->getMessageObject()); ?>
+                    </pre>
                     <?php
 
                     ?>

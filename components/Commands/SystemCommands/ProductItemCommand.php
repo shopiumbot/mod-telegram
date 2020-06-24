@@ -337,12 +337,10 @@ class ProductItemCommand extends SystemCommand
             return $this->_models;
 
         $this->_models = [];
-        //$cr = new CDbCriteria;
-        //$cr->addInCondition('t.name', array_keys($this->_attributes));
-
         // $query = Attribute::getDb()->cache(function () {
         $query = Attribute::find()
             ->where(['IN', 'name', array_keys($this->_attributes)])
+            ->published()
             ->sort()
             ->all();
         // }, 3600);

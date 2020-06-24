@@ -24,6 +24,7 @@ class SendMessageForm extends Model
 
     public function send()
     {
+        $api = Yii::$app->telegram;
         $data['chat_id'] = $this->user_id;
         $data['text'] = $this->text;
         $request = Request::sendMessage($data);

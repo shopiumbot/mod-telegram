@@ -130,7 +130,7 @@ class InlineKeyboardMorePager extends Component
         }
 
         // return Html::tag($linkWrapTag, Html::a($label, $this->pagination->createUrl($page), $linkOptions), $options);
-        return new InlineKeyboardButton(['text' => $callback, 'callback_data' => $callback]);
+        return new InlineKeyboardButton(['text' => $label, 'callback_data' => $callback]);
     }
 
     /**

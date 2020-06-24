@@ -52,7 +52,7 @@ $api = Yii::$app->telegram->getApi();
                                             data-username="<?= $userName; ?>"><?= $userName; ?></h5>
                                         <?php if($user->lastMessage){ ?>
                                         <span class="mail-desc"><?= $user->lastMessage->text; ?></span> <span
-                                                class="time"><?= $user->lastMessage->date; ?></span>
+                                                class="time"><?= CMS::date(strtotime($user->lastMessage->date)); ?></span>
                                     <?php } ?>
                                     </div>
                                 </a>

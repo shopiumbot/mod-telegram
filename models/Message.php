@@ -2,6 +2,7 @@
 
 namespace shopium\mod\telegram\models;
 
+use Longman\TelegramBot\Entities\MessageEntity;
 use shopium\mod\telegram\models\query\MessageQuery;
 
 use Longman\TelegramBot\Request;
@@ -64,15 +65,6 @@ class Message extends ActiveRecord
         return $this->hasMany(CallbackQuery::class, ['message_id' => 'id'])->orderBy(['created_at'=>SORT_ASC]);
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function attributeLabels()
-    {
-        return [
-
-        ];
-    }
 
     private $photoCache;
 
@@ -101,5 +93,28 @@ class Message extends ActiveRecord
 
         }
         return '/uploads/no-image.jpg';
+    }
+
+
+    public function getMessageObject(){
+        return new \Longman\TelegramBot\Entities\Message([
+            'chat_id'=>$this->chat_id,
+            'text'=>$this->text,
+            'entities'=>$this->entities
+            ////'entities'=> new MessageEntity([
+            //    json_decode($this->entities)
+            //    ]
+           // )
+        ]);
+    }
+
+
+
+    public function getMessageObject2(){
+        return new MessageEntity([
+            'chat_id'=>$this->chat_id,
+            'text'=>$this->text,
+
+        ]);
     }
 }
