@@ -189,13 +189,13 @@ class CartCommand extends UserCommand
                         'message_id' => $update->getCallbackQuery()->getMessage()->getMessageId()
                     ]);
                 }
-                $data['text'] = Yii::$app->settings->get('app', 'empty_cart_text');
+                $data['text'] = $this->settings->empty_cart_text;
                 $data['reply_markup'] = $this->startKeyboards();
                 $response = $data;
 
             }
         } else {
-            $data['text'] = Yii::$app->settings->get('app', 'empty_cart_text');
+            $data['text'] = $this->settings->empty_cart_text;
             $data['reply_markup'] = $this->startKeyboards();
             $response = $data;
         }

@@ -2,6 +2,7 @@
 
 namespace shopium\mod\telegram\components\Commands\SystemCommands;
 
+use core\modules\images\models\Image;
 use core\modules\shop\models\Attribute;
 use shopium\mod\telegram\components\InlineKeyboardPager;
 use shopium\mod\telegram\components\KeyboardPagination;
@@ -182,6 +183,7 @@ class ProductItemCommand extends SystemCommand
         }
 
         $keyboards[] = $this->productAdminKeywords($chat_id, $product);
+        /** @var Image $imageData */
         $image = Yii::getAlias('@uploads') . DIRECTORY_SEPARATOR . 'no-image.jpg';
         if ($images) {
             $imageData = $images[$this->photo_index];
@@ -195,12 +197,17 @@ class ProductItemCommand extends SystemCommand
                     }
                     $image = $file_id;
                 } else {
-                    $image = $imageData->getPathToOrigin();
+                    if ($this->settings->watermark_enable) {
+                        $image = $imageData->getUrl(false,true);
+                    }else{
+                         $image = $imageData->getPathToOrigin();
+                    }
+
+
                 }
 
             }
         }
-
 
         $test = [
 

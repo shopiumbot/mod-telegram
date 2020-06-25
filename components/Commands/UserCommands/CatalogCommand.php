@@ -73,7 +73,7 @@ class CatalogCommand extends UserCommand
 
         $chat_id = $chat->getId();
         $user_id = $user->getId();
-        $config = Yii::$app->settings->get('app');
+
         if (($this->id = trim($this->getConfig('id'))) === '') {
             $this->id = 1;
         }
@@ -125,7 +125,7 @@ class CatalogCommand extends UserCommand
                     'callback_data' => 'query=openCatalog&id=' . $back->id
                 ])];
             } else {
-                if (isset($config->enable_brands) && $config->enable_brands) {
+                if (isset($this->settings->enable_brands) && $this->settings->enable_brands) {
                     $brands = Manufacturer::find()->published()->count();
                     if ($brands) {
                         $keyboards[] = ArrayHelper::merge($keyboards, [new InlineKeyboardButton([
@@ -134,7 +134,7 @@ class CatalogCommand extends UserCommand
                         ])]);
                     }
                 }
-                if (isset($config->enable_discounts) && $config->enable_discounts && false) {
+                if (isset($this->settings->enable_discounts) && $this->settings->enable_discounts && false) {
                     $discounts = Product::find()
                         ->published()
                         ->isNotEmpty('discount')->count();
@@ -145,11 +145,10 @@ class CatalogCommand extends UserCommand
                         ])];
                     }
                 }
-                if (isset($config->enable_new) && $config->enable_new) {
-                    $config = Yii::$app->settings->get('app');
+                if (isset($this->settings->enable_new) && $this->settings->enable_new) {
                     $new = Product::find();
-                    if (isset($config->label_expire_new)) {
-                        $new->int2between(time(), time() - (86400 * $config->label_expire_new));
+                    if (isset($this->settings->label_expire_new)) {
+                        $new->int2between(time(), time() - (86400 * $this->settings->label_expire_new));
                     } else {
                         $new->int2between(-1, -1);
                     }
@@ -183,7 +182,7 @@ class CatalogCommand extends UserCommand
             }
         } else {
 
-            if (isset($config->enable_brands) && $config->enable_brands) {
+            if (isset($this->settings->enable_brands) && $this->settings->enable_brands) {
                 $brands = Manufacturer::find()->published()->count();
                 if ($brands) {
                     $keyboards[] = ArrayHelper::merge($keyboards, [new InlineKeyboardButton([
@@ -193,7 +192,7 @@ class CatalogCommand extends UserCommand
                 }
             }
 
-            if (isset($config->enable_discounts) && $config->enable_discounts && false) {
+            if (isset($this->settings->enable_discounts) && $this->settings->enable_discounts && false) {
                 $discounts = Product::find()
                     ->published()
                     ->isNotEmpty('discount')->count();
@@ -205,11 +204,10 @@ class CatalogCommand extends UserCommand
                 }
             }
 
-            if (isset($config->enable_new) && $config->enable_new) {
-                $config = Yii::$app->settings->get('app');
+            if (isset($this->settings->enable_new) && $this->settings->enable_new) {
                 $new = Product::find();
-                if (isset($config->label_expire_new)) {
-                    $new->int2between(time(), time() - (86400 * $config->label_expire_new));
+                if (isset($this->settings->label_expire_new)) {
+                    $new->int2between(time(), time() - (86400 * $this->settings->label_expire_new));
                 } else {
                     $new->int2between(-1, -1);
                 }

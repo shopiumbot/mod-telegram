@@ -17,7 +17,7 @@ abstract class Command extends \Longman\TelegramBot\Commands\Command
 {
     public $orderHistoryCount = 0;
     public $orderProductCount = 0;
-
+    public $settings;
     public function __construct(Api $telegram, Update $update = null)
     {
         /*$this->orderHistoryCount = Order::find()
@@ -29,6 +29,7 @@ abstract class Command extends \Longman\TelegramBot\Commands\Command
         if ($orderProductCount) {
             $this->orderProductCount = $orderProductCount->productsCount;
         }*/
+        $this->settings = Yii::$app->settings->get('app');
         parent::__construct($telegram, $update);
     }
 
@@ -82,9 +83,8 @@ abstract class Command extends \Longman\TelegramBot\Commands\Command
 
     public function startKeyboards()
     {
-        $config = Yii::$app->settings->get('app');
-        $textMyOrders = $config->button_text_history;
-        $textMyCart = $config->button_text_cart;
+        $textMyOrders = $this->settings->button_text_history;
+        $textMyCart = $this->settings->button_text_cart;
         // if ($this->orderHistoryCount) {
         // $textMyOrders .= ' (' . $this->orderHistoryCount . ')';
         // }
@@ -94,8 +94,8 @@ abstract class Command extends \Longman\TelegramBot\Commands\Command
 
 
         $keyboards[] = [
-            new KeyboardButton(['text' => $config->button_text_catalog]),
-            new KeyboardButton(['text' => $config->button_text_search]),
+            new KeyboardButton(['text' => $this->settings->button_text_catalog]),
+            new KeyboardButton(['text' => $this->settings->button_text_search]),
             new KeyboardButton(['text' => $textMyCart])
         ];
         $keyboards[] = [
@@ -175,9 +175,9 @@ abstract class Command extends \Longman\TelegramBot\Commands\Command
 
     public function catalogKeyboards()
     {
-        $config = Yii::$app->settings->get('app');
-        $textMyOrders = $config->button_text_history;
-        $textMyCart = $config->button_text_cart;
+
+        $textMyOrders = $this->settings->button_text_history;
+        $textMyCart = $this->settings->button_text_cart;
         // if ($this->orderHistoryCount) {
         //    $textMyOrders .= ' (' . $this->orderHistoryCount . ')';
         //}
@@ -186,9 +186,9 @@ abstract class Command extends \Longman\TelegramBot\Commands\Command
         //}
 
         $keyboards[] = [
-            new KeyboardButton(['text' => $config->button_text_start]),
-            new KeyboardButton(['text' => $config->button_text_catalog]),
-            new KeyboardButton(['text' => $config->button_text_search]),
+            new KeyboardButton(['text' => $this->settings->button_text_start]),
+            new KeyboardButton(['text' => $this->settings->button_text_catalog]),
+            new KeyboardButton(['text' => $this->settings->button_text_search]),
         ];
 
         $keyboards[] = [
@@ -214,11 +214,11 @@ abstract class Command extends \Longman\TelegramBot\Commands\Command
 
     public function homeKeyboards()
     {
-        $config = Yii::$app->settings->get('app');
+
         $keyboards[] = [
-            new KeyboardButton(['text' => $config->button_text_start]),
-            new KeyboardButton(['text' => $config->button_text_catalog]),
-            new KeyboardButton(['text' => $config->button_text_search]),
+            new KeyboardButton(['text' => $this->settings->button_text_start]),
+            new KeyboardButton(['text' => $this->settings->button_text_catalog]),
+            new KeyboardButton(['text' => $this->settings->button_text_search]),
         ];
 
         $data = (new Keyboard([

@@ -400,7 +400,6 @@ class CallbackqueryCommand extends SystemCommand
 
         } elseif (preg_match('/getList/iu', trim($callback_data), $match)) {
             $user_id = $callback_query->getFrom()->getId();
-            $config = Yii::$app->settings->get('app');
             parse_str($callback_data, $params);
 
 
@@ -418,8 +417,8 @@ class CallbackqueryCommand extends SystemCommand
                 }
             } elseif ($params['model'] == 'new') {
                 $pagerCommand = 'getList&model=new';
-                if (isset($config->label_expire_new)) {
-                    $query->int2between(time(), time() - (86400 * $config->label_expire_new));
+                if (isset($this->settings->label_expire_new)) {
+                    $query->int2between(time(), time() - (86400 * $this->settings->label_expire_new));
                 } else {
                     $query->int2between(-1, -1);
                 }
@@ -433,7 +432,7 @@ class CallbackqueryCommand extends SystemCommand
             $pages = new KeyboardPagination([
                 'totalCount' => $query->count(),
                 // 'defaultPageSize' => 5,
-                'pageSize' => Yii::$app->settings->get('app', 'pagenum_telegram'),
+                'pageSize' => $this->settings->pagenum_telegram,
                 'currentPage' => (isset($params['page'])) ? (int)$params['page'] : 1
             ]);
 
@@ -447,8 +446,8 @@ class CallbackqueryCommand extends SystemCommand
                 $pages->setPage(1);
             }
 
-            if ((int)Yii::$app->settings->get('app', 'pagenum_telegram') > 1) {
-                $offset = $pages->offset - (int)Yii::$app->settings->get('app', 'pagenum_telegram');
+            if ((int)$this->settings->pagenum_telegram > 1) {
+                $offset = $pages->offset - (int)$this->settings->pagenum_telegram;
             } else {
                 $offset = 0;
             }
@@ -527,7 +526,7 @@ class CallbackqueryCommand extends SystemCommand
                 $pages = new KeyboardPagination([
                     'totalCount' => $query->count(),
                     // 'defaultPageSize' => 5,
-                    'pageSize' => Yii::$app->settings->get('app', 'pagenum_telegram'),
+                    'pageSize' => $this->settings->pagenum_telegram,
                     'currentPage' => (isset($params['page'])) ? (int)$params['page'] : 1
                 ]);
 
@@ -541,8 +540,8 @@ class CallbackqueryCommand extends SystemCommand
                     $pages->setPage(1);
                 }
 
-                if ((int)Yii::$app->settings->get('app', 'pagenum_telegram') > 1) {
-                    $offset = $pages->offset - (int)Yii::$app->settings->get('app', 'pagenum_telegram');
+                if ((int)$this->settings->pagenum_telegram > 1) {
+                    $offset = $pages->offset - (int)$this->settings->pagenum_telegram;
                 } else {
                     $offset = 0;
                 }
@@ -612,55 +611,5 @@ class CallbackqueryCommand extends SystemCommand
         return Request::answerCallbackQuery($data);
 
     }
-
-    protected $_attributes;
-    public $model;
-    protected $_models;
-
-    public function attributes($product)
-    {
-
-        $eav = $product;
-        /** @var \app\modules\shop\components\EavBehavior $eav */
-        $this->_attributes = $eav->getEavAttributes();
-
-
-        $data = [];
-        foreach ($this->getModels() as $model) {
-            /** @var Attribute $model */
-            $abbr = ($model->abbreviation) ? ' ' . $model->abbreviation : '';
-
-
-            $data[$model->title]['value'] = $model->renderValue($this->_attributes[$model->name]);
-            $data[$model->title]['abbreviation'] = $abbr;
-        }
-
-        return $data;
-
-    }
-
-    public function getModels()
-    {
-        if (is_array($this->_models))
-            return $this->_models;
-
-        $this->_models = [];
-        //$cr = new CDbCriteria;
-        //$cr->addInCondition('t.name', array_keys($this->_attributes));
-
-        // $query = Attribute::getDb()->cache(function () {
-        $query = Attribute::find()
-            ->where(['IN', 'name', array_keys($this->_attributes)])
-            ->sort()
-            ->all();
-        // }, 3600);
-
-
-        foreach ($query as $m)
-            $this->_models[$m->name] = $m;
-
-        return $this->_models;
-    }
-
 
 }

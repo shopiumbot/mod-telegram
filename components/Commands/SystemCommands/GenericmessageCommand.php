@@ -69,7 +69,6 @@ class GenericmessageCommand extends SystemCommand
             return $deprecated_system_command_response;
         }
 
-        $config = Yii::$app->settings->get('app');
         $user_id = $this->getMessage()->getFrom()->getId();
         $chat_id = $this->getMessage()->getChat()->getId();
 
@@ -92,12 +91,12 @@ class GenericmessageCommand extends SystemCommand
         }
 
 
-        if ($config->button_text_cart === $text) { //cart emoji //preg_match('/^(\x{1F6CD})/iu', $text, $match)
+        if ($this->settings->button_text_cart === $text) { //cart emoji //preg_match('/^(\x{1F6CD})/iu', $text, $match)
             return $this->telegram->executeCommand('cart');
-        } elseif ($config->button_text_catalog === $text) { //folder emoji preg_match('/^(\x{1F4C2})/iu', $text, $match)
+        } elseif ($this->settings->button_text_catalog === $text) { //folder emoji preg_match('/^(\x{1F4C2})/iu', $text, $match)
             $this->telegram->setCommandConfig('catalog', ['id' => 1]);
             return $this->telegram->executeCommand('catalog');
-        } elseif ($config->button_text_start === $text) { //home emoji //preg_match('/^(\x{1F3E0})/iu', $text, $match)
+        } elseif ($this->settings->button_text_start === $text) { //home emoji //preg_match('/^(\x{1F3E0})/iu', $text, $match)
             $this->telegram->executeCommand('start');
             return $this->telegram->executeCommand('cancel');
 
@@ -111,11 +110,11 @@ class GenericmessageCommand extends SystemCommand
             return $this->telegram->executeCommand('call');
         } elseif (preg_match('/^(\x{2709})/iu', $text, $match)) { //feedback emoji
             return $this->telegram->executeCommand('feedback');
-        } elseif ($config->button_text_history === $text) { //package emoji //preg_match('/^(\x{1F4E6})/iu', $text, $match)
+        } elseif ($this->settings->button_text_history === $text) { //package emoji //preg_match('/^(\x{1F4E6})/iu', $text, $match)
             return $this->telegram->executeCommand('history');
         } elseif (preg_match('/^(\x{2699})/iu', $text, $match)) { //gear emoji
             return $this->telegram->executeCommand('settings');
-        } elseif ($config->button_text_search === $text) { //search emoji //preg_match('/^(\x{1F50E})/iu', $text, $match)
+        } elseif ($this->settings->button_text_search === $text) { //search emoji //preg_match('/^(\x{1F50E})/iu', $text, $match)
             return $this->telegram->executeCommand('search');
         }
 
