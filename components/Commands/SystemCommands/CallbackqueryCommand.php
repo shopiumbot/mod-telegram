@@ -3,6 +3,7 @@
 namespace shopium\mod\telegram\components\Commands\SystemCommands;
 
 
+use core\modules\shop\models\query\ProductQuery;
 use Longman\TelegramBot\Entities\InlineKeyboard;
 use core\modules\shop\models\Attribute;
 use core\modules\shop\models\Product;
@@ -399,25 +400,24 @@ class CallbackqueryCommand extends SystemCommand
 
         } elseif (preg_match('/getList/iu', trim($callback_data), $match)) {
             $user_id = $callback_query->getFrom()->getId();
-            $order = Order::findOne(['user_id' => $user_id, 'checkout' => 0]);
             $config = Yii::$app->settings->get('app');
             parse_str($callback_data, $params);
 
 
-            /** @var Product|\yii\db\ActiveQuery $query */
+            /** @var Product|ProductQuery $query */
+            $query = Product::find()->sort();
             if ($params['model'] == 'brands') {
                 if (isset($params['id'])) {
                     $pagerCommand = 'getList&model=brands&id=' . $params['id'];
-                    $query = Product::find()->sort()->applyManufacturers($params['id']);
+                    $query->applyManufacturers($params['id']);
                 }
             } elseif ($params['model'] == 'catalog') {
                 if (isset($params['id'])) {
                     $pagerCommand = 'getList&model=catalog&id=' . $params['id'];
-                    $query = Product::find()->sort()->applyCategories($params['id']);
+                    $query->applyCategories($params['id']);
                 }
             } elseif ($params['model'] == 'new') {
                 $pagerCommand = 'getList&model=new';
-                $query = Product::find()->sort();
                 if (isset($config->label_expire_new)) {
                     $query->int2between(time(), time() - (86400 * $config->label_expire_new));
                 } else {
@@ -473,8 +473,7 @@ class CallbackqueryCommand extends SystemCommand
                     $s = $this->telegram->setCommandConfig('productitem', [
                         'photo_index' => (isset($params['photo_index'])) ? $params['photo_index'] : 0,
                         'product' => $product
-                    ])
-                        ->executeCommand('productitem');
+                    ])->executeCommand('productitem');
                 }
 
             } else {
