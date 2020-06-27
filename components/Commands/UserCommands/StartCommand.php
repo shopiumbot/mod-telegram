@@ -22,7 +22,7 @@ class StartCommand extends UserCommand
     /**
      * @var string
      */
-    protected $description = 'Стартовая комманда';
+    protected $description = 'Начало';
 
     /**
      * @var string

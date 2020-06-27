@@ -197,11 +197,11 @@ class ProductItemCommand extends SystemCommand
                     }
                     $image = $file_id;
                 } else {
-                    if ($this->settings->watermark_enable) {
-                        $image = $imageData->getUrl(false,true);
-                    }else{
-                         $image = $imageData->getPathToOrigin();
-                    }
+                    //if ($this->settings->watermark_enable) {
+                    //    $image = $imageData->getUrl(false,true);
+                    //}else{
+                    $image = $imageData->getPathToOrigin();
+                    // }
 
 
                 }

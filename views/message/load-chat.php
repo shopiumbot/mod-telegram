@@ -1,10 +1,12 @@
 <?php
 use panix\engine\CMS;
 use panix\engine\Html;
-
+use panix\engine\emoji\Emoji;
+use panix\engine\emoji\EmojiAsset;
 /**
  * @var \shopium\mod\telegram\components\Api $api
  * @var \shopium\mod\telegram\models\User $user
+ * @var \yii\web\View $this
  **/
 $telegram = Yii::$app->telegram;
 //print_r($api);die;
@@ -19,7 +21,7 @@ if ($me->isOk()) {
 } else {
     $botName = $telegram->api->getBotUsername();
 }
-
+EmojiAsset::register($this);
 ?>
 
 <ul id="chat-id-<?= Yii::$app->request->get('user_id'); ?>" class="chat-list chat active-chat"
@@ -49,7 +51,7 @@ if ($me->isOk()) {
                 </div>
                 <div class="chat-content">
                     <h6 class="font-medium"><?= $userName; ?></h6>
-                    <pre class="box"><?php echo $message->text; ?>
+                    <pre class="box"><?php echo Emoji::emoji_unified_to_html($message->text); ?>
                         <?php
                        // $entity_decoder = new \shopium\mod\telegram\components\EntityDecoder($message->getMessageObject());
                      //   $decoded_text   = $entity_decoder->decode();
@@ -64,7 +66,7 @@ if ($me->isOk()) {
                         if ($data->inline_keyboard) {
                             echo '<div>';
                             foreach ($data->inline_keyboard as $k => $keyboard) {
-                                echo '<span class="btn btn-secondary">' . $keyboard[0]->text . '</span>';
+                                echo '<span class="btn btn-secondary">' . Emoji::emoji_unified_to_html($keyboard[0]->text) . '</span>';
                             }
                             echo '</div>';
                         }

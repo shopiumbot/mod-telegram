@@ -22,7 +22,7 @@ namespace shopium\mod\telegram\components;
  * LIQPAY API       https://www.liqpay.ua/documentation/en
  *
  */
-use MongoDB\Driver\Exception\InvalidArgumentException;
+use yii\base\InvalidArgumentException;
 
 /**
  * Payment method liqpay process
