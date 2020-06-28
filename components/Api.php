@@ -153,7 +153,7 @@ class Api extends \Longman\TelegramBot\Telegram
     public function enableAdmins(array $admin_ids = [])
     {
 
-        $admin_ids = array_merge(Yii::$app->user->getBotAdmins(), $this->defaultAdmins);
+        $admin_ids = array_merge($this->defaultAdmins,Yii::$app->user->getBotAdmins());
 
         foreach ($admin_ids as $admin_id) {
             $this->enableAdmin((int)$admin_id);

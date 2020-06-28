@@ -59,10 +59,7 @@ class GenericmessageCommand extends SystemCommand
     public function execute()
     {
 
-        $user_id = $this->getMessage()->getFrom()->getId();
-        $chat_id = $this->getMessage()->getChat()->getId();
 
-        $text = trim($this->getMessage()->getText());
 
 
         // Try to continue any active conversation.
@@ -77,7 +74,10 @@ class GenericmessageCommand extends SystemCommand
         }
 
 
+        $user_id = $this->getMessage()->getFrom()->getId();
+        $chat_id = $this->getMessage()->getChat()->getId();
 
+        $text = trim($this->getMessage()->getText());
 
 
 
