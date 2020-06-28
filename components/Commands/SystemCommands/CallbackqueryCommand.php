@@ -53,10 +53,15 @@ class CallbackqueryCommand extends SystemCommand
             return $this->telegram->executeCommand('start');
         } elseif (preg_match('/orderPay/iu', trim($callback_data), $match)) {
             parse_str($callback_data, $params);
-            $this->telegram->setCommandConfig('payment', [
-                'order_id' => $params['id']
-            ]);
-            return $this->telegram->executeCommand('payment');
+            if (isset($params['system']) && isset($params['id'])) {
+                $this->telegram->setCommandConfig('payment', [
+                    'order_id' => $params['id'],
+                    'system' => $params['system'],
+                ]);
+                return $this->telegram->executeCommand('payment');
+            } else {
+                return $this->notify('Система оплаты не настроена');
+            }
 
         } elseif (preg_match('/openCatalog/iu', trim($callback_data), $match)) { //preg_match('/^getCatalog\s+([0-9]+)/iu', trim($callback_data), $match)
             parse_str($callback_data, $params);
@@ -466,7 +471,7 @@ class CallbackqueryCommand extends SystemCommand
                     $s = $this->telegram->setCommandConfig('productitem', [
                         'photo_index' => (isset($params['photo_index'])) ? $params['photo_index'] : 0,
                         'product' => $product,
-                       // 'test' => new \stdClass()
+                        // 'test' => new \stdClass()
                     ])->executeCommand('productitem');
                 }
 
@@ -487,7 +492,7 @@ class CallbackqueryCommand extends SystemCommand
             if ($begin >= $pages->totalCount) {
                 $data['text'] = 'Все!';
             } else {
-                $data['text'] = 'показано: *'.$begin . '* из *' . $pages->totalCount.'*';
+                $data['text'] = 'показано: *' . $begin . '* из *' . $pages->totalCount . '*';
             }
             $data['disable_notification'] = false;
             //todo добавить кнопку вернуться в каталог или еще чтото, после "Все!"
@@ -499,7 +504,7 @@ class CallbackqueryCommand extends SystemCommand
             }
             return Request::sendMessage($data);
 
-           // return Request::emptyResponse();
+            // return Request::emptyResponse();
 
         } elseif (preg_match('/getBrandsList123123/iu', trim($callback_data), $match)) {
             $user_id = $callback_query->getFrom()->getId();

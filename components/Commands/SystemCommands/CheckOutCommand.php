@@ -609,10 +609,11 @@ class CheckOutCommand extends SystemCommand
                     }
 
                     if ($result->isOk()) {
+                        $system = ($order->paymentMethod) ? ($order->paymentMethod->system) ? $order->paymentMethod->system : 0 : 0;
                         $inlineKeyboards[] = [
                             new InlineKeyboardButton([
                                 'text' => Yii::t('telegram/command', 'BUTTON_PAY', $this->number_format($order->total_price)),
-                                'callback_data' => "query=orderPay&id={$order->id}&system=non"
+                                'callback_data' => "query=orderPay&id={$order->id}&system={$system}"
                             ]),
                         ];
                         $data['reply_markup'] = new InlineKeyboard([

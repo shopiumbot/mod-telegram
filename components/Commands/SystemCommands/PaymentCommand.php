@@ -29,6 +29,7 @@ class PaymentCommand extends SystemCommand
     public $enabled = true;
     public $private_only = true;
     public $order_id;
+    public $system;
 
     /**
      * {@inheritdoc}
@@ -38,6 +39,10 @@ class PaymentCommand extends SystemCommand
 
         if (($this->order_id = $this->getConfig('order_id')) === '') {
             $this->order_id = false;
+        }
+
+        if (($this->system = $this->getConfig('system')) === '') {
+            $this->system = false;
         }
 
         $update = $this->getUpdate();
