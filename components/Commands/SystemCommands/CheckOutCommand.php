@@ -519,7 +519,11 @@ class CheckOutCommand extends SystemCommand
                         $products = $order->products;
                         if ($products) {
                             foreach ($products as $product) {
-                                $content .= '*' . $product->name . ' (' . $product->quantity . ' шт.)*: ' . $this->number_format($product->price) . ' грн.' . PHP_EOL;
+                                $command = '';
+                                if ($product->originalProduct) {
+                                    $command .= '/product' . $product->product_id;
+                                }
+                                $content .= '*' . $product->name . '* '.$command.' *(' . $product->quantity . ' шт.)*: ' . $this->number_format($product->price) . ' грн.' . PHP_EOL;
                             }
                         }
                     }

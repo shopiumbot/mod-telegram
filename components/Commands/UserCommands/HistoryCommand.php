@@ -103,7 +103,9 @@ class HistoryCommand extends UserCommand
 
 
             $text = '*История заказа*' . PHP_EOL . PHP_EOL;
+
             foreach ($orders as $order) {
+                $text .= 'Номер заказа *№' . CMS::idToNumber($order->id) . '*' . PHP_EOL . PHP_EOL;
                 if ($pager->buttons)
                     $keyboards[] = $pager->buttons;
 
@@ -121,13 +123,19 @@ class HistoryCommand extends UserCommand
                         ])];
                 }
                 foreach ($order->products as $product) {
+                    $command = '';
+                    if ($product->originalProduct) {
+                        $command .= '/product' . $product->product_id;
+                    }
                     // $text .= '[' . $product->name . ']('.Url::to($product->originalProduct->getImage()->getUrlToOrigin(),true).') *(' . $product->quantity . ' шт.)*: ' . Yii::$app->currency->number_format($product->price) . ' грн. ' . PHP_EOL;
-                    $text .= '*' . $product->name . ' (' . $product->quantity . ' шт.)*: ' . Yii::$app->currency->number_format($product->price) . ' грн. ' . PHP_EOL;
+                    $text .= '*' . $product->name . '* ' . $command . ' *(' . $product->quantity . ' шт.):* ' . Yii::$app->currency->number_format($product->price) . ' грн. ' . PHP_EOL;
                 }
 
                 $text .= PHP_EOL . 'Дата заказа: *' . CMS::date($order->created_at) . '*' . PHP_EOL;
                 $text .= 'Статус: *' . $order->status->name . '*' . PHP_EOL;
-
+                if ($order->invoice && !empty($order->invoice)) {
+                    $text .= 'TTH: *' . $order->invoice . '*' . PHP_EOL;
+                }
 
                 $text .= PHP_EOL . PHP_EOL . '🚚 Доставка: *' . $order->deliveryMethod->name . '*' . PHP_EOL;
                 if ($order->area_id && $order->area) {
@@ -141,11 +149,11 @@ class HistoryCommand extends UserCommand
                     $warehouse = NovaPoshtaWarehouses::findOne(['Ref' => trim($order->warehouse_id)]);
                     if ($warehouse) {
                         $text .= '*' . $warehouse->DescriptionRu . '*' . PHP_EOL;
-                    }else{
-                        $text .= 'Отделение: *' . $order->warehouse . ' '.$order->warehouse_id.'*' . PHP_EOL;
+                    } else {
+                        $text .= 'Отделение: *' . $order->warehouse . ' ' . $order->warehouse_id . '*' . PHP_EOL;
                     }
                 }
-                $text .= PHP_EOL. '💰 Оплата: *' . $order->paymentMethod->name . '*' . PHP_EOL;
+                $text .= PHP_EOL . '💰 Оплата: *' . $order->paymentMethod->name . '*' . PHP_EOL;
                 $text .= 'Общая стоимость заказа: *' . Yii::$app->currency->number_format($order->total_price) . ' грн.*' . PHP_EOL;
 
             }

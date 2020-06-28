@@ -111,13 +111,13 @@ class ChatsCommand extends AdminCommand
         }
 
         if (($user_chats + $group_chats + $supergroup_chats) === 0) {
-            $text_back = 'No chats found..';
+            $text_back = 'Чаты не найдены...';
         } else {
-            $text_back .= PHP_EOL . 'Private Chats: ' . $user_chats;
-            $text_back .= PHP_EOL . 'Groups: ' . $group_chats;
-            $text_back .= PHP_EOL . 'Super Groups: ' . $supergroup_chats;
-            $text_back .= PHP_EOL . 'Channels: ' . $channel_chats;
-            $text_back .= PHP_EOL . 'Total: ' . ($user_chats + $group_chats + $supergroup_chats);
+            $text_back .= PHP_EOL . 'Частные чаты: ' . $user_chats;
+            $text_back .= PHP_EOL . 'Группы: ' . $group_chats;
+            $text_back .= PHP_EOL . 'Супер группы: ' . $supergroup_chats;
+            $text_back .= PHP_EOL . 'Каналы: ' . $channel_chats;
+            $text_back .= PHP_EOL . 'Всего: ' . ($user_chats + $group_chats + $supergroup_chats);
 
             if ($text === '') {
                 $text_back .= PHP_EOL . PHP_EOL . 'Список всех чатов: /' . $this->name . ' *' . PHP_EOL . 'Search for chats: /' . $this->name . ' <search string>';
