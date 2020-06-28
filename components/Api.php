@@ -5,6 +5,7 @@ namespace shopium\mod\telegram\components;
 use Longman\TelegramBot\Exception\TelegramException;
 use Longman\TelegramBot\Request;
 use Yii;
+use yii\base\Exception;
 
 //defined('TB_BASE_PATH') || define('TB_BASE_PATH', __DIR__);
 define('TB_BASE_COMMANDS_PATH', __DIR__ . '/Commands');
@@ -41,7 +42,7 @@ class Api extends \Longman\TelegramBot\Telegram
     {
         //if (isset($this->commands_objects[$command])) {
         //    return $this->commands_objects[$command];
-        //}
+       // }
         $which = ['System'];
         $this->isAdmin() && $which[] = 'Admin';
         $which[] = 'User';
@@ -83,13 +84,50 @@ class Api extends \Longman\TelegramBot\Telegram
         return null;
     }
 
+    public function getCommandsList()
+    {
+        $commands = [];
+
+        foreach ($this->commands_paths as $path) {
+            try {
+                //Get all "*Command.php" files
+                $files = new \RegexIterator(
+                    new \RecursiveIteratorIterator(
+                        new \RecursiveDirectoryIterator($path)
+                    ),
+                    '/^.+Command.php$/'
+                );
+
+                foreach ($files as $file) {
+                    //Remove "Command.php" from filename
+                    $command      = $this->sanitizeCommand(substr($file->getFilename(), 0, -11));
+                    $command_name = mb_strtolower($command);
+
+                    if (array_key_exists($command_name, $commands)) {
+                        continue;
+                    }
+
+                    require_once $file->getPathname();
+
+                    $command_obj = $this->getCommandObject($command, $file->getPathname());
+                    if ($command_obj instanceof Command) {
+                        $commands[$command_name] = $command_obj;
+                    }
+                }
+            } catch (Exception $e) {
+                throw new TelegramException('Error getting commands from path: ' . $path, $e);
+            }
+        }
+
+        return $commands;
+    }
 
     public function executeCommand($command)
     {
 
         $command = mb_strtolower($command);
         //if (isset($this->commands_objects[$command])) {
-        //    $command_obj = $this->commands_objects[$command];
+         //   $command_obj = $this->commands_objects[$command];
         //} else {
             $command_obj = $this->getCommandObject($command);
        // }
@@ -97,7 +135,7 @@ class Api extends \Longman\TelegramBot\Telegram
         if (!$command_obj || !$command_obj->isEnabled()) {
             //Failsafe in case the Generic command can't be found
             if ($command === static::GENERIC_COMMAND) {
-                throw new TelegramException('Generic command missing!2222');
+                throw new TelegramException('Generic command missing!');
             }
 
             //Handle a generic command or non existing one

@@ -41,6 +41,7 @@ class ProductItemCommand extends SystemCommand
     protected $private_only = true;
     public $photo_index = 0;
     public $product;
+    public $test;
 
     public function execute()
     {
@@ -53,6 +54,7 @@ class ProductItemCommand extends SystemCommand
         }
 
         $this->product = $this->getConfig('product');
+       // Yii::error($this->getConfig('test'));
         $callbackData = false;
         if ($update->getCallbackQuery()) {
             $callbackQuery = $update->getCallbackQuery();

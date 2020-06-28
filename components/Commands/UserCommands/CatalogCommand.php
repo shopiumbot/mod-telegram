@@ -34,7 +34,7 @@ class CatalogCommand extends UserCommand
     /**
      * @var string
      */
-    protected $usage = '/catalog <id>';
+    protected $usage = '/catalog';
 
     /**
      * @var string

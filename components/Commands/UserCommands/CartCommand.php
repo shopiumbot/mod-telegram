@@ -1,6 +1,6 @@
 <?php
 
-namespace Longman\TelegramBot\Commands\UserCommands;
+namespace shopium\mod\telegram\components\Commands\UserCommands;
 
 
 use Longman\TelegramBot\DB;

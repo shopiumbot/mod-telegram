@@ -465,7 +465,8 @@ class CallbackqueryCommand extends SystemCommand
                 foreach ($products as $index => $product) {
                     $s = $this->telegram->setCommandConfig('productitem', [
                         'photo_index' => (isset($params['photo_index'])) ? $params['photo_index'] : 0,
-                        'product' => $product
+                        'product' => $product,
+                       // 'test' => new \stdClass()
                     ])->executeCommand('productitem');
                 }
 
