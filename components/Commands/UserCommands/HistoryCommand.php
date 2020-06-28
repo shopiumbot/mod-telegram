@@ -116,13 +116,7 @@ class HistoryCommand extends UserCommand
                             'callback_data' => time()
                         ])];
                 } else {
-                    $system = 0;
-                    if ($order->paymentMethod) {
-                        if ($order->paymentMethod->system) {
-                            $system = $order->paymentMethod->system;
-                        }
-                    }
-
+                    $system = ($order->paymentMethod) ? $order->paymentMethod->system : 0;
                     $keyboards[] = [
                         new InlineKeyboardButton([
                             'text' => Yii::t('telegram/command', 'BUTTON_PAY', $this->number_format($order->total_price)),
