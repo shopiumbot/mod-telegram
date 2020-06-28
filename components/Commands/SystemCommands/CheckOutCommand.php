@@ -507,7 +507,7 @@ class CheckOutCommand extends SystemCommand
                         break;
                     }
                     $phone = $message->getContact()->getPhoneNumber();
-                    $notes['phone_number'] = (strpos($phone, '+')) ? $phone : '+' . $phone;
+                    $notes['phone_number'] = (strpos($phone, '+')) ? $phone : $phone;
 
                 // no break
                 case 5:
@@ -568,8 +568,10 @@ class CheckOutCommand extends SystemCommand
                         $warehouse = NovaPoshtaWarehouses::findOne(['Ref' => trim($order->warehouse_id)]);
                         if ($warehouse) {
                             $content .= '*' . $warehouse->DescriptionRu . '*' . PHP_EOL;
+                            $order->user_address = $warehouse->DescriptionRu;
                         } else {
                             $content .= 'Отделение: *' . $order->warehouse . '*' . PHP_EOL;
+                            $order->user_address = $order->warehouse;
                         }
                     }
                     $content .= PHP_EOL . '💰 Оплата: *' . $notes['payment'] . '*';
@@ -581,7 +583,7 @@ class CheckOutCommand extends SystemCommand
                     $order->delivery_id = $notes['delivery_id'];
                     $order->payment_id = $notes['payment_id'];
                     $order->user_phone = $notes['phone_number'];
-
+                    $order->user_name = $notes['name'];
 
                     $order->status_id = 1;
                     $order->checkout = 1;
