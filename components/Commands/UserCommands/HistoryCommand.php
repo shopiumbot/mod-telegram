@@ -119,7 +119,7 @@ class HistoryCommand extends UserCommand
                     $keyboards[] = [
                         new InlineKeyboardButton([
                             'text' => Yii::t('telegram/command', 'BUTTON_PAY', $this->number_format($order->total_price)),
-                            'callback_data' => 'payment/' . $order->id
+                            'callback_data' => "query=orderPay&id={$order->id}&system=non"
                         ])];
                 }
                 foreach ($order->products as $product) {

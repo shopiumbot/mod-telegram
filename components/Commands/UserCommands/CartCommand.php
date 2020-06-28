@@ -1,6 +1,6 @@
 <?php
 
-namespace shopium\mod\telegram\components\Commands\UserCommands;
+namespace Longman\TelegramBot\Commands\UserCommands;
 
 
 use Longman\TelegramBot\DB;
@@ -79,6 +79,8 @@ class CartCommand extends UserCommand
 
 
         $order = Order::find()->where(['user_id' => $user_id, 'checkout' => 0])->one();
+
+
 
         if ($order) {
 

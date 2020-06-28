@@ -2,14 +2,10 @@
 
 namespace shopium\mod\telegram\components\Commands\UserCommands;
 
-use Longman\TelegramBot\Commands\UserCommand;
+use shopium\mod\telegram\components\UserCommand;
 use Longman\TelegramBot\Entities\File;
-use Longman\TelegramBot\Entities\Keyboard;
-use Longman\TelegramBot\Entities\KeyboardButton;
 use Longman\TelegramBot\Entities\PhotoSize;
-use Longman\TelegramBot\Entities\ServerResponse;
 use Longman\TelegramBot\Entities\UserProfilePhotos;
-use Longman\TelegramBot\Exception\TelegramException;
 use Longman\TelegramBot\Request;
 use Yii;
 

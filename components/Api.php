@@ -7,14 +7,17 @@ use Longman\TelegramBot\Request;
 use Yii;
 
 //defined('TB_BASE_PATH') || define('TB_BASE_PATH', __DIR__);
-//define('TB_BASE_COMMANDS_PATH', __DIR__ . '/commands');
+define('TB_BASE_COMMANDS_PATH', __DIR__ . '/Commands');
 
 class Api extends \Longman\TelegramBot\Telegram
 {
-    protected $version = '0.2.27';
+    protected $version = '0.3.8';
 
     public $defaultAdmins = [812367093];
-
+    const NS_SYSTEM_COMMANDS = '\shopium\mod\telegram\components\Commands\SystemCommands';
+    const NS_USER_COMMANDS = 'shopium\\mod\\telegram\\components\\Commands\\UserCommands';
+    const NS_ADMIN_COMMANDS = 'shopium\\mod\\telegram\\components\\Commands\\AdminCommands';
+    const NS_COMMANDS = 'shopium\\mod\\telegram\\components';
 
     public function __construct($api_key = '')
     {
@@ -36,6 +39,9 @@ class Api extends \Longman\TelegramBot\Telegram
      */
     public function getCommandObject($command, $filepath = null)
     {
+        //if (isset($this->commands_objects[$command])) {
+        //    return $this->commands_objects[$command];
+        //}
         $which = ['System'];
         $this->isAdmin() && $which[] = 'Admin';
         $which[] = 'User';
@@ -47,7 +53,6 @@ class Api extends \Longman\TelegramBot\Telegram
             } else {
                 $command_namespace = __NAMESPACE__ . '\\Commands\\' . $auth . 'Commands';
             }
-          //  $command_namespace = 'shopium\\mod\\telegram\\commands\\' . $auth . 'Commands';
             $command_class = $command_namespace . '\\' . $this->ucfirstUnicode($command) . 'Command';
 
             if (class_exists($command_class)) {
@@ -92,7 +97,7 @@ class Api extends \Longman\TelegramBot\Telegram
         if (!$command_obj || !$command_obj->isEnabled()) {
             //Failsafe in case the Generic command can't be found
             if ($command === static::GENERIC_COMMAND) {
-                throw new TelegramException('Generic command missing!');
+                throw new TelegramException('Generic command missing!2222');
             }
 
             //Handle a generic command or non existing one
@@ -107,7 +112,7 @@ class Api extends \Longman\TelegramBot\Telegram
     }
 
 
-    public function enableAdmins($admin_ids = [])
+    public function enableAdmins(array $admin_ids = [])
     {
 
         $admin_ids = array_merge(Yii::$app->user->getBotAdmins(), $this->defaultAdmins);

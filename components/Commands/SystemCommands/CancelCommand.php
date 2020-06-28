@@ -4,8 +4,6 @@ namespace shopium\mod\telegram\components\Commands\SystemCommands;
 
 use Longman\TelegramBot\Conversation;
 use Longman\TelegramBot\DB;
-use Longman\TelegramBot\Entities\Keyboard;
-use Longman\TelegramBot\Entities\ReplyKeyboardHide;
 use Longman\TelegramBot\Request;
 use shopium\mod\telegram\components\SystemCommand;
 

@@ -4,9 +4,7 @@ namespace shopium\mod\telegram\components\Commands\UserCommands;
 
 
 use Longman\TelegramBot\Entities\PollOption;
-use Longman\TelegramBot\Entities\User;
 use Longman\TelegramBot\Request;
-use shopium\mod\telegram\commands\pager\InlineKeyboardPagination;
 use shopium\mod\telegram\components\UserCommand;
 
 

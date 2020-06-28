@@ -58,6 +58,13 @@ class GenericmessageCommand extends SystemCommand
      */
     public function execute()
     {
+
+        $user_id = $this->getMessage()->getFrom()->getId();
+        $chat_id = $this->getMessage()->getChat()->getId();
+
+        $text = trim($this->getMessage()->getText());
+
+
         // Try to continue any active conversation.
         if ($active_conversation_response = $this->executeActiveConversation()) {
             return $active_conversation_response;
@@ -69,10 +76,10 @@ class GenericmessageCommand extends SystemCommand
             return $deprecated_system_command_response;
         }
 
-        $user_id = $this->getMessage()->getFrom()->getId();
-        $chat_id = $this->getMessage()->getChat()->getId();
 
-        $text = trim($this->getMessage()->getText());
+
+
+
 
 
         $page = Pages::find()->published()->where(['name' => $text])->asArray()->one();

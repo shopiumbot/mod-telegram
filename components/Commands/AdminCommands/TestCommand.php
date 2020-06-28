@@ -3,16 +3,12 @@
 namespace shopium\mod\telegram\components\Commands\AdminCommands;
 
 
-use Longman\TelegramBot\Commands\AdminCommand;
+use shopium\mod\telegram\components\AdminCommand;
 use Longman\TelegramBot\Conversation;
 use Longman\TelegramBot\Entities\Keyboard;
 use Longman\TelegramBot\Entities\KeyboardButton;
 use Longman\TelegramBot\Request;
 use panix\engine\CMS;
-use app\modules\shop\models\Attribute;
-use app\modules\shop\models\Category;
-use app\modules\shop\models\Product;
-use app\modules\shop\models\ProductType;
 use Yii;
 
 /**

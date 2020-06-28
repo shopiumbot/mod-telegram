@@ -2,8 +2,7 @@
 
 namespace shopium\mod\telegram\components\Commands\SystemCommands;
 
-use Longman\TelegramBot\Commands\SystemCommand;
-use Longman\TelegramBot\Commands\UserCommand;
+use shopium\mod\telegram\components\SystemCommand;
 use Longman\TelegramBot\Entities\InlineKeyboard;
 use Longman\TelegramBot\Entities\InlineKeyboardButton;
 use Longman\TelegramBot\Request;

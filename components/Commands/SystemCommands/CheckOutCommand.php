@@ -9,7 +9,6 @@ use Longman\TelegramBot\Entities\InlineKeyboard;
 use Longman\TelegramBot\Entities\InlineKeyboardButton;
 use Longman\TelegramBot\Entities\Keyboard;
 use Longman\TelegramBot\Entities\KeyboardButton;
-use Longman\TelegramBot\Entities\PhotoSize;
 use Longman\TelegramBot\Request;
 use panix\engine\CMS;
 use shopium\mod\cart\models\Delivery;

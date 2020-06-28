@@ -2,7 +2,7 @@
 
 namespace shopium\mod\telegram\components\Commands\AdminCommands;
 
-use Longman\TelegramBot\Commands\AdminCommand;
+use shopium\mod\telegram\components\AdminCommand;
 use Longman\TelegramBot\DB;
 use Longman\TelegramBot\Entities\Update;
 use Longman\TelegramBot\Exception\TelegramException;
@@ -36,12 +36,15 @@ class DebugCommand extends AdminCommand
      */
     protected $version = '1.0.0';
 
-    public function __construct(Api $telegram, Update $update = null)
+    public function __construct2(Api $telegram, Update $update = null)
     {
+
+
+        parent::__construct($telegram, $update);
 
         if ($update->getCallbackQuery()) {
             $callbackQuery = $update->getCallbackQuery();
-            $message = $callbackQuery->getMessage();
+            //$message = $callbackQuery->getMessage();
             $user = $callbackQuery->getFrom();
 
         } else {
@@ -58,7 +61,6 @@ class DebugCommand extends AdminCommand
             $this->show_in_help = false;
             $this->enabled = false;
         }
-        parent::__construct($telegram, $update);
     }
 
     /**

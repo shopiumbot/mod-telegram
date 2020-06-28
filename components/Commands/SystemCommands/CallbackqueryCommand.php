@@ -5,9 +5,7 @@ namespace shopium\mod\telegram\components\Commands\SystemCommands;
 
 use core\modules\shop\models\query\ProductQuery;
 use Longman\TelegramBot\Entities\InlineKeyboard;
-use core\modules\shop\models\Attribute;
 use core\modules\shop\models\Product;
-use Longman\TelegramBot\Entities\InlineKeyboardButton;
 use shopium\mod\telegram\components\InlineKeyboardMorePager;
 use shopium\mod\telegram\components\InlineKeyboardPager;
 use shopium\mod\telegram\components\KeyboardPagination;
@@ -15,10 +13,6 @@ use shopium\mod\telegram\components\SystemCommand;
 use shopium\mod\cart\models\Order;
 use shopium\mod\cart\models\OrderProduct;
 use Longman\TelegramBot\Request;
-use panix\engine\db\ActiveQuery;
-use Yii;
-use yii\helpers\Html;
-use yii\helpers\Url;
 
 /**
  * Callback query command
@@ -57,10 +51,10 @@ class CallbackqueryCommand extends SystemCommand
         $data['callback_query_id'] = $callback_query_id;
         if ($callback_data == 'goHome') {
             return $this->telegram->executeCommand('start');
-        } elseif (preg_match('/^payment\/([0-9]+)/iu', trim($callback_data), $match)) {
-
+        } elseif (preg_match('/orderPay/iu', trim($callback_data), $match)) {
+            parse_str($callback_data, $params);
             $this->telegram->setCommandConfig('payment', [
-                'order_id' => $match[1]
+                'order_id' => $params['id']
             ]);
             return $this->telegram->executeCommand('payment');
 

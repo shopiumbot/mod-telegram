@@ -4,7 +4,7 @@ namespace shopium\mod\telegram\components\Commands\UserCommands;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
-use Longman\TelegramBot\Commands\UserCommand;
+use shopium\mod\telegram\components\UserCommand;
 use Longman\TelegramBot\Exception\TelegramException;
 use Longman\TelegramBot\Request;
 
