@@ -44,21 +44,24 @@ class CallbackqueryCommand extends SystemCommand
         $callback_query_id = $callback_query->getId();
         $callback_data = $callback_query->getData();
 
-        // if(YII_DEBUG){
-        // echo 'Callback: '.$callback_data.PHP_EOL;
-        //}
-
         $data['callback_query_id'] = $callback_query_id;
-        if ($callback_data == 'goHome') {
-            return $this->telegram->executeCommand('start');
+        if (preg_match('/planPay/iu', trim($callback_data), $match)) {
+            parse_str($callback_data, $params);
+            if (isset($params['system'])) {
+                return $this->telegram->setCommandConfig('plan', [
+                    'system' => $params['system'],
+                    'month' => $params['month'],
+                ])->executeCommand('plan');
+            } else {
+                return $this->notify('Ошибка #planPay');
+            }
         } elseif (preg_match('/orderPay/iu', trim($callback_data), $match)) {
             parse_str($callback_data, $params);
             if (isset($params['system']) && isset($params['id'])) {
-                $this->telegram->setCommandConfig('payment', [
+                return $this->telegram->setCommandConfig('payment', [
                     'order_id' => $params['id'],
                     'system' => $params['system'],
-                ]);
-                return $this->telegram->executeCommand('payment');
+                ])->executeCommand('payment');
             } else {
                 return $this->notify('Система оплаты не настроена');
             }
