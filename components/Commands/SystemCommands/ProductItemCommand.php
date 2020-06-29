@@ -112,7 +112,7 @@ class ProductItemCommand extends SystemCommand
 
         $attributes = $this->attributes($product);
         if ($attributes) {
-            $caption .= '*Характеристики:*' . PHP_EOL;
+            $caption .= PHP_EOL.'*Характеристики:*' . PHP_EOL;
             foreach ($attributes as $name => $data) {
                 if (!empty($data['value'])) {
                     $caption .= '*' . $name . '*: ' . $data['value'] . ' ' . $data['abbreviation'] . PHP_EOL;

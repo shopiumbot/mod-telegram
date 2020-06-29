@@ -290,6 +290,7 @@ class SearchResultCommand extends SystemCommand
         // $query = Attribute::getDb()->cache(function () {
         $query = Attribute::find()
             ->where(['IN', 'name', array_keys($this->_attributes)])
+            ->published()
             ->sort()
             ->all();
         // }, 3600);
