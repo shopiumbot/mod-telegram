@@ -2,6 +2,7 @@
 
 namespace shopium\mod\telegram\components\Commands\SystemCommands;
 
+use core\modules\user\models\Payments;
 use Longman\TelegramBot\DB;
 use shopium\mod\telegram\components\SystemCommand;
 use Longman\TelegramBot\Request;
@@ -37,21 +38,29 @@ class GenericCommand extends SystemCommand
      */
     public function execute()
     {
-        $preCheckout = $this->getPreCheckoutQuery();
+        $preCheckoutQuery = $this->getPreCheckoutQuery();
         $shippingQuery = $this->getShippingQuery();
-        if ($preCheckout) {
+        if ($preCheckoutQuery) {
             $response = Request::answerPreCheckoutQuery([
-                'pre_checkout_query_id' => $preCheckout->getId(),
+                'pre_checkout_query_id' => $preCheckoutQuery->getId(),
                 'ok' => true
             ]);
             if ($response->getOk()) {
                 //set order to PAY
+                $payment = new Payments();
+                $payment->system = 'liqpay';
+                $payment->name='Тариф';
+                $payment->type = 'balance';
+                $payment->money = 300.00;
+                if($payment->save(false)){
+
+                }
             }
             return $response;
 
         }
 
-       // $test = false;
+        // $test = false;
         $update = $this->getUpdate();
         if ($update->getCallbackQuery()) {
 
@@ -64,16 +73,16 @@ class GenericCommand extends SystemCommand
             $message = $this->getMessage();
 
 
-           // if ($message) {
-                $test = true;
-                $chat_id = $message->getChat()->getId();
-                $user_id = $message->getFrom()->getId();
-           // }
+            // if ($message) {
+            $test = true;
+            $chat_id = $message->getChat()->getId();
+            $user_id = $message->getFrom()->getId();
+            // }
         }
         //You can use $command as param
         //if ($message) {
-            $command = $message->getCommand();
-       // }
+        $command = $message->getCommand();
+        // }
 
         //If the user is an admin and the command is in the format "/whoisXYZ", call the /whois command
         if (stripos($command, 'whois') === 0 && $this->telegram->isAdmin($user_id)) {
@@ -82,19 +91,19 @@ class GenericCommand extends SystemCommand
             return $this->telegram->executeCommand('product');
         }
         //if ($test) {
-            $text = Yii::t('telegram/command', 'COMMAND_NOT_FOUND_1', $command) . PHP_EOL;
-            $text .= Yii::t('telegram/command', 'COMMAND_NOT_FOUND_2');
-            $data = [
-                'chat_id' => $chat_id,
-                'text' => $text,
-            ];
+        $text = Yii::t('telegram/command', 'COMMAND_NOT_FOUND_1', $command) . PHP_EOL;
+        $text .= Yii::t('telegram/command', 'COMMAND_NOT_FOUND_2');
+        $data = [
+            'chat_id' => $chat_id,
+            'text' => $text,
+        ];
 
-            $result = Request::sendMessage($data);
-            if ($result->isOk()) {
-                $db = DB::insertMessageRequest($result->getResult());
-            }
-            return $result;
-      //  }
+        $result = Request::sendMessage($data);
+        if ($result->isOk()) {
+            $db = DB::insertMessageRequest($result->getResult());
+        }
+        return $result;
+        //  }
 
     }
 }

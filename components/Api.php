@@ -19,22 +19,26 @@ class Api extends \Longman\TelegramBot\Telegram
     const NS_USER_COMMANDS = 'shopium\\mod\\telegram\\components\\Commands\\UserCommands';
     const NS_ADMIN_COMMANDS = 'shopium\\mod\\telegram\\components\\Commands\\AdminCommands';
     const NS_COMMANDS = 'shopium\\mod\\telegram\\components';
+    public $user;
 
     public function __construct($api_key = '')
     {
-       // $this->user = Yii::$app->user;
+
         if (empty($api_key))
             $api_key = Yii::$app->user->token;
 
+        $this->user = Yii::$app->user;
         parent::__construct($api_key, 'shopiumbot');
-        Yii::info('load api');
+        //Yii::info('load api');
         $this->enableAdmins();
 
         $this->setDownloadPath(Yii::getAlias('@app/web/telegram/downloads'));
         $this->setUploadPath(Yii::getAlias('@app/web/telegram/uploads'));
 
     }
-
+    public function getUser(){
+        return $this->user;
+    }
     /**
      * @inheritdoc
      */

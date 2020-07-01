@@ -9,8 +9,6 @@ use Longman\TelegramBot\Entities\Keyboard;
 use Longman\TelegramBot\Entities\KeyboardButton;
 use Longman\TelegramBot\Entities\Update;
 use Longman\TelegramBot\Request;
-use panix\engine\CMS;
-use shopium\mod\cart\models\Order;
 use Yii;
 
 abstract class Command extends \Longman\TelegramBot\Commands\Command
@@ -18,6 +16,7 @@ abstract class Command extends \Longman\TelegramBot\Commands\Command
     public $orderHistoryCount = 0;
     public $orderProductCount = 0;
     public $settings;
+
     public function __construct(Api $telegram, Update $update = null)
     {
         /*$this->orderHistoryCount = Order::find()
@@ -31,6 +30,16 @@ abstract class Command extends \Longman\TelegramBot\Commands\Command
         }*/
         $this->settings = Yii::$app->settings->get('app');
         parent::__construct($telegram, $update);
+    }
+
+    public function preExecute()
+    {
+        if (time() > $this->telegram->getUser()->expire) {
+            $text = '*Бот отключен!*' . PHP_EOL;
+            $text .= 'Период использование бота окончен, для разблокировки бота, необходимо продлить тарифный план.';
+            return $this->notify($text);
+        }
+        parent::preExecute();
     }
 
     public function isSystemCommand()
