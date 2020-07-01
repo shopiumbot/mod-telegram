@@ -60,10 +60,10 @@ class FeedbackCommand extends UserCommand
         $data = [
             'chat_id' => $chat_id,
         ];
-        if ($text === '❌ Отмена') {
-            $this->telegram->executeCommand('cancel');
-            return Request::emptyResponse();
-        }
+        //if ($text === '❌ Отмена') {
+        //    $this->telegram->executeCommand('cancel');
+       //     return Request::emptyResponse();
+        //}
         if ($chat->isGroupChat() || $chat->isSuperGroup()) {
             //reply to message id is applied by default
             //Force reply is applied by default so it can work with privacy on
@@ -98,7 +98,7 @@ class FeedbackCommand extends UserCommand
                     $result = Request::sendMessage($data);
                     break;
                 }*/
-                if ($text === '' || preg_match('/^(\x{2709})/iu', trim($text), $match)) {
+                if ($text === '' || $text === static::KEYWORD_CANCEL) {
                     $notes['state'] = 0;
                     $this->conversation->update();
 
@@ -106,7 +106,7 @@ class FeedbackCommand extends UserCommand
                     //$data['reply_markup'] = Keyboard::remove(['selective' => true]);
 
 
-                    $keyboards = [[new KeyboardButton('❌ Отмена')]];
+                    $keyboards = [[new KeyboardButton(static::KEYWORD_CANCEL)]];
                     $data['reply_markup'] = (new Keyboard(['keyboard' => $keyboards]))
                         ->setResizeKeyboard(true)
                         ->setOneTimeKeyboard(true)
@@ -146,15 +146,10 @@ class FeedbackCommand extends UserCommand
                     $resp = Request::sendMessage($dataChat);
                 }
 
-
                 $result = Request::sendMessage($data);
-
-
                 break;
         }
-
         return $result;
-
     }
 
 }

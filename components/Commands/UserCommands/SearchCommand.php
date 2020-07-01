@@ -77,10 +77,10 @@ class SearchCommand extends UserCommand
         $data = [
             'chat_id' => $chat_id,
         ];
-        if ($text === '❌ Отмена') {
-            return $this->telegram->executeCommand('cancel');
+        //if ($text === '❌ Отмена') {
+        //    return $this->telegram->executeCommand('cancel');
             //return Request::emptyResponse();
-        }
+        //}
         if ($chat->isGroupChat() || $chat->isSuperGroup()) {
             //reply to message id is applied by default
             //Force reply is applied by default so it can work with privacy on
@@ -110,7 +110,7 @@ class SearchCommand extends UserCommand
                     $data['text'] = 'Введите название товара или артикул:';
                     //$data['reply_markup'] = Keyboard::remove(['selective' => true]);
 
-                    $data['reply_markup'] = (new Keyboard(['❌ Отмена']))
+                    $data['reply_markup'] = (new Keyboard([static::KEYWORD_CANCEL]))
                         ->setResizeKeyboard(true)
                         ->setOneTimeKeyboard(true)
                         ->setSelective(true);

@@ -15,7 +15,7 @@ use Yii;
  *
  * Command that demonstrated the Conversation funtionality in form of a simple survey.
  */
-class AdminaddCommand extends AdminCommand
+class AdminAddCommand extends AdminCommand
 {
     /**
      * @var string

@@ -77,6 +77,11 @@ class GenericmessageCommand extends SystemCommand
         $text = trim($this->getMessage()->getText());
 
 
+        if ($text === static::KEYWORD_CANCEL) {
+            $this->telegram->executeCommand('cancel');
+            return Request::emptyResponse();
+        }
+
 
 
         $page = Pages::find()->published()->where(['name' => $text])->asArray()->one();

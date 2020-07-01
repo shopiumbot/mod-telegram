@@ -17,6 +17,9 @@ abstract class Command extends \Longman\TelegramBot\Commands\Command
     public $orderProductCount = 0;
     public $settings;
 
+    const KEYWORD_BACK = '⬅ Назад';
+    const KEYWORD_CANCEL = '❌ Отмена';
+
     public function __construct(Api $telegram, Update $update = null)
     {
         /*$this->orderHistoryCount = Order::find()

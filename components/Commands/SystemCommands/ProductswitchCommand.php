@@ -112,10 +112,10 @@ class ProductswitchCommand extends SystemCommand
 
         $product = Product::findOne($notes['id']);
 
-        if ($text === '❌ Отмена') {
-            $this->telegram->executeCommand('cancel');
-            return Request::emptyResponse();
-        }
+        //if ($text === '❌ Отмена') {
+        //    $this->telegram->executeCommand('cancel');
+        //    return Request::emptyResponse();
+        //}
         //$accept = ($notes['switch']) ? 'Показать' : 'Скрыть';
 
         $question = (!$this->switch) ? 'Вы уверены что хотите *скрыть* этот товар?' : 'Вы уверены что хотите *показать* этот товар?';
@@ -126,12 +126,12 @@ class ProductswitchCommand extends SystemCommand
             $product = null;
             switch ($state) {
                 case 0:
-                    if ($text === '' || !in_array($text, ['Да', '❌ Отмена'], true)) {
+                    if ($text === '' || !in_array($text, ['Да', static::KEYWORD_CANCEL], true)) {
                         $notes['state'] = 0;
                         $this->conversation->update();
 
                         $data['parse_mode'] = 'Markdown';
-                        $data['reply_markup'] = (new Keyboard(['Да', '❌ Отмена']))
+                        $data['reply_markup'] = (new Keyboard(['Да', static::KEYWORD_CANCEL]))
                             ->setResizeKeyboard(true)
                             ->setOneTimeKeyboard(true)
                             ->setSelective(true);

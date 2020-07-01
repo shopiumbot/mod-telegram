@@ -20,7 +20,7 @@ use Yii;
  *
  * Command that demonstrated the Conversation funtionality in form of a simple survey.
  */
-class ProductaddCommand extends AdminCommand
+class ProductAdd2Command extends AdminCommand
 {
     /**
      * @var string
