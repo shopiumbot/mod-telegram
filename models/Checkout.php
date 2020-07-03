@@ -1,0 +1,51 @@
+<?php
+
+namespace shopium\mod\telegram\models;
+
+
+use shopium\mod\telegram\models\query\ChatQuery;
+use core\components\ActiveRecord;
+
+/**
+ * This is the model class for table "actions".
+ *
+ * @property integer $client_chat_id
+ * @property string $message
+ * @property string $time
+ * @property string $direction
+ */
+class Checkout extends ActiveRecord
+{
+    const MODULE_ID = 'telegram';
+
+    public static function find()
+    {
+        return new ChatQuery(get_called_class());
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public static function tableName()
+    {
+        return '{{%telegram__pre_checkout_query}}';
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function rules()
+    {
+        return [
+            [['client_chat_id'], 'required'],
+            [['first_name', 'last_name', 'username'], 'safe'],
+            //   [['message'], 'string', 'max' => 4100],
+        ];
+    }
+
+    public function getUser()
+    {
+        return $this->hasOne(User::class, ['id' => 'user_id']);
+    }
+
+}

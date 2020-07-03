@@ -40,6 +40,7 @@ class GenericCommand extends SystemCommand
     {
         $preCheckoutQuery = $this->getPreCheckoutQuery();
         $shippingQuery = $this->getShippingQuery();
+        $callbackQuery = $this->getCallbackQuery();
         if ($preCheckoutQuery) {
             $response = Request::answerPreCheckoutQuery([
                 'pre_checkout_query_id' => $preCheckoutQuery->getId(),
@@ -49,10 +50,10 @@ class GenericCommand extends SystemCommand
                 //set order to PAY
                 $payment = new Payments();
                 $payment->system = 'liqpay';
-                $payment->name='Тариф';
+                $payment->name = 'Тариф';
                 $payment->type = 'balance';
                 $payment->money = 300.00;
-                if($payment->save(false)){
+                if ($payment->save(false)) {
 
                 }
             }
@@ -60,7 +61,7 @@ class GenericCommand extends SystemCommand
 
         }
 
-        // $test = false;
+
         $update = $this->getUpdate();
         if ($update->getCallbackQuery()) {
 
@@ -72,17 +73,14 @@ class GenericCommand extends SystemCommand
         } else {
             $message = $this->getMessage();
 
+            $chat = $message->getChat();
+            $from = $message->getFrom();
 
-            // if ($message) {
-            $test = true;
-            $chat_id = $message->getChat()->getId();
-            $user_id = $message->getFrom()->getId();
-            // }
+            $chat_id = $chat->getId();
+            $user_id = $from->getId();
         }
         //You can use $command as param
-        //if ($message) {
         $command = $message->getCommand();
-        // }
 
         //If the user is an admin and the command is in the format "/whoisXYZ", call the /whois command
         if (stripos($command, 'whois') === 0 && $this->telegram->isAdmin($user_id)) {
@@ -103,7 +101,7 @@ class GenericCommand extends SystemCommand
             $db = DB::insertMessageRequest($result->getResult());
         }
         return $result;
-        //  }
+
 
     }
 }

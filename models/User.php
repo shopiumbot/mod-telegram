@@ -4,6 +4,7 @@ namespace shopium\mod\telegram\models;
 
 
 use panix\engine\CMS;
+use panix\engine\Html;
 use shopium\mod\telegram\models\query\UserQuery;
 use Longman\TelegramBot\Request;
 use Yii;
@@ -66,26 +67,26 @@ class User extends ActiveRecord
     public static function dropdown()
     {
         // get and cache data
-       // static $dropdown;
-	   $dropdown=[];
+        // static $dropdown;
+        $dropdown = [];
         //if ($dropdown === null) {
 
-            // get all records from database and generate
-            $models = static::find()->where(['is_bot'=>0])->asArray()->all();
-            foreach ($models as $model) {
-                $name = '';
+        // get all records from database and generate
+        $models = static::find()->where(['is_bot' => 0])->asArray()->all();
+        foreach ($models as $model) {
+            $name = '';
 
 
-                if($model['username']){
-                    $name .= '@'.$model['username'];
-                }else{
-                    if($model['first_name']){
-                        $name .= ''.$model['first_name'].' '.$model['last_name'].'';
-                    }
+            if ($model['username']) {
+                $name .= '@' . $model['username'];
+            } else {
+                if ($model['first_name']) {
+                    $name .= '' . $model['first_name'] . ' ' . $model['last_name'] . '';
                 }
-                $dropdown[$model['id']] = $name;
             }
-       // }
+            $dropdown[$model['id']] = $name;
+        }
+        // }
 
         return $dropdown;
     }
@@ -112,5 +113,17 @@ class User extends ActiveRecord
 
         }
         return '/uploads/no-image.jpg';
+    }
+
+    public function displayName()
+    {
+        if ($this->username) {
+            return Html::a('@' . $this->username,'tg://resolve?domain=@'.$this->username);
+        } else {
+            if ($this->first_name || $this->last_name) {
+                return '' . $this->first_name . ' ' . $this->last_name . '';
+            }
+        }
+        return null;
     }
 }

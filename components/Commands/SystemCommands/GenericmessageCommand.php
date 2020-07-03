@@ -82,6 +82,11 @@ class GenericmessageCommand extends SystemCommand
             return Request::emptyResponse();
         }
 
+        //$test['chat_id'] = '@shopiumbotchannel';
+       // $test['chat_id'] = -1001271165607;
+       // $test['text']='test';
+       // $result = Request::sendMessage($test);
+
 
 
         $page = Pages::find()->published()->where(['name' => $text])->asArray()->one();

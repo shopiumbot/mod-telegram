@@ -54,7 +54,7 @@ class ProductItemCommand extends SystemCommand
         }
 
         $this->product = $this->getConfig('product');
-       // Yii::error($this->getConfig('test'));
+        // Yii::error($this->getConfig('test'));
         $callbackData = false;
         if ($update->getCallbackQuery()) {
             $callbackQuery = $update->getCallbackQuery();
@@ -95,7 +95,7 @@ class ProductItemCommand extends SystemCommand
             $caption .= '🔥🔥🔥';
         }
 
-        $caption .= '*' . $product->name . '* '.((!$product->switch)?'`(наименование скрыто)`':'').' ' . PHP_EOL;
+        $caption .= '*' . $product->name . '* ' . ((!$product->switch) ? '`(наименование скрыто)`' : '') . ' ' . PHP_EOL;
         $caption .= $this->number_format($product->price) . ' грн' . PHP_EOL . PHP_EOL;
 
         if ($product->hasDiscount) {
@@ -112,7 +112,7 @@ class ProductItemCommand extends SystemCommand
 
         $attributes = $this->attributes($product);
         if ($attributes) {
-            $caption .= PHP_EOL.'*Характеристики:*' . PHP_EOL;
+            $caption .= PHP_EOL . '*Характеристики:*' . PHP_EOL;
             foreach ($attributes as $name => $data) {
                 if (!empty($data['value'])) {
                     $caption .= '*' . $name . '*: ' . $data['value'] . ' ' . $data['abbreviation'] . PHP_EOL;
@@ -155,36 +155,45 @@ class ProductItemCommand extends SystemCommand
 
         }
 
-
-        if ($orderProduct) {
+        if ($chat->isGroupChat() || $chat->isSuperGroup()) {
             $keyboards[] = [
                 new InlineKeyboardButton([
-                    'text' => '—',
-                    'callback_data' => "query=productSpinner&order_id={$order->id}&product_id={$product->id}&type=down&img={$this->photo_index}"
-                ]),
-                new InlineKeyboardButton([
-                    'text' => $orderProduct->quantity . ' шт.',
-                    'callback_data' => time()
-                ]),
-                new InlineKeyboardButton([
-                    'text' => '+',
-                    'callback_data' => "query=productSpinner&order_id={$order->id}&product_id={$product->id}&type=up&img={$this->photo_index}"
-                ]),
-                new InlineKeyboardButton([
-                    'text' => '❌',
-                    'callback_data' => "query=deleteInCart&id={$orderProduct->id}&photo_index={$this->photo_index}"
+                    'text' => 'Чтобы купить этот товар перейдите в бота',
+                    //'url' => "https://t.me/shopiumbot?startgroup=test",
+                    'url' => "tg://resolve?domain=shopiumbot"
                 ]),
             ];
         } else {
-            $keyboards[] = [
-                new InlineKeyboardButton([
-                    'text' => Yii::t('telegram/command', 'BUTTON_BUY', $this->number_format($product->getFrontPrice())),
-                    'callback_data' => "query=addCart&product_id={$product->id}&photo_index={$this->photo_index}"
-                ])
-            ];
-        }
+            if ($orderProduct) {
+                $keyboards[] = [
+                    new InlineKeyboardButton([
+                        'text' => '—',
+                        'callback_data' => "query=productSpinner&order_id={$order->id}&product_id={$product->id}&type=down&img={$this->photo_index}"
+                    ]),
+                    new InlineKeyboardButton([
+                        'text' => $orderProduct->quantity . ' шт.',
+                        'callback_data' => time()
+                    ]),
+                    new InlineKeyboardButton([
+                        'text' => '+',
+                        'callback_data' => "query=productSpinner&order_id={$order->id}&product_id={$product->id}&type=up&img={$this->photo_index}"
+                    ]),
+                    new InlineKeyboardButton([
+                        'text' => '❌',
+                        'callback_data' => "query=deleteInCart&id={$orderProduct->id}&photo_index={$this->photo_index}"
+                    ]),
+                ];
+            } else {
+                $keyboards[] = [
+                    new InlineKeyboardButton([
+                        'text' => Yii::t('telegram/command', 'BUTTON_BUY', $this->number_format($product->getFrontPrice())),
+                        'callback_data' => "query=addCart&product_id={$product->id}&photo_index={$this->photo_index}"
+                    ])
+                ];
+            }
 
-        $keyboards[] = $this->productAdminKeywords($chat_id, $product);
+            $keyboards[] = $this->productAdminKeywords($chat_id, $product);
+        }
         /** @var Image $imageData */
         $image = Yii::getAlias('@uploads') . DIRECTORY_SEPARATOR . 'no-image.jpg';
         if ($images) {
@@ -192,7 +201,7 @@ class ProductItemCommand extends SystemCommand
             if ($imageData) {
                 if ($imageData->telegram_file_id) {
                     list($bot_id, $file_id) = explode(':', $imageData->telegram_file_id);
-                    if($file_id == $this->getTelegram()->getBotId()){
+                    if ($file_id == $this->getTelegram()->getBotId()) {
                         //todo check to bots ids
 
 
@@ -296,8 +305,6 @@ class ProductItemCommand extends SystemCommand
                         $imageData->save(false);
                     }
                 }
-
-
 
 
             } else {

@@ -63,7 +63,7 @@ class SendtochannelCommand extends AdminCommand
         in_array($type, ['command', 'text'], true) && $type = 'message';
 
         $text = trim($message->getText(true));
-        $text_yes_or_no = ($text === 'Yes' || $text === 'No');
+        $text_yes_or_no = ($text === 'Да' || $text === 'Нет');
 
         $data = [
             'chat_id' => $chat_id,
@@ -85,7 +85,7 @@ class SendtochannelCommand extends AdminCommand
 
         $yes_no_keyboard = new Keyboard(
             [
-                'keyboard' => [['Yes', 'No']],
+                'keyboard' => [['Да', 'Нет']],
                 'resize_keyboard' => true,
                 'one_time_keyboard' => true,
                 'selective' => true,
@@ -175,7 +175,7 @@ class SendtochannelCommand extends AdminCommand
                     } elseif (in_array($notes['message_type'], ['video', 'photo'], true)) {
                         $text = 'Хотите вставить подпись?';
                         if (!$text_yes_or_no && $notes['last_message_id'] !== $message->getMessageId()) {
-                            $text .= PHP_EOL . 'Type Yes or No';
+                            $text .= PHP_EOL . 'Type Да or Нет';
                         }
 
                         $result = $this->replyToChat(
@@ -185,7 +185,7 @@ class SendtochannelCommand extends AdminCommand
                         break;
                     }
                 }
-                $notes['set_caption'] = ($text === 'Yes');
+                $notes['set_caption'] = ($text === 'Да');
                 $notes['last_message_id'] = $message->getMessageId();
             // no break
             case 3:
@@ -224,14 +224,14 @@ class SendtochannelCommand extends AdminCommand
 
                         $data['text'] = 'Хотите опубликовать это?';
                         if (!$text_yes_or_no && $notes['last_message_id'] !== $message->getMessageId()) {
-                            $data['text'] .= PHP_EOL . 'Type Yes or No';
+                            $data['text'] .= PHP_EOL . 'Type Да or Нет';
                         }
                         $result = Request::sendMessage($data);
                     }
                     break;
                 }
 
-                $notes['post_message'] = ($text === 'Yes');
+                $notes['post_message'] = ($text === 'Да');
                 $notes['last_message_id'] = $message->getMessageId();
             // no break
             case 5:

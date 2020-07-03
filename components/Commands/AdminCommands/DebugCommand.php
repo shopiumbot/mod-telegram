@@ -79,7 +79,7 @@ class DebugCommand extends AdminCommand
         $data = ['chat_id' => $chat->getId()];
 
         if ($text !== 'glasnost' && !$chat->isPrivateChat()) {
-            $data['text'] = 'Only available in a private chat.';
+            $data['text'] = 'Доступно только в приватном чате.';
 
             return Request::sendMessage($data);
         }
