@@ -54,7 +54,7 @@ class DefaultController extends Controller
 
             // Silence is golden!
             // log telegram errors
-            Yii::error($e->getMessage());
+            //Yii::error($e->getMessage());
             return $e->getMessage();
         }
         return null;

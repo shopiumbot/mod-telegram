@@ -3,33 +3,31 @@
 namespace shopium\mod\telegram\models\search;
 
 use panix\engine\data\ActiveDataProvider;
-use shopium\mod\telegram\models\Checkout;
+use shopium\mod\telegram\models\StartSource;
 
 /**
- * Class CheckoutSearch
+ * Class ChatSearch
  * @property integer $id
  * @property string $name
  * @package shopium\mod\telegram\models\search
  */
-class CheckoutSearch extends Checkout
-{
+class StartSourceSearch extends StartSource {
 
+    public $test;
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['id', 'user_id'], 'integer'],
-            [['currency', 'total_amount'], 'safe'],
+            [['id','user_id','test'], 'integer'],
+            [['created_at','source'], 'safe'],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function scenarios()
-    {
+    public function scenarios() {
         // bypass scenarios() implementation in the parent class
         return \yii\base\Model::scenarios();
     }
@@ -41,9 +39,12 @@ class CheckoutSearch extends Checkout
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
-    {
-        $query = Checkout::find();
+    public function search($params) {
+        $query = StartSource::find();
+        $query->addSelect(['*','COUNT(DISTINCT(user_id)) as usersCount']);
+        $query->groupBy('source');
+        $query->orderBy(['created_at'=>SORT_DESC]);
+      // echo $query->createCommand()->rawSql;die;
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
@@ -57,9 +58,9 @@ class CheckoutSearch extends Checkout
         }
 
         $query->andFilterWhere(['id' => $this->id]);
-        $query->andFilterWhere(['user_id' => $this->user_id]);
-        $query->andFilterWhere(['like', 'currency', $this->currency]);
-        $query->andFilterWhere(['like', 'total_amount', $this->total_amount]);
+        $query->andFilterWhere(['user_id'=>$this->user_id]);
+        $query->andFilterWhere(['source', 'source', $this->source]);
+
 
         return $dataProvider;
     }

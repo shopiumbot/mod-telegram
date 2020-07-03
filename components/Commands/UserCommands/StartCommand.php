@@ -5,6 +5,8 @@ namespace shopium\mod\telegram\components\Commands\UserCommands;
 use Longman\TelegramBot\DB;
 use Longman\TelegramBot\Request;
 use shopium\mod\telegram\components\UserCommand;
+use shopium\mod\telegram\models\StartSource;
+use shopium\mod\telegram\models\User;
 use Yii;
 
 /**
@@ -54,9 +56,20 @@ class StartCommand extends UserCommand
         $chat = $message->getChat();
         $user = $message->getFrom();
         $text = trim($message->getText(true));
+
         $chat_id = $chat->getId();
         $user_id = $user->getId();
-
+        if ($text) {
+            $find = StartSource::findOne(['user_id' => $user_id]);
+            if (!$find) {
+                $source = new StartSource();
+                $source->source = $text;
+                $source->user_id = $user_id;
+                if($source->validate()){
+                    $source->save(false);
+                }
+            }
+        }
         $text = Yii::t('telegram/command', 'START', [$user->getFirstName() . ' ' . $user->getLastName()]);
 
         $data = [
@@ -70,17 +83,15 @@ class StartCommand extends UserCommand
         $adsData['text'] = 'Бот работает на платформе 🥇 @shopiumbot' . PHP_EOL;
         $adsData['text'] .= '👉 https://shopiumbot.com' . PHP_EOL;
         $ads = Request::sendMessage($adsData);
-        if($ads->isOk()){
+        if ($ads->isOk()) {
             $db = DB::insertMessageRequest($ads->getResult());
         }
-
 
 
         //$adsData2['chat_id']=343987970;
         //$adsData2['parse_mode']='Markdown';
         //$adsData2['text']='test message';
         //$ads2 = Request::sendMessage($adsData2);
-
 
 
         /*$answer = new PollAnswer([
@@ -107,13 +118,13 @@ class StartCommand extends UserCommand
         }else{
             $this->notify('ok');
         }*/
-      //  print_r($poll);
+        //  print_r($poll);
         //$test = Request::getMyCommands();
         // print_r($test);
         $data['reply_markup'] = $this->startKeyboards();
 
         $response = Request::sendMessage($data);
-        if($response->isOk()){
+        if ($response->isOk()) {
             $db = DB::insertMessageRequest($response->getResult());
         }
         return $response;
