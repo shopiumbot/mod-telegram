@@ -49,7 +49,7 @@ class MeCommand extends UserCommand
         ]);
 
 
-        $content = 'ID: ' . $user_id . ((in_array($user_id, $this->telegram->getAdminList())) ? ' (Администратор)' : '') . PHP_EOL;
+        $content = 'ID: ' . $user_id . (($this->telegram->isAdmin($user_id)) ? ' (Администратор)' : '') . PHP_EOL;
         $content .= 'Имя: ' . $from->getFirstName() . $from->getLastName() . PHP_EOL;
         $content .= 'Username: ' . $from->getUsername() . PHP_EOL;
         $content .= 'Язык: ' . $from->getLanguageCode();

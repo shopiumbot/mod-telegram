@@ -5,6 +5,7 @@ namespace shopium\mod\telegram\components\Commands\UserCommands;
 use Longman\TelegramBot\Entities\Keyboard;
 use Longman\TelegramBot\Entities\KeyboardButton;
 use Longman\TelegramBot\Request;
+use shopium\mod\telegram\components\Command;
 use shopium\mod\telegram\components\UserCommand;
 use Yii;
 
@@ -28,30 +29,29 @@ class HelpCommand extends UserCommand
      */
     public function execute()
     {
-        $message     = $this->getMessage();
-        $chat_id     = $message->getChat()->getId();
+        $message = $this->getMessage();
+        $chat_id = $message->getChat()->getId();
         $command_str = trim($message->getText(true));
 
         // Admin commands shouldn't be shown in group chats
         $safe_to_show = $message->getChat()->isPrivateChat();
 
         $data = [
-            'chat_id'    => $chat_id,
+            'chat_id' => $chat_id,
             'parse_mode' => 'markdown',
         ];
-
 
 
         $keyboards[] = [
             new KeyboardButton(['text' => '🏠 Начало']),
             new KeyboardButton(['text' => '✉ Написать']),
-           // new KeyboardButton(['text' => '☎ Позвонить']),
+            // new KeyboardButton(['text' => '☎ Позвонить']),
 
         ];
-      //  $keyboards[] = [
-         //   new KeyboardButton(['text' => '✉ Написать']),
-          //  new KeyboardButton(['text' => '⚙ Настройки']),
-       // ];
+        //  $keyboards[] = [
+        //   new KeyboardButton(['text' => '✉ Написать']),
+        //  new KeyboardButton(['text' => '⚙ Настройки']),
+        // ];
 
         $reply_markup = (new Keyboard([
             'keyboard' => $keyboards
@@ -64,13 +64,13 @@ class HelpCommand extends UserCommand
         list($all_commands, $user_commands, $admin_commands) = $this->getUserAdminCommands();
         // If no command parameter is passed, show the list.
         if ($command_str === '' || preg_match('/^(\x{2753})/iu', $command_str, $match)) {
-            $data['text'] = '*'.Yii::t('telegram/command','COMMAND_LIST').'*:' . PHP_EOL;
+            $data['text'] = '*' . Yii::t('telegram/command', 'COMMAND_LIST') . '*:' . PHP_EOL;
             foreach ($user_commands as $user_command) {
                 $data['text'] .= '/' . $user_command->getName() . ' - ' . $user_command->getDescription() . PHP_EOL;
             }
 
             if ($safe_to_show && count($admin_commands) > 0) {
-                $data['text'] .= PHP_EOL . '*'.Yii::t('telegram/command','COMMAND_LIST_ADMIN').'*:' . PHP_EOL;
+                $data['text'] .= PHP_EOL . '*' . Yii::t('telegram/command', 'COMMAND_LIST_ADMIN') . '*:' . PHP_EOL;
                 foreach ($admin_commands as $admin_command) {
                     $data['text'] .= '/' . $admin_command->getName() . ' - ' . $admin_command->getDescription() . PHP_EOL;
                 }
@@ -82,18 +82,15 @@ class HelpCommand extends UserCommand
 
         $command_str = str_replace('/', '', $command_str);
         if (isset($all_commands[$command_str]) && ($safe_to_show || !$all_commands[$command_str]->isAdminCommand())) {
-            $command      = $all_commands[$command_str];
-            $data['text'] = sprintf(
-                'Command: %s (v%s)' . PHP_EOL .
-                'Description: %s' . PHP_EOL .
-                'Usage: %s',
-                $command->getName(),
-                $command->getVersion(),
-                $command->getDescription(),
-                $command->getUsage()
-            );
-           // $result = $data;
-           return Request::sendMessage($data);
+            /** @var Command $command */
+            $command = $all_commands[$command_str];
+
+            $data['text'] = '*Команда:* '.$command->getName().' (v'.$command->getVersion().')'.PHP_EOL;
+            $data['text'] .= '*Описание:* '.$command->getDescription().''.PHP_EOL;
+            $data['text'] .= '*Использование:* '.$command->getUsage().''.PHP_EOL;
+
+            $data['parse_mode'] = 'Markdown';
+            return Request::sendMessage($data);
         }
 
         $data['text'] = 'Помощь не доступна: Команда /' . $command_str . ' не найдена';

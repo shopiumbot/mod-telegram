@@ -16,7 +16,7 @@ use shopium\mod\telegram\components\SystemCommand;
  */
 class CancelCommand extends SystemCommand
 {
-    /**#@+
+    /**
      * {@inheritdoc}
      */
     protected $name = 'cancel';
@@ -25,8 +25,6 @@ class CancelCommand extends SystemCommand
     protected $version = '1.0.0';
     protected $need_mysql = true;
     public $enabled = true;
-
-    /**#@-*/
 
     /**
      * {@inheritdoc}

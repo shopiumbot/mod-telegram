@@ -54,7 +54,7 @@ class WhoisCommand extends AdminCommand
 
         $chat_id = $message->getChat()->getId();
         $command = $message->getCommand();
-        $text    = trim($message->getText(true));
+        $text = trim($message->getText(true));
 
         $data = ['chat_id' => $chat_id];
 
@@ -75,19 +75,19 @@ class WhoisCommand extends AdminCommand
         if ($text === '') {
             $text = 'Provide the id to lookup: /whois <id>';
         } else {
-            $user_id    = $text;
-            $chat       = null;
+            $user_id = $text;
+            $chat = null;
             $created_at = null;
             $updated_at = null;
-            $result     = null;
+            $result = null;
 
             if (is_numeric($text)) {
                 $results = DB::selectChats([
-                    'groups'      => true,
+                    'groups' => true,
                     'supergroups' => true,
-                    'channels'    => true,
-                    'users'       => true,
-                    'chat_id'     => $user_id, //Specific chat_id to select
+                    'channels' => true,
+                    'users' => true,
+                    'chat_id' => $user_id, //Specific chat_id to select
                 ]);
 
                 if (!empty($results)) {
@@ -95,11 +95,11 @@ class WhoisCommand extends AdminCommand
                 }
             } else {
                 $results = DB::selectChats([
-                    'groups'      => true,
+                    'groups' => true,
                     'supergroups' => true,
-                    'channels'    => true,
-                    'users'       => true,
-                    'text'        => $text //Text to search in user/group name
+                    'channels' => true,
+                    'users' => true,
+                    'text' => $text //Text to search in user/group name
                 ]);
 
                 if (is_array($results) && count($results) === 1) {
@@ -108,26 +108,26 @@ class WhoisCommand extends AdminCommand
             }
 
             if (is_array($result)) {
-                $result['id']       = $result['chat_id'];
+                $result['id'] = $result['chat_id'];
                 $result['username'] = $result['chat_username'];
-                $chat               = new Chat($result);
+                $chat = new Chat($result);
 
-                $user_id    = $result['id'];
+                $user_id = $result['id'];
                 $created_at = $result['chat_created_at'];
                 $updated_at = $result['chat_updated_at'];
-                $old_id     = $result['old_id'];
+                $old_id = $result['old_id'];
             }
 
             if ($chat !== null) {
                 if ($chat->isPrivateChat()) {
                     $text = 'ID: ' . $user_id . ((in_array($user_id, $this->telegram->getAdminList())) ? ' (Администратор)' : '') . PHP_EOL;
+                    //$text = 'ID: ' . $user_id . (($this->telegram->isAdmin($user_id)) ? ' (Администратор)' : '') . PHP_EOL;
                     $text .= 'Имя Фамилия: ' . $chat->getFirstName() . ' ' . $chat->getLastName() . PHP_EOL;
 
                     $username = $chat->getUsername();
                     if ($username !== null && $username !== '') {
                         $text .= 'Username: @' . $username . PHP_EOL;
                     }
-
 
 
                     $created_at = new \DateTime($created_at, new \DateTimeZone('Europe/Kiev'));
@@ -141,14 +141,14 @@ class WhoisCommand extends AdminCommand
                     $text .= 'Впервые увидел: ' . $created_at2 . PHP_EOL;
                     $text .= 'Последния активность: ' . $updated_at2 . PHP_EOL;
 
-                    //Code from Whoami command
-                    $limit    = 10;
-                    $offset   = null;
+                    //Code from Whois command
+                    $limit = 10;
+                    $offset = null;
                     $response = Request::getUserProfilePhotos(
                         [
                             'user_id' => $user_id,
-                            'limit'   => $limit,
-                            'offset'  => $offset,
+                            'limit' => $limit,
+                            'offset' => $offset,
                         ]
                     );
 
@@ -160,10 +160,10 @@ class WhoisCommand extends AdminCommand
                             $photos = $user_profile_photos->getPhotos();
 
                             /** @var PhotoSize $photo */
-                            $photo   = $photos[0][2];
+                            $photo = $photos[0][2];
                             $file_id = $photo->getFileId();
 
-                            $data['photo']   = $file_id;
+                            $data['photo'] = $file_id;
                             $data['caption'] = $text;
 
                             return Request::sendPhoto($data);
@@ -172,7 +172,7 @@ class WhoisCommand extends AdminCommand
                 } elseif ($chat->isGroupChat()) {
                     $text = 'Чат ID: ' . $user_id . (!empty($old_id) ? ' (previously: ' . $old_id . ')' : '') . PHP_EOL;
                     $text .= 'Тип: ' . ucfirst($chat->getType()) . PHP_EOL;
-                    $text .= 'Title: ' . $chat->getTitle() . PHP_EOL;
+                    $text .= 'Заголовок: ' . $chat->getTitle() . PHP_EOL;
                     $text .= 'Впервые добавлено в группу: ' . $created_at . PHP_EOL;
                     $text .= 'Последния активность: ' . $updated_at . PHP_EOL;
                 }
