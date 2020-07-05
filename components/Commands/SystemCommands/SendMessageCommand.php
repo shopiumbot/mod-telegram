@@ -1,74 +1,81 @@
 <?php
 
-namespace shopium\mod\telegram\components\Commands\UserCommands;
-
+namespace shopium\mod\telegram\components\Commands\SystemCommands;
 
 use Longman\TelegramBot\Conversation;
 use Longman\TelegramBot\Entities\InlineKeyboard;
 use Longman\TelegramBot\Entities\InlineKeyboardButton;
 use Longman\TelegramBot\Entities\Keyboard;
 use Longman\TelegramBot\Entities\KeyboardButton;
+use Longman\TelegramBot\Entities\Payments\LabeledPrice;
 use Longman\TelegramBot\Request;
-use shopium\mod\telegram\components\UserCommand;
-use shopium\mod\telegram\models\Feedback;
+use panix\engine\CMS;
+use shopium\mod\cart\models\Order;
+use shopium\mod\telegram\components\SystemCommand;
 use Yii;
 
 /**
- * User "/cart" command
  *
- * Display an inline keyboard with a few buttons.
+ * This command cancels the currently active conversation and
+ * returns a message to let the user know which conversation it was.
+ * If no conversation is active, the returned message says so.
  */
-class FeedbackCommand extends UserCommand
+class SendMessageCommand extends SystemCommand
 {
-    /**
-     * @var string
+    /**#@+
+     * {@inheritdoc}
      */
-    protected $name = 'feedback';
-    protected $private_only = true;
-    /**
-     * @var string
-     */
-    protected $description = 'Написать нам сообщение';
+    protected $name = 'sendmessage';
+    protected $description = 'send message';
 
-    /**
-     * @var string
-     */
-    protected $usage = '/feedback <string>';
-
-    /**
-     * @var string
-     */
-    protected $version = '1.0';
-
-
+    protected $version = '1.0.0';
     protected $conversation;
+   // public $enabled = true;
+    public $private_only = true;
+    public $user_id;
 
 
     /**
-     * Command execute method
-     *
-     * @return \Longman\TelegramBot\Entities\ServerResponse
-     * @throws \Longman\TelegramBot\Exception\TelegramException
+     * {@inheritdoc}
      */
     public function execute()
     {
-        $message = $this->getMessage();
 
+        if (($this->user_id = $this->getConfig('user_id')) === '') {
+            $this->user_id = false;
+        }
+
+        $update = $this->getUpdate();
+
+        $callback_query = $update->getCallbackQuery();
+        $message = $callback_query->getMessage();
         $chat = $message->getChat();
         $user = $message->getFrom();
-        $text = trim($message->getText(true));
+
         $chat_id = $chat->getId();
         $user_id = $user->getId();
 
-        $data['chat_id'] = $chat_id;
+
+        $callback_query_id = $callback_query->getId();
+        $callback_data = $callback_query->getData();
+
+        $config = Yii::$app->settings->get('app');
+
+
+
+
+
+
+
+
+        $text = trim($message->getText(false));
+
+$this->notify($text);
+
+
         if ($text === static::KEYWORD_CANCEL) {
             return $this->telegram->executeCommand('cancel');
             //    return Request::emptyResponse();
-        }
-        if ($chat->isGroupChat() || $chat->isSuperGroup()) {
-            //reply to message id is applied by default
-            //Force reply is applied by default so it can work with privacy on
-            $data['reply_markup'] = Keyboard::forceReply(['selective' => true]);
         }
 
         //Conversation start
@@ -91,14 +98,6 @@ class FeedbackCommand extends UserCommand
         //Every time a step is achieved the track is updated
         switch ($state) {
             case 0:
-                /*if(mb_strlen($text) >= 10){
-                    $notes['state'] = 0;
-                    $this->conversation->update();
-                    $data['reply_markup'] = Keyboard::remove(['selective' => true]);
-                    $data['text'] = 'Количество символов должно быть больше 10.';
-                    $result = Request::sendMessage($data);
-                    break;
-                }*/
                 if ($text === '' || $text === static::KEYWORD_CANCEL || preg_match('/^(\x{2709})/iu', $text, $match)) {
                     $notes['state'] = 0;
                     $this->conversation->update();
@@ -127,13 +126,12 @@ class FeedbackCommand extends UserCommand
             // no break
             case 1:
                 $notes['state'] = 1;
-                unset($notes['state']);
                 $this->conversation->update();
-                $content_text = '';
-                $content_text .= 'От /whois' . $user_id . PHP_EOL;
-
+                $out_text = '';
+                $out_text .= 'От /whois' . $user_id . PHP_EOL;
+                unset($notes['state']);
                 $message = $notes['message'];
-                $content_text .= PHP_EOL . '*Сообщение*: ' . $message;
+                $out_text .= PHP_EOL . '*Сообщение*: ' . $message;
                 $data['text'] = '✅ *Сообщение успешно отправлено!*' . PHP_EOL;
                 $data['text'] .= 'Мы рассмотрим обращение и свяжемся с Вами.';
                 $data['parse_mode'] = 'Markdown';
@@ -142,26 +140,8 @@ class FeedbackCommand extends UserCommand
                 $this->conversation->stop();
 
 
-                /*$keyboards[] = [
-                    new InlineKeyboardButton([
-                        'text' => 'Ответить',
-                        'callback_data' => "query=sendMessage&user_id={$user_id}"
-                    ])
-                ];*/
-
-                foreach ($this->telegram->getAdminList() as $admin) {
-                    $dataChat['chat_id'] = $admin;
-                    $dataChat['parse_mode'] = 'Markdown';
-                    $dataChat['disable_notification'] = true;
-                    $dataChat['text'] = '*Заявка обратной связи:* ' . PHP_EOL . $content_text;
-                    /*$dataChat['reply_markup'] = new InlineKeyboard([
-                        'inline_keyboard' => $keyboards
-                    ]);*/
-                    $resp = Request::sendMessage($dataChat);
-                }
-
                 $result = Request::sendMessage($data);
-                if ($result->isOk()) {
+                /*if ($result->isOk()) {
                     $fb = new Feedback();
                     $fb->text = $message;
                     $fb->user_id = $user_id;
@@ -169,10 +149,33 @@ class FeedbackCommand extends UserCommand
                         $fb->save();
                     }
 
-                }
+                }*/
                 break;
         }
         return $result;
+
+
+
+
+
+
+
+
+
+        if ($this->user_id) {
+            $data['chat_id'] = $this->user_id;
+            $data['parse_mode'] = 'Markdown';
+            $data['disable_notification'] = true;
+            $data['text'] = '*Заявка:* ';
+           /* $data['reply_markup'] = new InlineKeyboard([
+                'inline_keyboard' => $keyboards
+            ]);*/
+            return Request::sendMessage($data);
+
+        }
+        return $this->notify('Ошибка #1003');
+
     }
+
 
 }

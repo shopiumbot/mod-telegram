@@ -6,6 +6,8 @@ namespace shopium\mod\telegram\components\Commands\SystemCommands;
 use core\modules\shop\models\query\ProductQuery;
 use Longman\TelegramBot\Entities\InlineKeyboard;
 use core\modules\shop\models\Product;
+use Longman\TelegramBot\Entities\Payments\LabeledPrice;
+use panix\engine\CMS;
 use shopium\mod\telegram\components\InlineKeyboardMorePager;
 use shopium\mod\telegram\components\InlineKeyboardPager;
 use shopium\mod\telegram\components\KeyboardPagination;
@@ -13,6 +15,8 @@ use shopium\mod\telegram\components\SystemCommand;
 use shopium\mod\cart\models\Order;
 use shopium\mod\cart\models\OrderProduct;
 use Longman\TelegramBot\Request;
+use Yii;
+use yii\helpers\Url;
 
 /**
  * Callback query command
@@ -55,6 +59,60 @@ class CallbackqueryCommand extends SystemCommand
             } else {
                 return $this->notify('Ошибка #planPay');
             }
+
+        } elseif (preg_match('/sendMessage/iu', trim($callback_data), $match)) {
+            parse_str($callback_data, $params);
+            if (isset($params['user_id'])) {
+                return $this->telegram->setCommandConfig('sendmessage', [
+                    'user_id' => $params['user_id']
+                ])->executeCommand('sendmessage');
+            }
+
+        } elseif (preg_match('/buyOneClick/iu', trim($callback_data), $match)) {
+            parse_str($callback_data, $params);
+            $user_id = $callback_query->getFrom()->getId();
+
+            if (isset($params['product_id'])) {
+                $product = Product::findOne($params['product_id']);
+                $images = $product->getImages();
+                $data = [];
+                $prices = [];
+                $prices[] = new LabeledPrice(['label' => 'adsasd', 'amount' => 100]);
+                $inline_keyboard = new InlineKeyboard([
+                    ['text' => 'Оплатить ', 'pay' => true],
+                ]);
+                $data['chat_id'] = $chat_id;
+                $data['title'] = 'Номер заказа №';
+                $data['description'] = 'Оплата заказа';
+                $data['payload'] = 'order-' . CMS::gen(10);
+                $data['start_parameter'] = CMS::gen(10);
+                $data['provider_token'] = '632593626:TEST:i56982357197';
+                $data['prices'] = $prices;
+                $data['currency'] = 'UAH';
+                $data['photo_url'] = Url::to($images[0]->getUrlToOrigin(),true);
+                $data['photo_width']=200;
+                $data['photo_height']=200;
+                /*$data['need_name'] = True;
+                $data['need_phone_number'] = True;
+                $data['need_email'] = True;
+                $data['need_shipping_address'] = True;
+                $data['is_flexible'] = True;*/
+
+                // $data['reply_markup'] = $inline_keyboard;
+                 $this->notify($images[0]->getUrlToOrigin());
+                $pay = Request::sendInvoice($data);
+
+                if (!$pay->getOk()) {
+                    $this->notify($pay->getDescription());
+                } else {
+                    $this->notify('send');
+                }
+                return $pay;
+
+
+            }
+
+
         } elseif (preg_match('/orderPay/iu', trim($callback_data), $match)) {
             parse_str($callback_data, $params);
             if (isset($params['system']) && isset($params['id'])) {

@@ -42,7 +42,9 @@ abstract class Command extends \Longman\TelegramBot\Commands\Command
             $text .= 'Период использование бота окончен, для разблокировки бота, необходимо продлить тарифный план.';
             return $this->notify($text);
         }
+
         parent::preExecute();
+
     }
 
     public function isSystemCommand()

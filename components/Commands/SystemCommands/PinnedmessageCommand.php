@@ -39,6 +39,15 @@ class PinnedmessageCommand extends SystemCommand
         $message = $this->getMessage();
         $pinned_message = $message->getPinnedMessage();
 
+
+        //remove pinned message
+        /*if ($message && $pinned_message) {
+            return Request::deleteMessage([
+                'chat_id' => $message->getChat()->getId(),
+                'message_id' => $message->getMessageId(),
+            ]);
+        }*/
+
         return Request::emptyResponse();
     }
 }

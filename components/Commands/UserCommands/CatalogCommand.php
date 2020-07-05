@@ -155,7 +155,7 @@ class CatalogCommand extends UserCommand
                     $newCount = $new->count();
                     if ($newCount) {
                         $keyboardsFirst[] = [new InlineKeyboardButton([
-                            'text' => "❇️ Новинки ({$newCount})",
+                            'text' => "❇ Новинки ({$newCount})",
                             'callback_data' => 'query=getList&model=new'
                         ])];
                     }

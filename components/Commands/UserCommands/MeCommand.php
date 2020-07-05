@@ -48,17 +48,11 @@ class MeCommand extends UserCommand
             'action' => 'typing',
         ]);
 
-        $caption = sprintf(
-            'ID: %d' . PHP_EOL .
-            'Имя: %s %s' . PHP_EOL .
-            'Username: %s' . PHP_EOL .
-            'Язык: %s',
-            $user_id,
-            $from->getFirstName(),
-            $from->getLastName(),
-            $from->getUsername(),
-            $from->getLanguageCode()
-        );
+
+        $content = 'ID: ' . $user_id . ((in_array($user_id, $this->telegram->getAdminList())) ? ' (Администратор)' : '') . PHP_EOL;
+        $content .= 'Имя: ' . $from->getFirstName() . $from->getLastName() . PHP_EOL;
+        $content .= 'Username: ' . $from->getUsername() . PHP_EOL;
+        $content .= 'Язык: ' . $from->getLanguageCode();
 
         //Fetch user profile photo
         $limit = 10;
@@ -82,10 +76,12 @@ class MeCommand extends UserCommand
                 $photo = $photos[0][2];
                 $file_id = $photo->getFileId();
                 $data['photo'] = $file_id;
-                $data['caption'] = $caption;
-
+                $data['caption'] = $content;
+                //$data['parse_mode'] = 'Markdown'; //not work
                 $result = Request::sendPhoto($data);
-
+                if (!$result->isOk()) {
+                    return $this->notify($result->getDescription(), 'error');
+                }
                 //Download the photo after send message response to speedup response
                 $response2 = Request::getFile(['file_id' => $file_id]);
                 if ($response2->isOk()) {
@@ -93,13 +89,12 @@ class MeCommand extends UserCommand
                     $photo_file = $response2->getResult();
                     Request::downloadFile($photo_file);
                 }
-
                 return $result;
             }
         }
 
         //No Photo just send text
-        $data['text'] = $caption;
+        $data['text'] = $content;
         return Request::sendMessage($data);
     }
 

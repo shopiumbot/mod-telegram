@@ -44,9 +44,12 @@ class GenericCommand extends SystemCommand
         if ($preCheckoutQuery) {
             $response = Request::answerPreCheckoutQuery([
                 'pre_checkout_query_id' => $preCheckoutQuery->getId(),
-                'ok' => true
+                'ok' => true,
+              //  'error_message'=>'error'
             ]);
+
             if ($response->getOk()) {
+                $this->notify($response->getDescription(),'error');
                 //set order to PAY
                 $payment = new Payments();
                 $payment->system = 'liqpay';
@@ -56,11 +59,19 @@ class GenericCommand extends SystemCommand
                 if ($payment->save(false)) {
 
                 }
+                return $response;
             }
-            return $response;
+
+
 
         }
-
+        if ($shippingQuery) {
+            $response = Request::answerShippingQuery([
+                'shipping_query_id' => $shippingQuery->getId(),
+                'ok' => true
+            ]);
+            return $response;
+        }
 
         $update = $this->getUpdate();
         if ($update->getCallbackQuery()) {
@@ -81,6 +92,8 @@ class GenericCommand extends SystemCommand
         }
         //You can use $command as param
         $command = $message->getCommand();
+
+
 
         //If the user is an admin and the command is in the format "/whoisXYZ", call the /whois command
         if (stripos($command, 'whois') === 0 && $this->telegram->isAdmin($user_id)) {

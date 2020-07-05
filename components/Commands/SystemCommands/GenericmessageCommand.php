@@ -3,6 +3,10 @@
 namespace shopium\mod\telegram\components\Commands\SystemCommands;
 
 use core\modules\pages\models\Pages;
+use Longman\TelegramBot\Entities\InlineKeyboard;
+use Longman\TelegramBot\Entities\Keyboard;
+use Longman\TelegramBot\Entities\Payments\LabeledPrice;
+use panix\engine\CMS;
 use Yii;
 use shopium\mod\telegram\components\SystemCommand;
 use Longman\TelegramBot\Entities\ServerResponse;
@@ -76,17 +80,16 @@ class GenericmessageCommand extends SystemCommand
 
         $text = trim($this->getMessage()->getText());
 
-
         if ($text === static::KEYWORD_CANCEL) {
-            $this->telegram->executeCommand('cancel');
-            return Request::emptyResponse();
+            return $this->telegram->executeCommand('cancel');
+            //  return Request::emptyResponse();
         }
 
-        //$test['chat_id'] = '@shopiumbotchannel';
-       // $test['chat_id'] = -1001271165607;
-       // $test['text']='test';
-       // $result = Request::sendMessage($test);
 
+        //$test['chat_id'] = '@shopiumbotchannel';
+        // $test['chat_id'] = -1001271165607;
+        // $test['text']='test';
+        // $result = Request::sendMessage($test);
 
 
         $page = Pages::find()->published()->where(['name' => $text])->asArray()->one();
@@ -94,14 +97,12 @@ class GenericmessageCommand extends SystemCommand
             $data['chat_id'] = $chat_id;
             $data['text'] = $page['text'];
             $data['parse_mode'] = 'Markdown';
+            $data['reply_markup'] = $this->catalogKeyboards();
             $send = Request::sendMessage($data);
-           if(!$send->isOk()){
-               $data['chat_id'] = $chat_id;
-               $data['text'] = $send->getDescription();
-               $data['parse_mode'] = 'Markdown';
-               $send = Request::sendMessage($data);
-           }
-           return $send;
+            if (!$send->isOk()) {
+                return $this->notify($send->getDescription(), 'error');
+            }
+            return $send;
         }
 
 

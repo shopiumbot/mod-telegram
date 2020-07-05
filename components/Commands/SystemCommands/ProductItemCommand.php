@@ -191,7 +191,12 @@ class ProductItemCommand extends SystemCommand
                     ])
                 ];
             }
-
+            /*$keyboards[] = [
+                new InlineKeyboardButton([
+                    'text' => 'Купить в один клик',
+                    'callback_data' => "query=buyOneClick&product_id={$product->id}"
+                ])
+            ];*/
             $keyboards[] = $this->productAdminKeywords($chat_id, $product);
         }
         /** @var Image $imageData */
