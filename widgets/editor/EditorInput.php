@@ -1,6 +1,7 @@
 <?php
 
 namespace shopium\mod\telegram\widgets\editor;
+
 //https://github.com/Ionaru/easy-markdown-editor/issues/207
 
 use Yii;
@@ -27,7 +28,7 @@ class EditorInput extends InputWidget
         $defaultClientOptions = [];
         $lang = Yii::$app->language;
 
-        $defaultClientOptions['status'] = false;
+
         // $defaultClientOptions['contextmenu'] = "link image inserttable | cell row column deletetable";
 
         //$defaultClientOptions['element'] = "#{$this->options['id']}";
@@ -60,6 +61,26 @@ class EditorInput extends InputWidget
             'italic' => "_",
             'strikethrough' => '~'
         ];
+
+        //$defaultClientOptions['status'] = false;
+        $defaultClientOptions['status'] = [
+            "autosave",
+            "lines",
+            "words",
+            "cursor",
+            new JsExpression("{
+                className: 'keystrokes',
+                defaultValue: function(el) {
+                    this.keystrokes = 0;
+                    el.innerHTML = '0 Keystrokes';
+                },
+                onUpdate: function(el) {
+                    el.innerHTML = ++this.keystrokes + ' Keystrokes';
+                },
+            }")];
+        /*$defaultClientOptions['previewRender'] = new JsExpression('function(plainText) {
+            return plainText;
+        }');*/
 
         $view = $this->getView();
 

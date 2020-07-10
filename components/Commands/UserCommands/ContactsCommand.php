@@ -58,7 +58,7 @@ class ContactsCommand extends UserCommand
         $data['text'] = '';
         if (!isset($config->latitude) && !isset($config->longitude)) {
             if (!$config->latitude && !$config->longitude) {
-                $data['text'] .= '*Контактная информация*' . PHP_EOL . PHP_EOL;
+                $data['text'] .= '*'.Yii::t('contacts/default', 'CONTACT_INFO').'*' . PHP_EOL . PHP_EOL;
             }
         }
         $address = Yii::$app->getModule('contacts')->getAddress();
@@ -70,7 +70,7 @@ class ContactsCommand extends UserCommand
             foreach ($address as $addr) {
                 if (!empty($addr)) {
                     if (isset($config->latitude) && isset($config->longitude)) {
-                        $title = 'Контактная информация' . PHP_EOL . PHP_EOL;
+                        $title = Yii::t('contacts/default', 'CONTACT_INFO'). PHP_EOL . PHP_EOL;
                         $venue = Request::sendVenue([
                             'chat_id' => $chat_id,
                             'latitude' => $config->latitude,

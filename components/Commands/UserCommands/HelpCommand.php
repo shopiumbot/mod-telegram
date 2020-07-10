@@ -85,15 +85,15 @@ class HelpCommand extends UserCommand
             /** @var Command $command */
             $command = $all_commands[$command_str];
 
-            $data['text'] = '*Команда:* '.$command->getName().' (v'.$command->getVersion().')'.PHP_EOL;
-            $data['text'] .= '*Описание:* '.$command->getDescription().''.PHP_EOL;
-            $data['text'] .= '*Использование:* '.$command->getUsage().''.PHP_EOL;
+            $data['text'] = '*Команда:* ' . $command->getName() . ' (v' . $command->getVersion() . ')' . PHP_EOL;
+            $data['text'] .= '*Описание:* ' . $command->getDescription() . '' . PHP_EOL;
+            $data['text'] .= '*Использование:* ' . $command->getUsage() . '' . PHP_EOL;
 
             $data['parse_mode'] = 'Markdown';
             return Request::sendMessage($data);
         }
 
-        $data['text'] = 'Помощь не доступна: Команда /' . $command_str . ' не найдена';
+        $data['text'] = Yii::t('telegram/default', 'COMMAND_NOT_FOUND', $command_str);
 
         return Request::sendMessage($data);
     }

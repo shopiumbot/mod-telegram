@@ -111,7 +111,7 @@ class CatalogCommand extends UserCommand
             }
             $keyboards = array_chunk($keyboards, $root->chunk);
         } else {
-            return $this->notify('В каталоге нет продукции', 'info');
+            return $this->notify(Yii::t('telegram/default', 'CATALOG_NO_ITEMS'), 'info');
         }
 
 
@@ -129,7 +129,7 @@ class CatalogCommand extends UserCommand
                     $brands = Manufacturer::find()->published()->count();
                     if ($brands) {
                         $keyboards[] = ArrayHelper::merge($keyboards, [new InlineKeyboardButton([
-                            'text' => "💎️ Бренды ({$brands})",
+                            'text' => Yii::t('telegram/default', 'BRANDS', $brands),
                             'callback_data' => 'query=getBrandsList'
                         ])]);
                     }
@@ -140,7 +140,7 @@ class CatalogCommand extends UserCommand
                         ->isNotEmpty('discount')->count();
                     if ($discounts) {
                         $keyboardsFirst[] = [new InlineKeyboardButton([
-                            'text' => "🔥 Акции ({$discounts})",
+                            'text' => Yii::t('telegram/default', 'DISCOUNT', $discounts),
                             'callback_data' => 'query=getList&model=discounts'
                         ])];
                     }
@@ -155,7 +155,7 @@ class CatalogCommand extends UserCommand
                     $newCount = $new->count();
                     if ($newCount) {
                         $keyboardsFirst[] = [new InlineKeyboardButton([
-                            'text' => "❇ Новинки ({$newCount})",
+                            'text' => Yii::t('telegram/default', 'NEW', $newCount),
                             'callback_data' => 'query=getList&model=new'
                         ])];
                     }
@@ -186,7 +186,7 @@ class CatalogCommand extends UserCommand
                 $brands = Manufacturer::find()->published()->count();
                 if ($brands) {
                     $keyboards[] = ArrayHelper::merge($keyboards, [new InlineKeyboardButton([
-                        'text' => "💎️ Бренды ({$brands})",
+                        'text' => Yii::t('telegram/default', 'BRANDS', $brands),
                         'callback_data' => 'query=getBrandsList'
                     ])]);
                 }
@@ -195,10 +195,11 @@ class CatalogCommand extends UserCommand
             if (isset($this->settings->enable_discounts) && $this->settings->enable_discounts && false) {
                 $discounts = Product::find()
                     ->published()
-                    ->isNotEmpty('discount')->count();
+                    ->isNotEmpty('discount')
+                    ->count();
                 if ($discounts) {
                     $keyboardsFirst[] = [new InlineKeyboardButton([
-                        'text' => "🔥 Акции ({$discounts})",
+                        'text' => Yii::t('telegram/default', 'DISCOUNT', $discounts),
                         'callback_data' => 'query=getList&model=discounts'
                     ])];
                 }
@@ -214,7 +215,7 @@ class CatalogCommand extends UserCommand
                 $newCount = $new->count();
                 if ($newCount) {
                     $keyboardsFirst[] = [new InlineKeyboardButton([
-                        'text' => "❇️ Новинки ({$newCount})",
+                        'text' => Yii::t('telegram/default', 'NEW', $newCount),
                         'callback_data' => 'query=getList&model=new'
                     ])];
                 }
@@ -223,14 +224,14 @@ class CatalogCommand extends UserCommand
 
             $data = [
                 'chat_id' => $chat_id,
-                'text' => 'Выберите раздел:',
+                'text' => Yii::t('telegram/default', 'CATALOG_SELECT'),
                 'reply_markup' => new InlineKeyboard([
                     'inline_keyboard' => $keyboards
                 ]),
             ];
 
 
-            $dataCatalog['text'] = '⬇ Каталог продукции';
+            $dataCatalog['text'] = Yii::t('telegram/default', 'CATALOG');
             $dataCatalog['chat_id'] = $chat_id;
             $dataCatalog['reply_markup'] = $this->catalogKeyboards();
             $buttonsResponse = Request::sendMessage($dataCatalog);
