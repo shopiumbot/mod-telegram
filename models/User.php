@@ -118,10 +118,22 @@ class User extends ActiveRecord
     public function displayName()
     {
         if ($this->username) {
+            return $this->username;
+        } else {
+            if ($this->first_name || $this->last_name) {
+                return $this->first_name . ' ' . $this->last_name;
+            }
+        }
+        return null;
+    }
+
+    public function displayNameWithUrl()
+    {
+        if ($this->username) {
             return Html::a('@' . $this->username,'tg://resolve?domain=@'.$this->username);
         } else {
             if ($this->first_name || $this->last_name) {
-                return '' . $this->first_name . ' ' . $this->last_name . '';
+                return $this->first_name . ' ' . $this->last_name;
             }
         }
         return null;

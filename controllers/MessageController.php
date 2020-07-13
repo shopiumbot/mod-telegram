@@ -4,6 +4,7 @@ namespace shopium\mod\telegram\controllers;
 
 use Yii;
 use yii\base\UserException;
+use yii\data\ActiveDataProvider;
 use yii\web\ForbiddenHttpException;
 use yii\web\Response;
 use Longman\TelegramBot\Exception\TelegramException;
@@ -32,6 +33,32 @@ class MessageController extends AdminController
             ],
             $this->pageName
         ];
+        $user_id = Yii::$app->request->get('user_id');
+        if($user_id){
+            $view = 'view';
+
+            $user = User::find()->where(['id'=>$user_id])->one();
+            $query = Message::find()
+                ->where(['chat_id'=>$user_id])
+                ->orderBy(['date'=>SORT_DESC]);
+                //->groupBy(['user_id','chat_id'])
+              //  ->all();
+
+
+            $provider = new ActiveDataProvider([
+                'query' => $query,
+                'pagination' => [
+                    'pageSize' => 25,
+                    // 'defaultPageSize' =>(int)  $this->allowedPageLimit[0],
+                    // 'pageSizeLimit' => $this->allowedPageLimit,
+                ]
+            ]);
+
+        }else{
+            $view = 'index';
+            $user=false;
+            $provider=false;
+        }
         $searchModel = new MessageSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->getQueryParams());
 
@@ -43,10 +70,15 @@ class MessageController extends AdminController
             }
 
         }
-        return $this->render('index', [
+
+
+
+        return $this->render($view, [
             'dataProvider' => $dataProvider,
             'searchModel' => $searchModel,
-            'sendForm'=>$sendForm
+            'sendForm'=>$sendForm,
+            'provider'=>$provider,
+            'user'=>$user,
         ]);
     }
 

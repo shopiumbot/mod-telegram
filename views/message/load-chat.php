@@ -1,6 +1,4 @@
 <?php
-use panix\engine\CMS;
-use panix\engine\Html;
 use panix\engine\emoji\Emoji;
 use panix\engine\emoji\EmojiAsset;
 /**
@@ -9,10 +7,8 @@ use panix\engine\emoji\EmojiAsset;
  * @var \yii\web\View $this
  **/
 $telegram = Yii::$app->telegram;
-//print_r($api);die;
 $botPhoto = $telegram->getPhoto();
-$userPhoto = $user->getPhoto();
-$userName = $user->username;
+
 
 
 $me = \Longman\TelegramBot\Request::getMe();
@@ -22,23 +18,22 @@ if ($me->isOk()) {
     $botName = $telegram->api->getBotUsername();
 }
 EmojiAsset::register($this);
+
 ?>
 
-<ul id="chat-id-<?= Yii::$app->request->get('user_id'); ?>" class="chat-list chat active-chat"
-    data-user-id="<?= Yii::$app->request->get('user_id'); ?>">
+<ul id="chat-id-<?= $user->id; ?>" class="chat-list chat active-chat"
+    data-user-id="<?= $user->id; ?>">
 
     <?php
     if ($model) {
 
         foreach ($model as $message) {
             /** @var \shopium\mod\telegram\models\Message $message */
-            // CMS::dump($message);die;
             $odd = ($message->user_id == $message->chat_id) ? 'odd' : '';
             $imageClass = ($message->user_id == $message->chat_id) ? 'float-right' : '';
             if ($message->user_id == $message->chat_id) {
-                $photo = $userPhoto;
-                $userName = ($user->username) ? '@'.$user->username : $user->first_name . ' ' . $user->last_name;
-
+                $photo = $user->getPhoto();
+                $userName = $user->displayName();
             } else {
                 $userName = '@'.$botName;
                 $photo = $botPhoto;
@@ -50,7 +45,7 @@ EmojiAsset::register($this);
                     <img src="<?= $photo; ?>" alt="<?= $userName; ?>">
                 </div>
                 <div class="chat-content">
-                    <h6 class="font-medium"><?= $userName; ?></h6>
+                    <h6 class="font-medium"><?= $userName; ?> <?= $user->id; ?></h6>
                     <pre class="box"><?php echo Emoji::emoji_unified_to_html($message->text); ?>
                         <?php
                        // $entity_decoder = new \shopium\mod\telegram\components\EntityDecoder($message->getMessageObject());
