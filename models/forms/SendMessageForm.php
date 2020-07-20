@@ -3,6 +3,7 @@
 namespace shopium\mod\telegram\models\forms;
 
 
+use Longman\TelegramBot\DB;
 use Longman\TelegramBot\Request;
 use Yii;
 use yii\base\Model;
@@ -29,6 +30,7 @@ class SendMessageForm extends Model
         $data['text'] = $this->text;
         $request = Request::sendMessage($data);
         if ($request->isOk()) {
+            DB::insertMessageRequest($request->getResult());
             return true;
         } else {
             return false;

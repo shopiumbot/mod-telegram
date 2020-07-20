@@ -64,10 +64,12 @@ $api = Yii::$app->telegram->getApi();
                         $users = \shopium\mod\telegram\models\User::find()->where(['is_bot' => 0])->orderBy(['updated_at' => SORT_DESC])->all();
                         if ($users) {
                             foreach ($users as $user) {
+                                $activeClass = (Yii::$app->request->get('user_id') == $user->id) ? 'bg-light' : '';
                                 $userName = ($user->username) ? '@' . $user->username : $user->first_name . ' ' . $user->last_name;
                                 //$member = Request::getChatMember(['chat_id'=>'812367093','user_id'=>'812367093']);
                                 ?>
-                                <a href="javascript:void(0)" class="chat-user message-item" id='chat_user_1'
+                                <a href="javascript:void(0)" class="chat-user message-item <?= $activeClass; ?>"
+                                   id='chat_user_<?= $user->id; ?>'
                                    data-user-id='<?= $user->id; ?>'>
                                         <span class="user-img">
 

@@ -79,9 +79,10 @@ if ($me->isOk()) {
                         $users = \shopium\mod\telegram\models\User::find()->where(['is_bot' => 0])->orderBy(['updated_at' => SORT_DESC])->all();
                         if ($users) {
                             foreach ($users as $userItem) {
+                                $activeClass = (Yii::$app->request->get('user_id') == $userItem->id) ? 'bg-light' : '';
                                 //$member = Request::getChatMember(['chat_id'=>'812367093','user_id'=>'812367093']);
                                 ?>
-                                <a href="javascript:void(0)" class="chat-user message-item"
+                                <a href="javascript:void(0)" class="chat-user message-item <?= $activeClass; ?>"
                                    id='chat_user_<?= $userItem->id; ?>'
                                    data-user-id='<?= $userItem->id; ?>'>
                                         <span class="user-img">
@@ -148,8 +149,8 @@ if ($me->isOk()) {
                                     $photo = $botPhoto;
                                 }
                                 return $this->render('_item', [
-                                    'key'=>$key,
-                                    'index'=>$index,
+                                    'key' => $key,
+                                    'index' => $index,
                                     'data' => $model,
                                     'odd' => $odd,
                                     'imageClass' => $imageClass,
@@ -183,17 +184,17 @@ if ($me->isOk()) {
                                 //'noneLeftTemplate' => false,
                                 //'spinnerSrc' => $this->context->assetUrl . '/images/ajax.gif'
                                 //'paginationOptions' => ['class' => 'pagination d-flex justify-content-center2'],
-                               // 'eventOnLoaded' => new \yii\web\JsExpression("function(items,url,xhr){
- 
-                               // }"),
+                                // 'eventOnLoaded' => new \yii\web\JsExpression("function(items,url,xhr){
 
-                               // 'eventOnNext' => new \yii\web\JsExpression("function(pageIndex){
+                                // }"),
 
-                               // }"),
+                                // 'eventOnNext' => new \yii\web\JsExpression("function(pageIndex){
+
+                                // }"),
                                 'item' => '.chat-item',
-                                'negativeMargin'=>250,
-                               // 'pagination' => true,
-                                'overflowContainer'=>'.chat-box',
+                                'negativeMargin' => 250,
+                                // 'pagination' => true,
+                                'overflowContainer' => '.chat-box',
                                 'triggerText' => Yii::t('shop/default', 'Показать еще')
 
                             ],
@@ -201,7 +202,7 @@ if ($me->isOk()) {
                         ?>
 
                         <?php
-                       // Pjax::end();
+                        // Pjax::end();
                         ?>
 
 
@@ -210,7 +211,28 @@ if ($me->isOk()) {
                 <?php
                 $form = ActiveForm::begin();
                 echo Html::activeHiddenInput($sendForm, 'user_id');
+
+                $js = <<<JS
+$('form').on('beforeSubmit', function(){
+ var data = $(this).serialize();
+ $.ajax({
+ url: $(this).attr('action'),
+ type: 'POST',
+ data: data,
+ success: function(res){
+ console.log(res);
+ },
+ error: function(jqXHR, textStatus, errorThrown){
+ console.log(textStatus,jqXHR,errorThrown);
+ }
+ });
+ return false;
+});
+JS;
+                $this->registerJs($js);
                 ?>
+
+
                 <div class="card-body border-top border-bottom chat-send-message-footer">
                     <div class="row">
                         <div class="col-12">

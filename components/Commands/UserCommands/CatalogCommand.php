@@ -147,7 +147,7 @@ class CatalogCommand extends UserCommand
                 }
                 if (isset($this->settings->enable_new) && $this->settings->enable_new) {
                     $new = Product::find();
-                    if (isset($this->settings->label_expire_new)) {
+                    if (isset($this->settings->label_expire_new) && $this->settings->label_expire_new) {
                         $new->int2between(time(), time() - (86400 * $this->settings->label_expire_new));
                     } else {
                         $new->int2between(-1, -1);
@@ -207,7 +207,7 @@ class CatalogCommand extends UserCommand
 
             if (isset($this->settings->enable_new) && $this->settings->enable_new) {
                 $new = Product::find();
-                if (isset($this->settings->label_expire_new)) {
+                if (isset($this->settings->label_expire_new) && $this->settings->label_expire_new) {
                     $new->int2between(time(), time() - (86400 * $this->settings->label_expire_new));
                 } else {
                     $new->int2between(-1, -1);

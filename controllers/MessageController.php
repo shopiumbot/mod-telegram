@@ -34,15 +34,15 @@ class MessageController extends AdminController
             $this->pageName
         ];
         $user_id = Yii::$app->request->get('user_id');
-        if($user_id){
+        if ($user_id) {
             $view = 'view';
 
-            $user = User::find()->where(['id'=>$user_id])->one();
+            $user = User::find()->where(['id' => $user_id])->one();
             $query = Message::find()
-                ->where(['chat_id'=>$user_id])
-                ->orderBy(['date'=>SORT_DESC]);
-                //->groupBy(['user_id','chat_id'])
-              //  ->all();
+                ->where(['chat_id' => $user_id])
+                ->orderBy(['date' => SORT_DESC]);
+            //->groupBy(['user_id','chat_id'])
+            //  ->all();
 
 
             $provider = new ActiveDataProvider([
@@ -54,48 +54,55 @@ class MessageController extends AdminController
                 ]
             ]);
 
-        }else{
+        } else {
             $view = 'index';
-            $user=false;
-            $provider=false;
+            $user = false;
+            $provider = false;
         }
         $searchModel = new MessageSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->getQueryParams());
 
         $sendForm = new SendMessageForm();
-        if($sendForm->load(Yii::$app->request->post())){
-            if($sendForm->validate()){
+        if (Yii::$app->request->get('user_id')) {
+            $sendForm->user_id = Yii::$app->request->get('user_id');
+        }
+        if ($sendForm->load(Yii::$app->request->post())) {
+
+            if ($sendForm->validate()) {
                 $sendForm->send();
+
                 return $this->refresh();
+            } else {
+                print_r($sendForm->errors);
+                die;
             }
 
         }
 
 
-
         return $this->render($view, [
             'dataProvider' => $dataProvider,
             'searchModel' => $searchModel,
-            'sendForm'=>$sendForm,
-            'provider'=>$provider,
-            'user'=>$user,
+            'sendForm' => $sendForm,
+            'provider' => $provider,
+            'user' => $user,
         ]);
     }
 
-    public function actionLoadChat(){
+    public function actionLoadChat()
+    {
 
         $user_id = Yii::$app->request->get('user_id');
-        $user = User::find()->where(['id'=>$user_id])->one();
+        $user = User::find()->where(['id' => $user_id])->one();
         $model = Message::find()
-            ->where(['chat_id'=>$user_id])
+            ->where(['chat_id' => $user_id])
             ->limit(10)
-            ->orderBy(['date'=>SORT_DESC])
+            ->orderBy(['date' => SORT_DESC])
             //->groupBy(['user_id','chat_id'])
             ->all();
 
 
-
-        return $this->renderAjax('load-chat',['model'=>$model,'user'=>$user]);
+        return $this->renderAjax('load-chat', ['model' => $model, 'user' => $user]);
     }
 
 
@@ -144,7 +151,7 @@ class MessageController extends AdminController
             $result = $telegram->deleteWebhook();
 
             if ($result->isOk()) {
-                Yii::$app->session->setFlash("success-webhook", Yii::t("telegram/default",'Бот успешно отписан'));
+                Yii::$app->session->setFlash("success-webhook", Yii::t("telegram/default", 'Бот успешно отписан'));
                 return $this->redirect(['/admin']);
             }
         } catch (TelegramException $e) {

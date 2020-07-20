@@ -451,7 +451,7 @@ class CallbackqueryCommand extends SystemCommand
 
             $data = [
                 'callback_query_id' => $callback_query_id,
-                'text' => 'Это демо версия!',
+                'text' => 'В разработке!',
                 // 'show_alert' => true,
                 'cache_time' => 5000,
             ];
@@ -477,7 +477,7 @@ class CallbackqueryCommand extends SystemCommand
                 }
             } elseif ($params['model'] == 'new') {
                 $pagerCommand = 'getList&model=new';
-                if (isset($this->settings->label_expire_new)) {
+                if (isset($this->settings->label_expire_new) && $this->settings->label_expire_new) {
                     $query->int2between(time(), time() - (86400 * $this->settings->label_expire_new));
                 } else {
                     $query->int2between(-1, -1);
