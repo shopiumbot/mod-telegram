@@ -79,7 +79,7 @@ class SearchCommand extends UserCommand
         ];
         //if ($text === '❌ Отмена') {
         //    return $this->telegram->executeCommand('cancel');
-            //return Request::emptyResponse();
+        //return Request::emptyResponse();
         //}
         if ($chat->isGroupChat() || $chat->isSuperGroup()) {
             //reply to message id is applied by default
@@ -120,7 +120,7 @@ class SearchCommand extends UserCommand
                         $data['text'] = 'Введите название товара или артикул:';
                     }
                     $result = Request::sendMessage($data);
-                    if($result->isOk()){
+                    if ($result->isOk()) {
                         $db = DB::insertMessageRequest($result->getResult());
                     }
                     break;
@@ -134,8 +134,12 @@ class SearchCommand extends UserCommand
 
                 if ($text === '') {
                     $notes['state'] = 1;
-                    $query = Product::find()->sort()->published()->groupBy(Product::tableName() . '.`id`');
-                    $query->applySearch($notes['query']);
+                    $query = Product::find()->applySearch($notes['query']);
+                    if (!in_array($user_id, $this->telegram->getAdminList())) {
+                        $query->published();
+                    }
+                    $query->sort();
+                    $query->groupBy(Product::tableName() . '.`id`');
 
                     $count = $query->count();
 
@@ -154,7 +158,7 @@ class SearchCommand extends UserCommand
                         $data['text'] = 'Результат поиска';
                         $data['reply_markup'] = $this->catalogKeyboards();
                         $result2 = Request::sendMessage($data);
-                        if($result2->isOk()){
+                        if ($result2->isOk()) {
                             $db = DB::insertMessageRequest($result2->getResult());
                         }
                         $data = [];
@@ -167,7 +171,7 @@ class SearchCommand extends UserCommand
                         $data['reply_markup'] = new InlineKeyboard(['inline_keyboard' => $buttons]);
 
                         $result = Request::sendMessage($data);
-                        if($result->isOk()){
+                        if ($result->isOk()) {
                             $db = DB::insertMessageRequest($result->getResult());
                         }
 
@@ -181,7 +185,7 @@ class SearchCommand extends UserCommand
                         ]);
                         $data['reply_markup'] = $this->catalogKeyboards();
                         $result = Request::sendMessage($data);
-                        if($result->isOk()){
+                        if ($result->isOk()) {
                             $db = DB::insertMessageRequest($result->getResult());
                         }
                     }

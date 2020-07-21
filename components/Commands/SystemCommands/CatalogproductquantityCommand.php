@@ -5,6 +5,7 @@ namespace shopium\mod\telegram\components\Commands\SystemCommands;
 use Longman\TelegramBot\Entities\InlineKeyboard;
 use Longman\TelegramBot\Entities\InlineKeyboardButton;
 use Longman\TelegramBot\Request;
+use shopium\mod\cart\models\OrderProductTemp;
 use shopium\mod\telegram\components\SystemCommand;
 use shopium\mod\cart\models\OrderProduct;
 
@@ -61,7 +62,7 @@ class CatalogproductquantityCommand extends SystemCommand
         }
 
 
-        $product = OrderProduct::find()->where(['order_id' => $this->order_id, 'product_id' => $this->product_id])->one();
+        $product = OrderProductTemp::find()->where(['order_id' => $this->order_id, 'product_id' => $this->product_id])->one();
         $chat_id = $message->getChat()->getId();
         //  $order = OrderProduct::find()->where(['order_id'=>$this->order_id]);
         if ($product) {

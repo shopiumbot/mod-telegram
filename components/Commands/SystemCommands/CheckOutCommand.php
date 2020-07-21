@@ -15,6 +15,7 @@ use shopium\mod\cart\models\Delivery;
 use shopium\mod\cart\models\NovaPoshtaArea;
 use shopium\mod\cart\models\NovaPoshtaCities;
 use shopium\mod\cart\models\NovaPoshtaWarehouses;
+use shopium\mod\cart\models\OrderTemp;
 use shopium\mod\cart\models\Payment;
 use shopium\mod\telegram\components\SystemCommand;
 use shopium\mod\cart\models\Order;
@@ -507,7 +508,7 @@ class CheckOutCommand extends SystemCommand
                 case 5:
                     $this->conversation->update();
                     $titleClient = '*✅ Ваш заказ успешно оформлен*' . PHP_EOL . PHP_EOL;
-                    $order = Order::find()->where(['user_id' => $user_id, 'checkout' => 0])->one();
+                    $order = OrderTemp::findOne($user_id);
                     $content = '';
                     if ($order) {
                         $products = $order->products;

@@ -7,6 +7,8 @@ use Longman\TelegramBot\DB;
 use Longman\TelegramBot\Entities\InlineKeyboard;
 use Longman\TelegramBot\Entities\InlineKeyboardButton;
 use Longman\TelegramBot\Request;
+use shopium\mod\cart\models\OrderProductTemp;
+use shopium\mod\cart\models\OrderTemp;
 use shopium\mod\telegram\components\InlineKeyboardPager;
 use shopium\mod\telegram\components\UserCommand;
 use shopium\mod\cart\models\OrderProduct;
@@ -78,7 +80,7 @@ class CartCommand extends UserCommand
         $data['chat_id'] = $chat_id;
 
 
-        $order = Order::find()->where(['user_id' => $user_id, 'checkout' => 0])->one();
+        $order = OrderTemp::findOne($user_id);
 
 
 
@@ -90,7 +92,7 @@ class CartCommand extends UserCommand
             }
 
 
-            $query = OrderProduct::find()->where(['order_id' => $order->id]);
+            $query = OrderProductTemp::find()->where(['order_id' => $order->id]);
             $queryCount = $query->count();
             $pages = new KeyboardPagination([
                 'totalCount' => $queryCount,
@@ -125,7 +127,7 @@ class CartCommand extends UserCommand
                         new InlineKeyboardButton([
                             'text' => '—',
                             // 'callback_data' => "spinner/{$order->id}/{$product->product_id}/down/cart"
-                            'callback_data' => "query=cartSpinner&order_id={$order->id}&product_id={$product->product_id}&page={$this->page}&type=down"
+                            'callback_data' => "query=cartSpinner&oid={$order->id}&pid={$product->product_id}&page={$this->page}&type=down"
                         ]),
                         new InlineKeyboardButton([
                             'text' => $product->quantity . ' шт.',
@@ -134,7 +136,7 @@ class CartCommand extends UserCommand
                         new InlineKeyboardButton([
                             'text' => '+',
                             // 'callback_data' => "spinner/{$order->id}/{$product->product_id}/up/cart"
-                            'callback_data' => "query=cartSpinner&order_id={$order->id}&product_id={$product->product_id}&page={$this->page}&type=up"
+                            'callback_data' => "query=cartSpinner&oid={$order->id}&pid={$product->product_id}&page={$this->page}&type=up"
                         ])
                     ];
 

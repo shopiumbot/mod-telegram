@@ -8,6 +8,7 @@ use Longman\TelegramBot\Entities\InlineKeyboardButton;
 use Longman\TelegramBot\Request;
 use core\modules\shop\models\Attribute;
 use core\modules\shop\models\Product;
+use shopium\mod\cart\models\OrderTemp;
 use shopium\mod\telegram\components\InlineKeyboardMorePager;
 use shopium\mod\telegram\components\KeyboardPagination;
 use shopium\mod\telegram\components\SystemCommand;
@@ -66,7 +67,7 @@ class SearchResultCommand extends SystemCommand
         $text = trim($message->getText(true));
 
 
-        $order = Order::findOne(['user_id' => $user_id, 'checkout' => 0]);
+        $order = OrderTemp::findOne($user_id);
 
 
         $this->string = $this->getConfig('string');
@@ -77,9 +78,11 @@ class SearchResultCommand extends SystemCommand
             $this->page = 1;
         }
 
-        $query = Product::find()->sort()->published();
-        //->groupBy(Product::tableName() . '.`id`');
-        $query->applySearch($this->string);
+        $query = Product::find()->applySearch($this->string);
+        if (!in_array($user_id, $this->telegram->getAdminList())) {
+            $query->published();
+        }
+        $query->sort();
 
         $pages = new KeyboardPagination([
             'totalCount' => $query->count(),

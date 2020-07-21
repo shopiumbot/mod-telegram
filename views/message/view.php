@@ -209,6 +209,11 @@ if ($me->isOk()) {
                     </div>
                 </div>
                 <?php
+
+
+
+                $orderProduct = \shopium\mod\cart\models\OrderProductTemp::find()->where(['product_id' => 245, 'order_id' => 812367093])->one();
+//CMS::dump($orderProduct);
                 $form = ActiveForm::begin();
                 echo Html::activeHiddenInput($sendForm, 'user_id');
 

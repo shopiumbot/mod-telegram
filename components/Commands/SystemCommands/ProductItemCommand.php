@@ -4,6 +4,8 @@ namespace shopium\mod\telegram\components\Commands\SystemCommands;
 
 use core\modules\images\models\Image;
 use core\modules\shop\models\Attribute;
+use shopium\mod\cart\models\OrderProductTemp;
+use shopium\mod\cart\models\OrderTemp;
 use shopium\mod\telegram\components\InlineKeyboardPager;
 use shopium\mod\telegram\components\KeyboardPagination;
 use shopium\mod\telegram\components\SystemCommand;
@@ -41,7 +43,6 @@ class ProductItemCommand extends SystemCommand
     protected $private_only = true;
     public $photo_index = 0;
     public $product;
-    public $test;
 
     public function execute()
     {
@@ -54,7 +55,6 @@ class ProductItemCommand extends SystemCommand
         }
 
         $this->product = $this->getConfig('product');
-        // Yii::error($this->getConfig('test'));
         $callbackData = false;
         if ($update->getCallbackQuery()) {
             $callbackQuery = $update->getCallbackQuery();
@@ -86,7 +86,7 @@ class ProductItemCommand extends SystemCommand
         $keyboards = [];
         //$this->notify($callbackData);
 
-        $order = Order::findOne(['user_id' => $user_id, 'checkout' => 0]);
+        $order = OrderTemp::findOne($user_id);
         $product = $this->product;
 
 
@@ -123,7 +123,7 @@ class ProductItemCommand extends SystemCommand
             $caption .= PHP_EOL . Html::encode($product->description) . PHP_EOL . PHP_EOL;
         }
         if ($order) {
-            $orderProduct = OrderProduct::findOne(['product_id' => $product->id, 'order_id' => $order->id]);
+            $orderProduct = OrderProductTemp::findOne(['product_id' => $product->id, 'order_id' => $order->id]);
         } else {
             $orderProduct = null;
         }
@@ -167,8 +167,10 @@ class ProductItemCommand extends SystemCommand
             if ($orderProduct) {
                 $keyboards[] = [
                     new InlineKeyboardButton([
+                        //'text' => "{$order->id}&product_id={$product->id}",
                         'text' => '—',
-                        'callback_data' => "query=productSpinner&order_id={$order->id}&product_id={$product->id}&type=down&img={$this->photo_index}"
+                        // 'callback_data' => time()
+                        'callback_data' => "query=productSpinner&oid={$order->id}&pid={$product->id}&type=down&img={$this->photo_index}"
                     ]),
                     new InlineKeyboardButton([
                         'text' => $orderProduct->quantity . ' шт.',
@@ -176,7 +178,7 @@ class ProductItemCommand extends SystemCommand
                     ]),
                     new InlineKeyboardButton([
                         'text' => '+',
-                        'callback_data' => "query=productSpinner&order_id={$order->id}&product_id={$product->id}&type=up&img={$this->photo_index}"
+                        'callback_data' => "query=productSpinner&oid={$order->id}&pid={$product->id}&type=up&img={$this->photo_index}"
                     ]),
                     new InlineKeyboardButton([
                         'text' => '❌',

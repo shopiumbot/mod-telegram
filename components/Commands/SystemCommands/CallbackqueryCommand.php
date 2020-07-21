@@ -8,6 +8,8 @@ use Longman\TelegramBot\Entities\InlineKeyboard;
 use core\modules\shop\models\Product;
 use Longman\TelegramBot\Entities\Payments\LabeledPrice;
 use panix\engine\CMS;
+use shopium\mod\cart\models\OrderProductTemp;
+use shopium\mod\cart\models\OrderTemp;
 use shopium\mod\telegram\components\InlineKeyboardMorePager;
 use shopium\mod\telegram\components\InlineKeyboardPager;
 use shopium\mod\telegram\components\KeyboardPagination;
@@ -152,7 +154,7 @@ class CallbackqueryCommand extends SystemCommand
             $photo_index = $params['photo_index'];
 
 
-            $orderProduct = OrderProduct::findOne((int)$id);
+            $orderProduct = OrderProductTemp::findOne((int)$id);
             $product = Product::findOne($orderProduct->product_id);
             if ($orderProduct) {
 
@@ -203,9 +205,9 @@ class CallbackqueryCommand extends SystemCommand
             $user_id = $callback_query->getFrom()->getId();
             parse_str($callback_data, $params);
 
-            $orderProduct = OrderProduct::findOne([
-                'order_id' => $params['order_id'],
-                'product_id' => $params['product_id'],
+            $orderProduct = OrderProductTemp::findOne([
+                'order_id' => $params['oid'],
+                'product_id' => $params['pid'],
             ]);
             if ($orderProduct) {
                 if ($params['type'] == 'up') {
@@ -231,9 +233,9 @@ class CallbackqueryCommand extends SystemCommand
             $user_id = $callback_query->getFrom()->getId();
             parse_str($callback_data, $params);
 
-            $orderProduct = OrderProduct::findOne([
-                'order_id' => $params['order_id'],
-                'product_id' => $params['product_id'],
+            $orderProduct = OrderProductTemp::findOne([
+                'order_id' => $params['oid'],
+                'product_id' => $params['pid'],
             ]);
             if ($orderProduct) {
                 if ($params['type'] == 'up') {
@@ -287,11 +289,11 @@ class CallbackqueryCommand extends SystemCommand
 
             $product = Product::findOne($product_id);
 
-            $order = Order::find()->where(['user_id' => $user_id, 'checkout' => 0])->one();
+            $order = OrderTemp::findOne($user_id);
             $quantity = 1;
             if (!$order) {
-                $order = new Order;
-                $order->user_id = $user_id;
+                $order = new OrderTemp;
+                $order->id = $user_id;
                 $order->firstname = $callback_query->getFrom()->getFirstName();
                 $order->lastname = $callback_query->getFrom()->getLastName();
                 $order->save(false);
@@ -411,7 +413,7 @@ class CallbackqueryCommand extends SystemCommand
             parse_str($callback_data, $params);
             $user_id = $callback_query->getFrom()->getId();
             $message = $callback_query->getMessage();
-            $order = Order::findOne(['user_id' => $user_id, 'checkout' => 0]);
+            $order = OrderTemp::findOne($user_id);
             // print_r($params);
             $product_id = $params['product_id'];
             $page = $params['page'];
