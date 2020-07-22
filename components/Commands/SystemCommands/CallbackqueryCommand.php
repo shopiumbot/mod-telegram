@@ -294,13 +294,13 @@ class CallbackqueryCommand extends SystemCommand
             if (!$order) {
                 $order = new OrderTemp;
                 $order->id = $user_id;
-                $order->firstname = $callback_query->getFrom()->getFirstName();
-                $order->lastname = $callback_query->getFrom()->getLastName();
+                //$order->firstname = $callback_query->getFrom()->getFirstName();
+                //$order->lastname = $callback_query->getFrom()->getLastName();
                 $order->save(false);
             }
 
 
-            $add = $order->addProduct($product, $quantity, $product->getFrontPrice());
+            $add = $order->addProduct($product, $quantity);
             if ($add) {
 
                 $data = [

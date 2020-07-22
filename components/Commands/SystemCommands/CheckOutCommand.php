@@ -3,6 +3,7 @@
 namespace shopium\mod\telegram\components\Commands\SystemCommands;
 
 
+use core\modules\shop\models\Product;
 use Longman\TelegramBot\Conversation;
 use Longman\TelegramBot\DB;
 use Longman\TelegramBot\Entities\InlineKeyboard;
@@ -15,6 +16,8 @@ use shopium\mod\cart\models\Delivery;
 use shopium\mod\cart\models\NovaPoshtaArea;
 use shopium\mod\cart\models\NovaPoshtaCities;
 use shopium\mod\cart\models\NovaPoshtaWarehouses;
+use shopium\mod\cart\models\OrderProduct;
+use shopium\mod\cart\models\OrderProductTemp;
 use shopium\mod\cart\models\OrderTemp;
 use shopium\mod\cart\models\Payment;
 use shopium\mod\telegram\components\SystemCommand;
@@ -64,7 +67,8 @@ class CheckOutCommand extends SystemCommand
      * @var \Longman\TelegramBot\Conversation
      */
     protected $conversation;
-
+    private $order;
+    private $orderProducts;
 
     /**
      * Command execute method
@@ -77,52 +81,40 @@ class CheckOutCommand extends SystemCommand
 
         $update = $this->getUpdate();
 
-
         if ($update->getCallbackQuery()) {
             $callbackQuery = $update->getCallbackQuery();
-
             $message = $callbackQuery->getMessage();
-            //  $chat = $callbackQuery->getMessage()->getChat();
-            //  $user = $message->getFrom();
             $chat = $message->getChat();
             $user = $callbackQuery->getFrom();
-            $chat_id = $chat->getId();
-            $user_id = $user->getId();
             parse_str($callbackQuery->getData(), $params);
-            $order = Order::find()->where(['id' => $params['id'], 'checkout' => 0])->one();
-
         } else {
             $message = $this->getMessage();
             $chat = $message->getChat();
             $user = $message->getFrom();
-
-            $chat_id = $chat->getId();
-            $user_id = $user->getId();
-            $order = Order::find()->where(['user_id' => $user_id, 'checkout' => 0])->one();
         }
 
-
+        $chat_id = $chat->getId();
+        $user_id = $user->getId();
+        // $this->order = OrderTemp::findOne(['id' => $user_id]);
         $data['chat_id'] = $chat_id;
         $text = trim($message->getText(true));
 
 
         //Preparing Response
-
-        if ($order) {
-            if (!$order->getProducts()->count()) {
-                // $data['reply_markup'] = $this->startKeyboards();
-                //  return $this->notify(Yii::$app->settings->get('telegram', 'empty_cart_text'),'info');
-
-
-                $data_edit = [
-                    'chat_id' => $chat_id,
-                    'message_id' => $message->getMessageId(),
-                    'text' => $this->settings->empty_cart_text,
-                ];
-                return Request::editMessageText($data_edit);
+        $this->orderProducts = OrderProductTemp::findAll(['order_id' => $chat_id]);
+        if ($this->orderProducts) {
+            // if (!$this->orderProducts->count()) {
+            // $data['reply_markup'] = $this->startKeyboards();
+            //  return $this->notify(Yii::$app->settings->get('telegram', 'empty_cart_text'),'info');
 
 
-            }
+            //  $data_edit = [
+            //      'chat_id' => $chat_id,
+            //      'message_id' => $message->getMessageId(),
+            //      'text' => $this->settings->empty_cart_text,
+            //  ];
+            //  return Request::editMessageText($data_edit);
+            // }
             if ($chat->isGroupChat() || $chat->isSuperGroup()) {
                 //reply to message id is applied by default
                 //Force reply is applied by default so it can work with privacy on
@@ -196,6 +188,41 @@ class CheckOutCommand extends SystemCommand
                     $text = '';
                 // no break
                 case 2:
+                    contact:
+                    if ($text === static::KEYWORD_BACK) {
+                        $text = '';
+                        goto payment;
+                    }
+                    if ($message->getContact() === null) {
+                        $notes['state'] = 2;
+                        $this->conversation->update();
+
+                        $keyboards = [
+                            [
+                                (new KeyboardButton('📞 Оставить контакты'))->setRequestContact(true)],
+                            [
+                                new KeyboardButton(static::KEYWORD_BACK),
+                                new KeyboardButton(static::KEYWORD_CANCEL)
+                            ]
+                        ];
+                        $buttons = (new Keyboard(['keyboard' => $keyboards]))
+                            ->setResizeKeyboard(true)
+                            ->setOneTimeKeyboard(true)
+                            ->setSelective(true);
+
+
+                        $data['reply_markup'] = $buttons;
+                        $data['text'] = 'Ваши контактные данные:';
+                        $result = Request::sendMessage($data);
+                        break;
+                    }
+                    $phone = $message->getContact()->getPhoneNumber();
+                    $notes['phone_number'] = (strpos($phone, '+')) ? $phone : $phone;
+
+                // no break
+
+
+                case 3:
                     delivery:
                     if ($text === static::KEYWORD_BACK) {
                         $text = '';
@@ -221,7 +248,7 @@ class CheckOutCommand extends SystemCommand
                         ->setSelective(true);
 
                     if ($text === '' || !in_array($text, $deliveryList, true)) {
-                        $notes['state'] = 2;
+                        $notes['state'] = 3;
                         $this->conversation->update();
 
                         $data['reply_markup'] = $buttons;
@@ -238,7 +265,7 @@ class CheckOutCommand extends SystemCommand
                     $notes['delivery_id'] = array_search($text, $deliveryList);
 
 
-                case '2.1':
+                case '3.1':
                     delivery_novaposhta:
                     if ($text === static::KEYWORD_BACK) {
                         $text = '';
@@ -277,7 +304,7 @@ class CheckOutCommand extends SystemCommand
 
 
                         if ($text === '' || !in_array($text, $cityList, true)) {
-                            $notes['state'] = '2.1';
+                            $notes['state'] = '3.1';
                             $this->conversation->update();
 
                             $data['reply_markup'] = $buttons;
@@ -295,7 +322,7 @@ class CheckOutCommand extends SystemCommand
                     }
 
 
-                case '2.2':
+                case '3.2':
                     delivery_novaposhta_city:
                     if ($text === static::KEYWORD_BACK) {
                         $text = '';
@@ -352,7 +379,7 @@ class CheckOutCommand extends SystemCommand
                             ->setSelective(true);
 
                         if ($text === '' || !in_array($text, $citiesList, true)) {
-                            $notes['state'] = '2.2';
+                            $notes['state'] = '3.2';
                             $this->conversation->update();
 
                             $data['reply_markup'] = $buttons;
@@ -369,7 +396,7 @@ class CheckOutCommand extends SystemCommand
                         $notes['delivery_city_id'] = array_search($text, $citiesList);
                     }
                 // no break
-                case '2.3':
+                case '3.3':
                     delivery_novaposhta_warehouses:
                     if ($text === static::KEYWORD_BACK) {
                         $text = '';
@@ -412,7 +439,7 @@ class CheckOutCommand extends SystemCommand
                             ->setSelective(true);
 
                         if ($text === '' || !in_array($text, $warehousesList, true)) {
-                            $notes['state'] = '2.3';
+                            $notes['state'] = '3.3';
                             $this->conversation->update();
 
                             $data['reply_markup'] = $buttons;
@@ -430,7 +457,7 @@ class CheckOutCommand extends SystemCommand
                     }
                 // no break
 
-                case 3:
+                case 4:
                     payment:
                     if ($text === static::KEYWORD_BACK) {
                         $text = '';
@@ -455,7 +482,7 @@ class CheckOutCommand extends SystemCommand
                         ->setSelective(true);
 
                     if ($text === '' || !in_array($text, $paymentList, true)) {
-                        $notes['state'] = 3;
+                        $notes['state'] = 4;
                         $this->conversation->update();
 
                         $data['reply_markup'] = $buttons;
@@ -472,61 +499,36 @@ class CheckOutCommand extends SystemCommand
                     $notes['payment'] = $text;
                     $notes['payment_id'] = array_search($text, $paymentList);
                 // no break
-                case 4:
-                    contact:
-                    if ($text === static::KEYWORD_BACK) {
-                        $text = '';
-                        goto payment;
-                    }
-                    if ($message->getContact() === null) {
-                        $notes['state'] = 4;
-                        $this->conversation->update();
 
-                        $keyboards = [
-                            [
-                                (new KeyboardButton('📞 Оставить контакты'))->setRequestContact(true)],
-                            [
-                                new KeyboardButton(static::KEYWORD_BACK),
-                                new KeyboardButton(static::KEYWORD_CANCEL)
-                            ]
-                        ];
-                        $buttons = (new Keyboard(['keyboard' => $keyboards]))
-                            ->setResizeKeyboard(true)
-                            ->setOneTimeKeyboard(true)
-                            ->setSelective(true);
-
-
-                        $data['reply_markup'] = $buttons;
-                        $data['text'] = 'Ваши контактные данные:';
-                        $result = Request::sendMessage($data);
-                        break;
-                    }
-                    $phone = $message->getContact()->getPhoneNumber();
-                    $notes['phone_number'] = (strpos($phone, '+')) ? $phone : $phone;
-
-                // no break
                 case 5:
                     $this->conversation->update();
                     $titleClient = '*✅ Ваш заказ успешно оформлен*' . PHP_EOL . PHP_EOL;
-                    $order = OrderTemp::findOne($user_id);
+                    // $orderTemp = OrderTemp::findOne($user_id);
+                    $order = new Order;
+                    $order->user_id = $chat_id;
                     $content = '';
-                    if ($order) {
-                        $products = $order->products;
-                        if ($products) {
-                            foreach ($products as $product) {
-                                $command = '';
-                                if ($product->originalProduct) {
-                                    $command .= '/product' . $product->product_id;
-                                }
-                                $content .= '*' . $product->name . '* '.$command.' *(' . $product->quantity . ' шт.)*: ' . $this->number_format($product->price) . ' грн.' . PHP_EOL;
-                            }
+                    foreach ($this->orderProducts as $product) {
+                        $command = '';
+                        if ($product->originalProduct) {
+                            $command .= '/product' . $product->product_id;
                         }
+                        $content .= '*' . $product->name . '* ' . $command . ' *(' . $product->quantity . ' шт.)*: ' . $this->number_format($product->price) . ' грн.' . PHP_EOL;
                     }
 
                     unset($notes['state']);
-                    //foreach ($notes as $k => $v) {
-                    //    $content .= PHP_EOL . '*' . ucfirst($k) . '*: ' . $v;
-                    //}
+
+                    $content .= PHP_EOL . '*Имя*: ' . $notes['name'];
+                    $content .= PHP_EOL . '*Телефон*: ' . $notes['phone_number'] . PHP_EOL;
+
+                    $content .= PHP_EOL . '🚚 Доставка: *' . $notes['delivery'] . '*' . PHP_EOL;
+                    if ($order->area_id && $order->area) {
+                        $content .= 'обл. *' . $order->area . '*, ';
+                    }
+                    if ($order->city_id && $order->city) {
+                        $content .= 'г. *' . $order->city . '*' . PHP_EOL;
+                    }
+
+
                     if (isset($notes['delivery_city']))
                         $order->city = $notes['delivery_city'];
 
@@ -547,18 +549,6 @@ class CheckOutCommand extends SystemCommand
                     if (isset($notes['delivery_warehouse_id']))
                         $order->warehouse_id = $notes['delivery_warehouse_id'];
 
-
-                    $content .= PHP_EOL . '*Имя*: ' . $notes['name'];
-                    $content .= PHP_EOL . '*Телефон*: ' . $notes['phone_number'] . PHP_EOL;
-
-                    $content .= PHP_EOL . '🚚 Доставка: *' . $notes['delivery'] . '*' . PHP_EOL;
-                    if ($order->area_id && $order->area) {
-                        $content .= 'обл. *' . $order->area . '*, ';
-                    }
-                    if ($order->city_id && $order->city) {
-                        $content .= 'г. *' . $order->city . '*' . PHP_EOL;
-                    }
-
                     if ($order->warehouse_id && $order->warehouse) {
                         $warehouse = NovaPoshtaWarehouses::findOne(['Ref' => trim($order->warehouse_id)]);
                         if ($warehouse) {
@@ -571,7 +561,6 @@ class CheckOutCommand extends SystemCommand
                     }
                     $content .= PHP_EOL . '💰 Оплата: *' . $notes['payment'] . '*';
 
-                    $content .= PHP_EOL . PHP_EOL . 'Сумма заказа: *' . $this->number_format($order->total_price) . '* грн.';
 
                     //$order->delivery = $notes['delivery'];
                     //$order->payment = $notes['payment'];
@@ -579,14 +568,21 @@ class CheckOutCommand extends SystemCommand
                     $order->payment_id = $notes['payment_id'];
                     $order->user_phone = $notes['phone_number'];
                     $order->user_name = $notes['name'];
-
                     $order->status_id = 1;
-                    $order->checkout = 1;
-                    $order->save(false);
+                    $order->save();
+
+                    foreach ($this->orderProducts as $product) {
+                        $order->addProduct($product->originalProduct, $product->quantity, $product->price);
+
+                    }
+                    OrderTemp::deleteAll(['id' => $user_id]);
+                    OrderProductTemp::deleteAll(['order_id' => $user_id]);
+
+                    $o = Order::findOne($order->id);
+                    $content .= PHP_EOL . PHP_EOL . 'Сумма заказа: *' . $this->number_format($o->total_price) . '* ' . Yii::$app->currency->active['symbol'];
 
 
-                    //$test = $order->sendAdminEmail();
-                    $titleOwner = '*✅ Новый заказ ' . CMS::idToNumber($order->id) . '*' . PHP_EOL . PHP_EOL;
+                    $titleOwner = '*✅ Новый заказ ' . CMS::idToNumber($o->id) . '*' . PHP_EOL . PHP_EOL;
                     $admins = $this->telegram->getAdminList();
                     foreach ($admins as $admin) {
                         $data2['chat_id'] = $admin;
@@ -605,11 +601,11 @@ class CheckOutCommand extends SystemCommand
                     }
 
                     if ($result->isOk()) {
-                        $system = ($order->paymentMethod) ? $order->paymentMethod->system : 0;
+                        $system = ($o->paymentMethod) ? $o->paymentMethod->system : 0;
                         $inlineKeyboards[] = [
                             new InlineKeyboardButton([
-                                'text' => Yii::t('telegram/command', 'BUTTON_PAY', $this->number_format($order->total_price)),
-                                'callback_data' => "query=orderPay&id={$order->id}&system={$system}"
+                                'text' => Yii::t('telegram/command', 'BUTTON_PAY', $this->number_format($o->total_price)),
+                                'callback_data' => "query=orderPay&id={$o->id}&system={$system}"
                             ]),
                         ];
                         $data['reply_markup'] = new InlineKeyboard([

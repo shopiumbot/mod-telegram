@@ -140,7 +140,7 @@ class SearchResultCommand extends SystemCommand
                 }
 
                 $caption .= '*' . $product->name . '*' . PHP_EOL;
-                $caption .= $this->number_format($product->price) . ' грн' . PHP_EOL . PHP_EOL;
+                $caption .= $this->number_format($product->price) . ' '.Yii::$app->currency->active['symbol'] . PHP_EOL . PHP_EOL;
 
                 if ($product->hasDiscount) {
                     $caption .= '*🎁 Скидка*: ' . $product->discountSum . PHP_EOL . PHP_EOL;

@@ -77,7 +77,7 @@ class HistoryCommand extends UserCommand
         }
 
         $query = Order::find()
-            ->where(['user_id' => $user_id, 'checkout' => 1])
+            ->where(['user_id' => $user_id])
             ->orderBy(['id' => SORT_DESC]);
 
         $pages = new KeyboardPagination([
@@ -139,7 +139,9 @@ class HistoryCommand extends UserCommand
                     $text .= 'TTH: *' . $order->invoice . '*' . PHP_EOL;
                 }
 
-                $text .= PHP_EOL . PHP_EOL . '🚚 Доставка: *' . $order->deliveryMethod->name . '*' . PHP_EOL;
+                if ($order->deliveryMethod) {
+                    $text .= PHP_EOL . PHP_EOL . '🚚 Доставка: *' . $order->deliveryMethod->name . '*' . PHP_EOL;
+                }
                 if ($order->area_id && $order->area) {
                     $text .= 'обл. *' . $order->area . '*, ';
                 }
@@ -155,8 +157,10 @@ class HistoryCommand extends UserCommand
                         $text .= 'Отделение: *' . $order->warehouse . ' ' . $order->warehouse_id . '*' . PHP_EOL;
                     }
                 }
-                $text .= PHP_EOL . '💰 Оплата: *' . $order->paymentMethod->name . '*' . PHP_EOL;
-                $text .= 'Общая стоимость заказа: *' . Yii::$app->currency->number_format($order->total_price) . ' грн.*' . PHP_EOL;
+                if ($order->paymentMethod) {
+                    $text .= PHP_EOL . '💰 Оплата: *' . $order->paymentMethod->name . '*' . PHP_EOL;
+                }
+                $text .= 'Общая стоимость заказа: *' . Yii::$app->currency->number_format($order->total_price) . ' ' . Yii::$app->currency->active['symbol'] . '*' . PHP_EOL;
 
             }
             $data['text'] = $text;

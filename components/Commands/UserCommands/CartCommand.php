@@ -92,7 +92,7 @@ class CartCommand extends UserCommand
             }
 
 
-            $query = OrderProductTemp::find()->where(['order_id' => $order->id]);
+            $query = OrderProductTemp::find()->where(['order_id' => $chat_id]);
             $queryCount = $query->count();
             $pages = new KeyboardPagination([
                 'totalCount' => $queryCount,
@@ -117,8 +117,9 @@ class CartCommand extends UserCommand
             $keyboards = [];
 
             if ($queryCount) {
+               // $total_price = 0;
                 foreach ($products as $product) {
-
+                    $original = $product->originalProduct;
                     $keyboards[] = [
                         new InlineKeyboardButton([
                             'text' => '❌',
@@ -156,13 +157,13 @@ class CartCommand extends UserCommand
 
                     $text = '*Ваша корзина*' . PHP_EOL;
                     if ($imageData) {
-                        $text .= '[' . $product->name . '](https://' . Yii::$app->request->getServerName() . '' . $imageData->getUrlToOrigin() . ')' . PHP_EOL;
+                        $text .= '[' . $original->name . '](https://' . Yii::$app->request->getServerName() . '' . $imageData->getUrlToOrigin() . ')' . PHP_EOL;
                     } else {
-                        $text .= '[' . $product->name . '](https://' . Yii::$app->request->getServerName() . '/uploads/no-image.jpg)' . PHP_EOL;
+                        $text .= '[' . $original->name . '](https://' . Yii::$app->request->getServerName() . '/uploads/no-image.jpg)' . PHP_EOL;
                     }
 
                     // $text .= '_описание товара_ ' . PHP_EOL;
-                    $text .= '`' . $this->number_format($product->price) . ' грн / ' . $product->quantity . ' шт = ' . $this->number_format(($product->price * $product->quantity)) . ' грн`' . PHP_EOL;
+                    $text .= '`' . $this->number_format($original->price) . ' '.Yii::$app->currency->active['symbol'].' / ' . $product->quantity . ' шт = ' . $this->number_format(($original->price * $product->quantity)) . ' '.Yii::$app->currency->active['symbol'].'`' . PHP_EOL;
 
                     //  $data['chat_id'] = $chat_id;
                     $data['text'] = $text;
@@ -184,7 +185,7 @@ class CartCommand extends UserCommand
                         return Request::editMessageReplyMarkup(array_merge($data, $dataReplyMarkup));
                     }
                     $response = $data;
-
+                 //   $total_price += $original->price;
                 }
             } else {
                 if ($update->getCallbackQuery()) {
