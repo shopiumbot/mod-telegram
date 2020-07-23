@@ -19,6 +19,7 @@ abstract class Command extends \Longman\TelegramBot\Commands\Command
 
     const KEYWORD_BACK = '⬅ Назад';
     const KEYWORD_CANCEL = '❌ Отмена';
+    const KEYWORD_ADMIN = '💎 Админ-панель';
 
     public function __construct(Api $telegram, Update $update = null)
     {
@@ -117,6 +118,13 @@ abstract class Command extends \Longman\TelegramBot\Commands\Command
             new KeyboardButton(['text' => $textMyOrders]),
             new KeyboardButton(['text' => '❓ Помощь'])
         ];
+
+
+        if (in_array(812367093, $this->telegram->getAdminList())) {
+            $keyboards[] = [
+                new KeyboardButton(['text' => self::KEYWORD_ADMIN])
+            ];
+        }
         // $keyboards[] = [
         //  new KeyboardButton(['text' => '⚙ Настройки']),
         //   new KeyboardButton(['text' => '❓ Помощь'])
@@ -210,6 +218,11 @@ abstract class Command extends \Longman\TelegramBot\Commands\Command
             new KeyboardButton(['text' => $textMyOrders]),
             new KeyboardButton(['text' => '❓ Помощь'])
         ];
+        if (in_array(812367093, $this->telegram->getAdminList())) {
+            $keyboards[] = [
+                new KeyboardButton(['text' => self::KEYWORD_ADMIN])
+            ];
+        }
         $pages = Pages::find()->published()->asArray()->all();
         $pagesKeywords = [];
         foreach ($pages as $page) {

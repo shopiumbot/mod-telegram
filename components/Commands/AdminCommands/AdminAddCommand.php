@@ -8,6 +8,7 @@ use Longman\TelegramBot\Conversation;
 use Longman\TelegramBot\Entities\Keyboard;
 use Longman\TelegramBot\Request;
 use shopium\mod\telegram\components\AdminCommand;
+use shopium\mod\telegram\models\User;
 use Yii;
 
 /**
@@ -58,13 +59,36 @@ class AdminAddCommand extends AdminCommand
      */
     public function execute()
     {
-        $message = $this->getMessage();
+        $update = $this->getUpdate();
 
+        if ($update->getCallbackQuery()) {
+            $callbackQuery = $update->getCallbackQuery();
+            $message = $callbackQuery->getMessage();
+            $user = $callbackQuery->getFrom();
+            parse_str($callbackQuery->getData(), $params);
+            if (isset($params['command'])) {
+                if ($params['command'] == 'changeProductImage') {
+                    $callbackData = 'changeProductImage';
+                }
+            }
+            if (isset($params['query'])) {
+                if ($params['query'] == 'addCart') {
+                    $callbackData = $params['query'];
+                } elseif ($params['query'] == 'deleteInCart') {
+                    $callbackData = $params['query'];
+                } elseif ($params['query'] == 'productSpinner') {
+                    $callbackData = $params['query'];
+                }
+            }
+
+        } else {
+            $message = $this->getMessage();
+            $user = $message->getFrom();
+        }
         $chat = $message->getChat();
-        $user = $message->getFrom();
-        $text = trim($message->getText(true));
         $chat_id = $chat->getId();
-        $user_id = $user->getId();
+        $user_id =  $user->getId();
+        $text = trim($message->getText(true));
         $data['chat_id'] = $chat_id;
 
         //Preparing Response
@@ -115,7 +139,10 @@ class AdminAddCommand extends AdminCommand
             // no break
             case 1:
                 $this->conversation->update();
-                $content = '✅ !!!' . PHP_EOL;
+
+                $user = User::findOne($notes['admin_id']);
+
+                $content = '✅ !!!'.$user->id . PHP_EOL;
 
                 unset($notes['state']);
                 foreach ($notes as $k => $v) {

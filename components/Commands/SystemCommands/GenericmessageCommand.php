@@ -114,9 +114,10 @@ class GenericmessageCommand extends SystemCommand
         } elseif ($this->settings->button_text_start === $text) { //home emoji //preg_match('/^(\x{1F3E0})/iu', $text, $match)
             $this->telegram->executeCommand('start');
             return $this->telegram->executeCommand('cancel');
-
-            //} elseif ($text == 'Отмена') {
-            //    return $this->telegram->executeCommand('cancel');
+        } elseif (self::KEYWORD_ADMIN === $text) {
+            if ($this->telegram->isAdmin($user_id)) {
+                return $this->telegram->executeCommand('AdminPanel');
+            }
         } elseif (preg_match('/^(\x{2753})/iu', $text, $match)) { //help emoji
             return $this->telegram->executeCommand('help');
         } elseif (preg_match('/^(\x{1F4E2})/iu', $text, $match)) { //news emoji

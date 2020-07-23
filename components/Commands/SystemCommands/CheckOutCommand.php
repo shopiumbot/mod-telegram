@@ -508,11 +508,12 @@ class CheckOutCommand extends SystemCommand
                     $order->user_id = $chat_id;
                     $content = '';
                     foreach ($this->orderProducts as $product) {
+                        $original = $product->originalProduct;
                         $command = '';
-                        if ($product->originalProduct) {
+                        if ($original) {
                             $command .= '/product' . $product->product_id;
                         }
-                        $content .= '*' . $product->name . '* ' . $command . ' *(' . $product->quantity . ' шт.)*: ' . $this->number_format($product->price) . ' грн.' . PHP_EOL;
+                        $content .= '*' . $original->name . '* ' . $command . ' *(' . $product->quantity . ' шт.)*: ' . $this->number_format($original->price) . ' грн.' . PHP_EOL;
                     }
 
                     unset($notes['state']);
@@ -572,7 +573,8 @@ class CheckOutCommand extends SystemCommand
                     $order->save();
 
                     foreach ($this->orderProducts as $product) {
-                        $order->addProduct($product->originalProduct, $product->quantity, $product->price);
+                        $original = $product->originalProduct;
+                        $order->addProduct($original, $product->quantity, $original->price);
 
                     }
                     OrderTemp::deleteAll(['id' => $user_id]);

@@ -63,13 +63,40 @@ class ProductAddCommand extends AdminCommand
      */
     public function execute()
     {
-        $message = $this->getMessage();
+        $update = $this->getUpdate();
 
+        if ($update->getCallbackQuery()) {
+            $callbackQuery = $update->getCallbackQuery();
+            $message = $callbackQuery->getMessage();
+            $user = $callbackQuery->getFrom();
+            parse_str($callbackQuery->getData(), $params);
+            if (isset($params['command'])) {
+                if ($params['command'] == 'changeProductImage') {
+                    $callbackData = 'changeProductImage';
+                }
+            }
+            if (isset($params['query'])) {
+                if ($params['query'] == 'addCart') {
+                    $callbackData = $params['query'];
+                } elseif ($params['query'] == 'deleteInCart') {
+                    $callbackData = $params['query'];
+                } elseif ($params['query'] == 'productSpinner') {
+                    $callbackData = $params['query'];
+                }
+            }
+
+        } else {
+            $message = $this->getMessage();
+            $user = $message->getFrom();
+        }
         $chat = $message->getChat();
-        $user = $message->getFrom();
-        $text = trim($message->getText(true));
         $chat_id = $chat->getId();
-        $user_id = $user->getId();
+        $user_id =  $user->getId();
+
+
+
+        $text = trim($message->getText(true));
+
         $data['chat_id'] = $chat_id;
 
         //Preparing Response

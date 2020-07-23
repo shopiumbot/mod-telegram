@@ -201,6 +201,12 @@ class CallbackqueryCommand extends SystemCommand
             }
             return $this->errorMessage();
 
+        } elseif (preg_match('/exchangeRates/iu', trim($callback_data), $match)) {
+            return $this->telegram->executeCommand('ExchangeRates');
+        } elseif (preg_match('/addProduct/iu', trim($callback_data), $match)) {
+            return $this->telegram->executeCommand('ProductAdd');
+        } elseif (preg_match('/addAdmin/iu', trim($callback_data), $match)) {
+            return $this->telegram->executeCommand('AdminAdd');
         } elseif (preg_match('/cartSpinner/iu', trim($callback_data), $match)) {
             $user_id = $callback_query->getFrom()->getId();
             parse_str($callback_data, $params);
