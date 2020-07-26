@@ -570,11 +570,11 @@ class CheckOutCommand extends SystemCommand
                     $order->user_phone = $notes['phone_number'];
                     $order->user_name = $notes['name'];
                     $order->status_id = 1;
-                    $order->save();
+                    $order->save(false);
 
                     foreach ($this->orderProducts as $product) {
                         $original = $product->originalProduct;
-                        $order->addProduct($original, $product->quantity, $original->price);
+                        $add = $order->addProduct($original, $product->quantity, $original->price);
 
                     }
                     OrderTemp::deleteAll(['id' => $user_id]);

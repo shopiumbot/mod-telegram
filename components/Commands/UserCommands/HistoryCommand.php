@@ -99,7 +99,7 @@ class HistoryCommand extends UserCommand
             'command' => 'getHistory'
         ]);
 
-
+        $keyboards=[];
         if ($orders) {
 
 
@@ -130,7 +130,7 @@ class HistoryCommand extends UserCommand
                         $command .= '/product' . $product->product_id;
                     }
                     // $text .= '[' . $product->name . ']('.Url::to($product->originalProduct->getImage()->getUrlToOrigin(),true).') *(' . $product->quantity . ' шт.)*: ' . Yii::$app->currency->number_format($product->price) . ' грн. ' . PHP_EOL;
-                    $text .= '*' . $product->name . '* ' . $command . ' *(' . $product->quantity . ' шт.):* ' . Yii::$app->currency->number_format($product->price) . ' грн. ' . PHP_EOL;
+                    $text .= '*' . $product->name . '* ' . $command . ' *(' . $product->quantity . ' шт.):* ' . $this->number_format($product->price) . ' грн. ' . PHP_EOL;
                 }
 
                 $text .= PHP_EOL . 'Дата заказа: *' . CMS::date($order->created_at) . '*' . PHP_EOL;
@@ -160,7 +160,7 @@ class HistoryCommand extends UserCommand
                 if ($order->paymentMethod) {
                     $text .= PHP_EOL . '💰 Оплата: *' . $order->paymentMethod->name . '*' . PHP_EOL;
                 }
-                $text .= 'Общая стоимость заказа: *' . Yii::$app->currency->number_format($order->total_price) . ' ' . Yii::$app->currency->active['symbol'] . '*' . PHP_EOL;
+                $text .= 'Общая стоимость заказа: *' . $this->number_format($order->total_price) . ' ' . Yii::$app->currency->active['symbol'] . '*' . PHP_EOL;
 
             }
             $data['text'] = $text;

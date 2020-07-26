@@ -119,8 +119,8 @@ abstract class Command extends \Longman\TelegramBot\Commands\Command
             new KeyboardButton(['text' => '❓ Помощь'])
         ];
 
-
-        if (in_array(812367093, $this->telegram->getAdminList())) {
+        //in_array(812367093, $this->telegram->getAdminList())
+        if ($this->telegram->isAdmin($this->update->getMessage()->getChat()->getId())) {
             $keyboards[] = [
                 new KeyboardButton(['text' => self::KEYWORD_ADMIN])
             ];
@@ -218,7 +218,8 @@ abstract class Command extends \Longman\TelegramBot\Commands\Command
             new KeyboardButton(['text' => $textMyOrders]),
             new KeyboardButton(['text' => '❓ Помощь'])
         ];
-        if (in_array(812367093, $this->telegram->getAdminList())) {
+        //in_array(812367093, $this->telegram->getAdminList())
+        if ($this->telegram->isAdmin($this->update->getMessage()->getChat()->getId())) {
             $keyboards[] = [
                 new KeyboardButton(['text' => self::KEYWORD_ADMIN])
             ];
