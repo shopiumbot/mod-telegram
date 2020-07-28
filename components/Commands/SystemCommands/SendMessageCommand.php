@@ -59,24 +59,10 @@ class SendMessageCommand extends SystemCommand
         $callback_query_id = $callback_query->getId();
         $callback_data = $callback_query->getData();
 
-        $config = Yii::$app->settings->get('app');
-
-
-
-
-
 
 
 
         $text = trim($message->getText(false));
-
-$this->notify($text);
-
-
-        if ($text === static::KEYWORD_CANCEL) {
-            return $this->telegram->executeCommand('cancel');
-            //    return Request::emptyResponse();
-        }
 
         //Conversation start
         $this->conversation = new Conversation($user_id, $chat_id, $this->getName());
@@ -92,13 +78,13 @@ $this->notify($text);
 
         $result = Request::emptyResponse();
 
-
+$this->notify(json_encode($state));
         //State machine
         //Entrypoint of the machine state if given by the track
         //Every time a step is achieved the track is updated
         switch ($state) {
             case 0:
-                if ($text === '' || $text === static::KEYWORD_CANCEL || preg_match('/^(\x{2709})/iu', $text, $match)) {
+                if ($notes['state']==0 || $text === static::KEYWORD_CANCEL || preg_match('/^(\x{2709})/iu', $text, $match)) {
                     $notes['state'] = 0;
                     $this->conversation->update();
 
@@ -122,7 +108,6 @@ $this->notify($text);
                 }
 
                 $notes['message'] = $text;
-                $text = '';
             // no break
             case 1:
                 $notes['state'] = 1;
@@ -132,8 +117,7 @@ $this->notify($text);
                 unset($notes['state']);
                 $message = $notes['message'];
                 $out_text .= PHP_EOL . '*Сообщение*: ' . $message;
-                $data['text'] = '✅ *Сообщение успешно отправлено!*' . PHP_EOL;
-                $data['text'] .= 'Мы рассмотрим обращение и свяжемся с Вами.';
+                $data['text'] = '123' . PHP_EOL;
                 $data['parse_mode'] = 'Markdown';
                 $data['reply_markup'] = $this->startKeyboards();
 
@@ -141,15 +125,7 @@ $this->notify($text);
 
 
                 $result = Request::sendMessage($data);
-                /*if ($result->isOk()) {
-                    $fb = new Feedback();
-                    $fb->text = $message;
-                    $fb->user_id = $user_id;
-                    if($fb->validate()){
-                        $fb->save();
-                    }
 
-                }*/
                 break;
         }
         return $result;

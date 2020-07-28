@@ -33,7 +33,7 @@ echo GridView::widget([
             'attribute' => 'created_at',
             'format' => 'raw',
             'value' => function ($model) {
-                return CMS::date(strtotime($model->created_at));
+                return CMS::date($model->created_at);
             }
         ],
     ]

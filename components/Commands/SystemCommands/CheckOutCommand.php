@@ -217,7 +217,7 @@ class CheckOutCommand extends SystemCommand
                         break;
                     }
                     $phone = $message->getContact()->getPhoneNumber();
-                    $notes['phone_number'] = (strpos($phone, '+')) ? $phone : $phone;
+                    $notes['phone_number'] = (strpos($phone, '+')===false) ? '+'.$phone : $phone;
 
                 // no break
 

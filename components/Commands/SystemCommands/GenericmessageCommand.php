@@ -3,8 +3,12 @@
 namespace shopium\mod\telegram\components\Commands\SystemCommands;
 
 use core\modules\pages\models\Pages;
+use Couchbase\RegexpSearchQuery;
+use Longman\TelegramBot\Entities\Games\Game;
 use Longman\TelegramBot\Entities\InlineKeyboard;
+use Longman\TelegramBot\Entities\InlineKeyboardButton;
 use Longman\TelegramBot\Entities\Keyboard;
+use Longman\TelegramBot\Entities\KeyboardButton;
 use Longman\TelegramBot\Entities\Payments\LabeledPrice;
 use panix\engine\CMS;
 use Yii;
@@ -62,7 +66,7 @@ class GenericmessageCommand extends SystemCommand
      */
     public function execute()
     {
-
+        $update = $this->getUpdate();
         // Try to continue any active conversation.
         if ($active_conversation_response = $this->executeActiveConversation()) {
             return $active_conversation_response;
@@ -85,6 +89,63 @@ class GenericmessageCommand extends SystemCommand
             //  return Request::emptyResponse();
         }
 
+        $dice = $this->getMessage()->getDice();
+        if ($dice) {
+            $text_no_win = "К сожелению Вы не чего не выйграли!";
+            $diceValue = $dice->getValue();
+            if ($dice->getEmoji() == '🏀') {
+                sleep(4);//time of animation game dice
+                if (!in_array($diceValue, [1, 2, 3])) {
+                    $text = "Вы выйграли *{$diceValue}%* скидки".PHP_EOL.PHP_EOL;
+                    $text .= "Процент выйгрыша 40.00%";
+                    $this->notify($text, 'success');
+                } else {
+                    $this->notify($text_no_win, 'info');
+                }
+            } elseif ($dice->getEmoji() == '🎯') {
+                sleep(3);//time of animation game dice
+                if ($diceValue != 1) {
+                    $text = "Вы выйграли *{$diceValue}%* скидки".PHP_EOL.PHP_EOL;
+                    $text .= "Процент выйгрыша 83.33%";
+                    $this->notify($text, 'success');
+                } else {
+                    $this->notify($text_no_win, 'info');
+                }
+
+            } elseif ($dice->getEmoji() == '🎲') {
+                sleep(4);//time of animation game dice
+                $text = "Вы выйграли *{$diceValue}%* скидки";
+                $this->notify($text, 'success');
+
+            }
+        }
+
+        /*$keyboards2[] = [
+            new InlineKeyboardButton([
+                'text' => '🎲 Выйграть скидку',
+                'callback_data' => "query=productSpinnesad"
+            ]),
+        ];
+        $keyboards2[] = [
+            new InlineKeyboardButton([
+                'text' => '🏀',
+                'callback_data' => "query=deleteInCar"
+            ]),
+        ];
+        $keyboards2[] = [
+            new InlineKeyboardButton([
+                'text' => '🎯',
+                'callback_data' => "query=deleteInCar"
+            ]),
+        ];
+
+        $data['chat_id'] = $chat_id;
+        $data['text'] = 'Выигрывай скидку или промо-код';
+        $data['parse_mode'] = 'Markdown';
+        $data['reply_markup'] = new InlineKeyboard([
+            'inline_keyboard' => $keyboards2
+        ]);
+        $send = Request::sendMessage($data);*/
 
         //$test['chat_id'] = '@shopiumbotchannel';
         // $test['chat_id'] = -1001271165607;

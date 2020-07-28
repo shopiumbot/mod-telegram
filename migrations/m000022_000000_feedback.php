@@ -13,6 +13,7 @@ class m000022_000000_feedback extends Migration
     {
         $this->createTable('{{%feedback}}', [
             'id' => $this->bigPrimaryKey()->unsigned(),
+            'message_id' => $this->bigInteger()->unsigned(),
             'user_id' => $this->bigInteger()->notNull(),
             'text' => $this->text()->notNull(),
             'created_at' => $this->integer(),
@@ -21,6 +22,7 @@ class m000022_000000_feedback extends Migration
 
         $this->createIndex('user_id', '{{%feedback}}', 'user_id');
         $this->createIndex('created_at', '{{%feedback}}', 'created_at');
+        $this->createIndex('message_id', '{{%feedback}}', 'message_id');
 
     }
 

@@ -142,34 +142,51 @@ class FeedbackCommand extends UserCommand
                 $this->conversation->stop();
 
 
-                /*$keyboards[] = [
-                    new InlineKeyboardButton([
-                        'text' => 'Ответить',
-                        'callback_data' => "query=sendMessage&user_id={$user_id}"
-                    ])
-                ];*/
 
                 foreach ($this->telegram->getAdminList() as $admin) {
                     $dataChat['chat_id'] = $admin;
                     $dataChat['parse_mode'] = 'Markdown';
                     $dataChat['disable_notification'] = true;
                     $dataChat['text'] = '*Заявка обратной связи:* ' . PHP_EOL . $content_text;
-                    /*$dataChat['reply_markup'] = new InlineKeyboard([
-                        'inline_keyboard' => $keyboards
-                    ]);*/
+                    //$dataChat['reply_markup'] = new InlineKeyboard([
+                    //    'inline_keyboard' => $keyboards
+                    //]);
                     $resp = Request::sendMessage($dataChat);
+
+
+
+
+
+                    if ($resp->isOk()) {
+                        $fb = new Feedback();
+                        $fb->text = $message;
+                        $fb->user_id = $user_id;
+                        $fb->message_id = $resp->getResult()->getMessageId();
+                        if($fb->validate()){
+                            $fb->save();
+
+
+                            $keyboards[] = [
+                                new InlineKeyboardButton([
+                                    'text' => "Ответить {$user_id}&fid={$fb->id}",
+                                    'callback_data' => "query=sendMessage&user_id={$user_id}&fid={$fb->id}"
+                                ])
+                            ];
+                            $dataEdit['chat_id'] = $chat_id;
+                            $dataEdit['message_id'] = $resp->getResult()->getMessageId();
+                            /*$dataEdit['reply_markup'] = new InlineKeyboard([
+                                'inline_keyboard' => $keyboards
+                            ]);*/
+                            Request::editMessageReplyMarkup($dataEdit);
+
+
+                        }
+
+                    }
                 }
 
                 $result = Request::sendMessage($data);
-                if ($result->isOk()) {
-                    $fb = new Feedback();
-                    $fb->text = $message;
-                    $fb->user_id = $user_id;
-                    if($fb->validate()){
-                        $fb->save();
-                    }
 
-                }
                 break;
         }
         return $result;

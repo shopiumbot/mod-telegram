@@ -5,18 +5,16 @@ use panix\engine\grid\GridView;
 use panix\engine\Html;
 use panix\engine\CMS;
 
-/*$limit    = 10;
-$offset   = null;
-$response =  Yii::$app->telegram->getUserProfilePhotos([
-    'user_id' => 812367093,
-    'limit'   => $limit,
-    'offset'  => $offset,
-]);*/
+/*$categoriesList = [];
+$root = \core\modules\shop\models\Category::findOne(1);
+$model = \core\modules\shop\models\Category::find()->dataTree(1);
+foreach ($model as $cate){
+CMS::dump($cate);
+}
+die;*/
 
 
-//\panix\engine\CMS::dump($response->result->photos);
 
-//\panix\engine\CMS::dump(Yii::$app->telegram->getFile(['file_id'=>$response->result->photos[0][0]->file_id]));
 
 /** @var \shopium\mod\telegram\components\Api $api */
 $api = Yii::$app->telegram->getApi();

@@ -121,6 +121,9 @@ class ProductAddCommand extends AdminCommand
         }
 
 
+
+
+
         $result = Request::emptyResponse();
 
         //State machine
@@ -177,14 +180,18 @@ class ProductAddCommand extends AdminCommand
                     unset($notes['category'],$notes['category_id']);
                     goto type;
                 }
-                $model = Category::find()->excludeRoot()->all();
+
+                $root = Category::findOne(1);
+                $model = $root->children()->all();
+
+               // $model = Category::find()->excludeRoot()->all();
                 $list = [];
                 $keyboards = [];
                 foreach ($model as $k => $item) {
                     $list[$item->id] = $item->name;
                     $keyboards[] = new KeyboardButton(['text' => $item->name]);
                 }
-                $keyboards = array_chunk($keyboards, 2);
+                $keyboards = array_chunk($keyboards, 1);
                 $keyboards[] = [
                     new KeyboardButton(static::KEYWORD_BACK),
                     new KeyboardButton(static::KEYWORD_CANCEL)

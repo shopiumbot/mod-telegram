@@ -138,6 +138,7 @@ class ExchangeRatesCommand extends AdminCommand
             $text .= 'ПриватБанк Connection error';
         }
         try {
+
             //Нац банк Украины USD
             $response = $client->createRequest()
                 ->setMethod('GET')
@@ -159,7 +160,7 @@ class ExchangeRatesCommand extends AdminCommand
                 }
             }
         } catch (Exception $e) {
-            $text .= 'Нацiональний банк України Connection error';
+            $text .= '🇺🇦 🏦 *НБУ* Connection error';
         }
         try {
             $text .= "" . PHP_EOL;

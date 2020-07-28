@@ -13,13 +13,12 @@ use shopium\mod\telegram\models\StartSource;
  */
 class StartSourceSearch extends StartSource {
 
-    public $test;
     /**
      * @inheritdoc
      */
     public function rules() {
         return [
-            [['id','user_id','test'], 'integer'],
+            [['id','user_id'], 'integer'],
             [['created_at','source'], 'safe'],
         ];
     }
@@ -43,7 +42,7 @@ class StartSourceSearch extends StartSource {
         $query = StartSource::find();
         $query->addSelect(['*','COUNT(DISTINCT(user_id)) as usersCount']);
         $query->groupBy('source');
-        $query->orderBy(['created_at'=>SORT_DESC]);
+        $query->orderBy(['id'=>SORT_DESC]);
       // echo $query->createCommand()->rawSql;die;
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

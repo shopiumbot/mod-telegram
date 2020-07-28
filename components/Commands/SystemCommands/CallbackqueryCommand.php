@@ -65,9 +65,9 @@ class CallbackqueryCommand extends SystemCommand
         } elseif (preg_match('/sendMessage/iu', trim($callback_data), $match)) {
             parse_str($callback_data, $params);
             if (isset($params['user_id'])) {
-                return $this->telegram->setCommandConfig('sendmessage', [
+                return $this->telegram->setCommandConfig('sendMessage', [
                     'user_id' => $params['user_id']
-                ])->executeCommand('sendmessage');
+                ])->executeCommand('sendMessage');
             }
 
         } elseif (preg_match('/buyOneClick/iu', trim($callback_data), $match)) {

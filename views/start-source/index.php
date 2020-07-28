@@ -30,7 +30,14 @@ echo GridView::widget([
             'attribute' => 'user_id',
             'format' => 'raw',
             'value' => function ($model) {
-                return $model->user->displayName();
+
+                $query = \shopium\mod\telegram\models\StartSource::find();
+                $query->where(['source'=>$model->source]);
+                $query->orderBy(['id'=>SORT_DESC]);
+                $result = $query->one();
+
+
+                return $result->user->displayName();
             }
         ],
 

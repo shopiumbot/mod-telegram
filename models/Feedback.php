@@ -11,6 +11,7 @@ use yii\behaviors\TimestampBehavior;
  * This is the model class for table "tbl_feedback".
  *
  * @property integer $user_id
+ * @property integer $message_id
  * @property string $text
  */
 class Feedback extends ActiveRecord

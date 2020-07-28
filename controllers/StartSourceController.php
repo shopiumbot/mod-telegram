@@ -50,6 +50,7 @@ class StartSourceController extends AdminController
 
         $query = StartSource::find();
         $query->where(['source'=>$source]);
+        $query->orderBy(['id'=>SORT_DESC]);
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
