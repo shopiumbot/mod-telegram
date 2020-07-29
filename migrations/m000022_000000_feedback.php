@@ -3,7 +3,7 @@
 namespace shopium\mod\telegram\migrations;
 
 use yii\console\Exception;
-use panix\engine\db\Migration;
+use yii\db\Migration;
 
 class m000022_000000_feedback extends Migration
 {
@@ -11,13 +11,14 @@ class m000022_000000_feedback extends Migration
     // Use safeUp/safeDown to run migration code within a transaction
     public function safeUp()
     {
+        $tableOptions = 'CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci ENGINE=InnoDB';
         $this->createTable('{{%feedback}}', [
             'id' => $this->bigPrimaryKey()->unsigned(),
             'message_id' => $this->bigInteger()->unsigned(),
             'user_id' => $this->bigInteger()->notNull(),
             'text' => $this->text()->notNull(),
             'created_at' => $this->integer(),
-        ], 'CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci ENGINE=InnoDB');
+        ], $tableOptions);
 
 
         $this->createIndex('user_id', '{{%feedback}}', 'user_id');

@@ -8,6 +8,7 @@ use Longman\TelegramBot\Entities\InlineKeyboardButton;
 use Longman\TelegramBot\Request;
 use core\modules\shop\models\Attribute;
 use core\modules\shop\models\Product;
+use shopium\mod\cart\models\OrderProductTemp;
 use shopium\mod\cart\models\OrderTemp;
 use shopium\mod\telegram\components\InlineKeyboardMorePager;
 use shopium\mod\telegram\components\KeyboardPagination;
@@ -55,15 +56,18 @@ class SearchResultCommand extends SystemCommand
     {
         $update = $this->getUpdate();
 
-
         if ($update->getCallbackQuery()) {
             $callbackQuery = $update->getCallbackQuery();
             $message = $callbackQuery->getMessage();
             $chat = $message->getChat();
             $user = $callbackQuery->getFrom();
-            $chat_id = $chat->getId();
-            $user_id = $user->getId();
+        }else{
+            $message = $this->getMessage();
+            $chat = $message->getChat();
+            $user = $message->getFrom();
         }
+        $chat_id = $chat->getId();
+        $user_id = $user->getId();
         $text = trim($message->getText(true));
 
 
@@ -168,7 +172,7 @@ class SearchResultCommand extends SystemCommand
                 }
 
                 if ($order) {
-                    $orderProduct = OrderProduct::findOne(['product_id' => $product->id, 'order_id' => $order->id]);
+                    $orderProduct = OrderProductTemp::findOne(['product_id' => $product->id, 'order_id' => $order->id]);
                 } else {
                     $orderProduct = null;
                 }

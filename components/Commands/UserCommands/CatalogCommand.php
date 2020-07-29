@@ -79,41 +79,44 @@ class CatalogCommand extends UserCommand
         }
 
         $root = Category::findOne($this->id);
-        $categories = $root->children()->all();
+        if ($root) {
+            $categories = $root->children()->all();
 
 
-        $keyboards = [];
-        $keyboardsFirst = [];
+            $keyboards = [];
+            $keyboardsFirst = [];
 
-        if ($categories) {
-            foreach ($categories as $category) {
-                $count = $category->countItems;
-                $icon = ($category->icon) ? $category->icon . ' ' : '';
-                $child = $category->children()->count();
+            if ($categories) {
+                foreach ($categories as $category) {
+                    $count = $category->countItems;
+                    $icon = ($category->icon) ? $category->icon . ' ' : '';
+                    $child = $category->children()->count();
 
-                if ($child) {
+                    if ($child) {
 
-                    $keyboards[] = new InlineKeyboardButton([
-                        'text' => $icon . $category->name,
-                        'callback_data' => 'query=openCatalog&id=' . $category->id
-                    ]);
-
-                } else {
-                    if ($count) {
                         $keyboards[] = new InlineKeyboardButton([
-                            'text' => $icon . $category->name . ' (' . $count . ')',
-                            'callback_data' => 'query=getList&model=catalog&id=' . $category->id
+                            'text' => $icon . $category->name,
+                            'callback_data' => 'query=openCatalog&id=' . $category->id
                         ]);
+
+                    } else {
+                        if ($count) {
+                            $keyboards[] = new InlineKeyboardButton([
+                                'text' => $icon . $category->name . ' (' . $count . ')',
+                                'callback_data' => 'query=getList&model=catalog&id=' . $category->id
+                            ]);
+                        }
+
                     }
 
                 }
-
+                $keyboards = array_chunk($keyboards, $root->chunk);
+            } else {
+                return $this->notify(Yii::t('telegram/default', 'CATALOG_NO_ITEMS'), 'info');
             }
-            $keyboards = array_chunk($keyboards, $root->chunk);
         } else {
             return $this->notify(Yii::t('telegram/default', 'CATALOG_NO_ITEMS'), 'info');
         }
-
 
         if ($isCallback) {
 

@@ -98,6 +98,8 @@ abstract class Command extends \Longman\TelegramBot\Commands\Command
 
     public function startKeyboards()
     {
+
+        $update = $this->getUpdate();
         $textMyOrders = $this->settings->button_text_history;
         $textMyCart = $this->settings->button_text_cart;
         // if ($this->orderHistoryCount) {
@@ -118,9 +120,18 @@ abstract class Command extends \Longman\TelegramBot\Commands\Command
             new KeyboardButton(['text' => $textMyOrders]),
             new KeyboardButton(['text' => '❓ Помощь'])
         ];
-
+        if ($update->getCallbackQuery()) {
+            $callbackQuery = $update->getCallbackQuery();
+            $message = $callbackQuery->getMessage();
+            $chat = $message->getChat();
+            $user = $callbackQuery->getFrom();
+        } else {
+            $message = $this->getMessage();
+            $chat = $message->getChat();
+            $user = $message->getFrom();
+        }
         //in_array(812367093, $this->telegram->getAdminList())
-        if ($this->telegram->isAdmin($this->update->getMessage()->getChat()->getId())) {
+        if ($this->telegram->isAdmin($chat->getId())) {
             $keyboards[] = [
                 new KeyboardButton(['text' => self::KEYWORD_ADMIN])
             ];
