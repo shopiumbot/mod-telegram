@@ -77,16 +77,16 @@ class StartCommand extends UserCommand
             'chat_id' => $chat_id,
             'text' => $text,
         ];
-
-        $adsData['chat_id'] = $chat_id;
-        $adsData['parse_mode'] = 'Markdown';
-        $adsData['text'] = 'Бот работает на платформе 🥇 @shopiumbot' . PHP_EOL;
-        $adsData['text'] .= '👉 https://shopiumbot.com' . PHP_EOL;
-        $ads = Request::sendMessage($adsData);
-        if ($ads->isOk()) {
-            $db = DB::insertMessageRequest($ads->getResult());
+        if (Yii::$app->user->planId == 1) {
+            $adsData['chat_id'] = $chat_id;
+            $adsData['parse_mode'] = 'Markdown';
+            $adsData['text'] = 'Бот работает на платформе 🥇 @shopiumbot' . PHP_EOL;
+            $adsData['text'] .= '👉 https://shopiumbot.com' . PHP_EOL;
+            $ads = Request::sendMessage($adsData);
+            if ($ads->isOk()) {
+                $db = DB::insertMessageRequest($ads->getResult());
+            }
         }
-
 
         //$adsData2['chat_id']=343987970;
         //$adsData2['parse_mode']='Markdown';
