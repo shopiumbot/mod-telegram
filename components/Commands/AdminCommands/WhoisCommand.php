@@ -120,7 +120,7 @@ class WhoisCommand extends AdminCommand
 
             if ($chat !== null) {
                 if ($chat->isPrivateChat()) {
-                    $text = 'ID: ' . $user_id . ((in_array($user_id, $this->telegram->getAdminList())) ? ' (Администратор)' : '') . PHP_EOL;
+                    $text = 'ID: ' . $user_id . ((in_array($user_id, $this->telegram->getAdminList())) ? ' *(Администратор)*' : '') . PHP_EOL;
                     //$text = 'ID: ' . $user_id . (($this->telegram->isAdmin($user_id)) ? ' (Администратор)' : '') . PHP_EOL;
                     $text .= 'Имя Фамилия: ' . $chat->getFirstName() . ' ' . $chat->getLastName() . PHP_EOL;
 

@@ -59,13 +59,13 @@ class StartCommand extends UserCommand
 
         $chat_id = $chat->getId();
         $user_id = $user->getId();
-        if ($text) {
+        if ($text || !in_array($text, [$this->settings->button_text_start])) {
             $find = StartSource::findOne(['user_id' => $user_id]);
             if (!$find) {
                 $source = new StartSource();
                 $source->source = $text;
                 $source->user_id = $user_id;
-                if($source->validate()){
+                if ($source->validate()) {
                     $source->save(false);
                 }
             }

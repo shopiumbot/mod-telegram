@@ -155,17 +155,19 @@ class GameCommand extends SystemCommand
                 }
 
                 if($text == $gamesList[0]){
-                    goto game_die;
+                    $notes['state'] = 'game_die';
+                  //  goto game_die;
                 }elseif($text == $gamesList[1]){
                     //goto game_basketball;
                 }elseif($text == $gamesList[2]){
                     //goto game_darts;
                 }
                 $notes['gaming'] = $text;
+                $text='';
             case 'game_die':
                 game_die:
-                if ($text === '' || $notes['gaming'] == $gamesList[0]) {
-                    $notes['state'] = 1;
+                if ($text === '' || !in_array($text, [1,2,3,4,5,6], true)) {
+                    $notes['state'] = 'game_die';
                     $notes['gaming'] = $gamesList[0];
                     $this->conversation->update();
                     $keyboards = [
@@ -198,8 +200,10 @@ class GameCommand extends SystemCommand
                     break;
                 }
                 $notes['selected'] = $text;
-
-
+                $data2['chat_id']=$chat_id;
+                $data2['text']='🎲';
+                $result2 = Request::sendMessage($data2);
+                $text='';
             case 2:
                 $this->conversation->update();
                 $titleClient = '*✅ Ваш заказ успешно оформлен*' . PHP_EOL . PHP_EOL;

@@ -191,7 +191,7 @@ class CheckOutCommand extends SystemCommand
                     contact:
                     if ($text === static::KEYWORD_BACK) {
                         $text = '';
-                        goto payment;
+                        goto username;
                     }
                     if ($message->getContact() === null) {
                         $notes['state'] = 2;
@@ -226,7 +226,7 @@ class CheckOutCommand extends SystemCommand
                     delivery:
                     if ($text === static::KEYWORD_BACK) {
                         $text = '';
-                        goto username;
+                        goto contact;
                     }
                     $delivery = Delivery::find()->all();
                     $deliveryList = [];
