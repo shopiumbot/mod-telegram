@@ -101,14 +101,19 @@ class User extends ActiveRecord
                 if ($profile->getResult()->photos) {
                     $photo = $profile->getResult()->photos[0][2];
                     $file = Request::getFile(['file_id' => $photo['file_id']]);
-                    if (!file_exists(Yii::getAlias('@app/web/telegram/downloads') . DIRECTORY_SEPARATOR . $file->getResult()->file_path)) {
-                        $download = Request::downloadFile($file->getResult());
+                    if($file->getOk()){
+                        if (!file_exists(Yii::getAlias('@app/web/telegram/downloads') . DIRECTORY_SEPARATOR . $file->getResult()->file_path)) {
+                            $download = Request::downloadFile($file->getResult());
+                        }
+                        return '/telegram/downloads/' . $file->getResult()->file_path;
+                    //}else{
+                    //    return '/uploads/no-image.jpg';
                     }
-                    return '/telegram/downloads/' . $file->getResult()->file_path;
                 }
-            } else {
-                return '/uploads/no-image.jpg';
+          //  } else {
+          //      return '/uploads/no-image.jpg';
             }
+            return '/uploads/no-image.jpg';
         } catch (Exception $e) {
 
         }

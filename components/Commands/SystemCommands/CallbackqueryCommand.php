@@ -273,7 +273,7 @@ class CallbackqueryCommand extends SystemCommand
                     ])
                     ->executeCommand('productitem');
             }
-            return $this->notify('Товара ранее был удален и корзины', 'info');
+            return $this->notify('Товара ранее был удален из корзины', 'info');
 
         } elseif (preg_match('/checkOut/iu', trim($callback_data), $match)) {
             parse_str($callback_data, $params);
