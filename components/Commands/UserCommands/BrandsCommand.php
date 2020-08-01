@@ -110,7 +110,7 @@ class BrandsCommand extends UserCommand
             }
 
         } else {
-            return $this->notify('Нет информации', 'info');
+            return $this->notify('Нет информации');
         }
 
         $keyboards = array_chunk($keyboards, 2);
@@ -130,7 +130,7 @@ class BrandsCommand extends UserCommand
             }
             return $request;
         } else {
-            $data['text'] = 'Выберите раздел:';
+            $data['text'] = Yii::t('telegram/default', 'CHOOSE_SECTION');
             $data['reply_markup'] = new InlineKeyboard([
                 'inline_keyboard' => $keyboards
             ]);
