@@ -227,7 +227,7 @@ class CatalogCommand extends UserCommand
 
             $data = [
                 'chat_id' => $chat_id,
-                'text' => Yii::t('telegram/default', 'CATALOG_SELECT'),
+                'text' => Yii::t('telegram/default', 'CHOOSE_SECTION'),
                 'reply_markup' => new InlineKeyboard([
                     'inline_keyboard' => $keyboards
                 ]),

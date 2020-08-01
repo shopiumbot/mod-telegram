@@ -7,8 +7,10 @@ use core\modules\shop\models\Manufacturer;
 use Longman\TelegramBot\DB;
 use Longman\TelegramBot\Entities\InlineKeyboard;
 use Longman\TelegramBot\Entities\InlineKeyboardButton;
+use Longman\TelegramBot\Entities\Update;
 use Longman\TelegramBot\Request;
 use core\modules\shop\models\Category;
+use shopium\mod\telegram\components\Api;
 use shopium\mod\telegram\components\UserCommand;
 use Yii;
 
@@ -45,6 +47,16 @@ class BrandsCommand extends UserCommand
     public $id;
 
     public $private_only = false;
+
+    public function __construct(Api $telegram, Update $update = null)
+    {
+
+        parent::__construct($telegram, $update);
+        if(!Yii::$app->settings->get('app','enable_brands')){
+            $this->show_in_help=false;
+            $this->enabled=false;
+        }
+    }
 
     /**
      * Command execute method
