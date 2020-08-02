@@ -601,7 +601,7 @@ class CheckOutCommand extends SystemCommand
                         $db = DB::insertMessageRequest($result->getResult());
                     }
 
-                    if ($result->isOk()) {
+                    if ($result->isOk() && Yii::$app->user->planId !== 1) {
                         $system = ($o->paymentMethod) ? $o->paymentMethod->system : 0;
                         $inlineKeyboards[] = [
                             new InlineKeyboardButton([
@@ -612,10 +612,10 @@ class CheckOutCommand extends SystemCommand
                         $data['reply_markup'] = new InlineKeyboard([
                             'inline_keyboard' => $inlineKeyboards
                         ]);
-                        $data['text'] = '🙍🏼‍♀ Наш менеджер свяжеться с вами!‍';
-                        $result = Request::sendMessage($data);
-                    }
 
+                    }
+                    $data['text'] = '🙍🏼‍♀ Наш менеджер свяжеться с вами!‍';
+                    $result = Request::sendMessage($data);
                     $this->conversation->stop();
                     break;
             }

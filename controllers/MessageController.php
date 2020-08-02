@@ -2,6 +2,7 @@
 
 namespace shopium\mod\telegram\controllers;
 
+use shopium\mod\telegram\models\forms\SendAllMessageForm;
 use Yii;
 use yii\base\UserException;
 use yii\data\ActiveDataProvider;
@@ -20,11 +21,11 @@ class MessageController extends AdminController
 
     public $icon = 'settings';
 
-    public $layout = '@theme/views/layouts/dashboard_fluid';
+
 
     public function actionIndex()
     {
-
+        $this->layout = '@theme/views/layouts/dashboard_fluid';
         $this->pageName = Yii::t('app/default', 'SETTINGS');
         $this->breadcrumbs = [
             [
@@ -91,7 +92,7 @@ class MessageController extends AdminController
 
     public function actionLoadChat()
     {
-
+        $this->layout = '@theme/views/layouts/dashboard_fluid';
         $user_id = Yii::$app->request->get('user_id');
         $user = User::find()->where(['id' => $user_id])->one();
         $model = Message::find()
@@ -157,5 +158,24 @@ class MessageController extends AdminController
         } catch (TelegramException $e) {
             return $e->getMessage();
         }
+    }
+
+
+    public function actionSendAll(){
+
+        $model = new SendAllMessageForm();
+        if ($model->load(Yii::$app->request->post())) {
+
+            if ($model->validate()) {
+                $model->send();
+
+                return $this->refresh();
+            } else {
+                print_r($model->errors);
+                die;
+            }
+
+        }
+        return $this->render('send-all', ['model' => $model]);
     }
 }
