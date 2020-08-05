@@ -134,7 +134,8 @@ class HistoryCommand extends UserCommand
                 }
 
                 $text .= PHP_EOL . 'Дата заказа: *' . CMS::date($order->created_at) . '*' . PHP_EOL;
-                $text .= 'Статус: *' . $order->status->name . '*' . PHP_EOL;
+                if($order->status)
+                    $text .= 'Статус: *' . $order->status->name . '*' . PHP_EOL;
                 if ($order->invoice && !empty($order->invoice)) {
                     $text .= 'TTH: *' . $order->invoice . '*' . PHP_EOL;
                 }
