@@ -86,6 +86,9 @@ class SearchResultCommand extends SystemCommand
         if (!in_array($user_id, $this->telegram->getAdminList())) {
             $query->published();
         }
+        if(Yii::$app->settings->get('app','availability_hide')){
+            $query->isNotAvailability();
+        }
         $query->sort();
 
         $pages = new KeyboardPagination([

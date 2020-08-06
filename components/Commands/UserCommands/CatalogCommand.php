@@ -88,7 +88,17 @@ class CatalogCommand extends UserCommand
 
             if ($categories) {
                 foreach ($categories as $category) {
-                    $count = $category->countItems;
+//$s=$category->products;
+                    //$count = $s->isNotAvailability()->count();
+
+                    $countQuery = Product::find()->where(['main_category_id' => $category->id])->published();
+                    if (Yii::$app->settings->get('app', 'availability_hide')) {
+                        $countQuery->isNotAvailability();
+                    }
+
+                    $count = $countQuery->count();
+
+
                     $icon = ($category->icon) ? $category->icon . ' ' : '';
                     $child = $category->children()->count();
 
@@ -138,9 +148,13 @@ class CatalogCommand extends UserCommand
                     }
                 }
                 if (isset($this->settings->enable_discounts) && $this->settings->enable_discounts && false) {
-                    $discounts = Product::find()
-                        ->published()
-                        ->isNotEmpty('discount')->count();
+                    $discountsQuery = Product::find()->published();
+                    if (Yii::$app->settings->get('app', 'availability_hide')) {
+                        $discountsQuery->isNotAvailability();
+                    }
+                    $discountsQuery->isNotEmpty('discount');
+
+                    $discounts = $discountsQuery->count();
                     if ($discounts) {
                         $keyboardsFirst[] = [new InlineKeyboardButton([
                             'text' => Yii::t('telegram/default', 'DISCOUNT', $discounts),
@@ -149,13 +163,16 @@ class CatalogCommand extends UserCommand
                     }
                 }
                 if (isset($this->settings->enable_new) && $this->settings->enable_new) {
-                    $new = Product::find();
-                    if (isset($this->settings->label_expire_new) && $this->settings->label_expire_new) {
-                        $new->int2between(time(), time() - (86400 * $this->settings->label_expire_new));
-                    } else {
-                        $new->int2between(-1, -1);
+                    $newQuery = Product::find()->published();
+                    if (Yii::$app->settings->get('app', 'availability_hide')) {
+                        $newQuery->isNotAvailability();
                     }
-                    $newCount = $new->count();
+                    if (isset($this->settings->label_expire_new) && $this->settings->label_expire_new) {
+                        $newQuery->int2between(time(), time() - (86400 * $this->settings->label_expire_new));
+                    } else {
+                        $newQuery->int2between(-1, -1);
+                    }
+                    $newCount = $newQuery->count();
                     if ($newCount) {
                         $keyboardsFirst[] = [new InlineKeyboardButton([
                             'text' => Yii::t('telegram/default', 'NEW', $newCount),
@@ -196,10 +213,12 @@ class CatalogCommand extends UserCommand
             }
 
             if (isset($this->settings->enable_discounts) && $this->settings->enable_discounts && false) {
-                $discounts = Product::find()
-                    ->published()
-                    ->isNotEmpty('discount')
-                    ->count();
+                $discountsQuery = Product::find()->published();
+                if (Yii::$app->settings->get('app', 'availability_hide')) {
+                    $discountsQuery->isNotAvailability();
+                }
+                $discountsQuery->isNotEmpty('discount');
+                $discounts = $discountsQuery->count();
                 if ($discounts) {
                     $keyboardsFirst[] = [new InlineKeyboardButton([
                         'text' => Yii::t('telegram/default', 'DISCOUNT', $discounts),
@@ -209,13 +228,16 @@ class CatalogCommand extends UserCommand
             }
 
             if (isset($this->settings->enable_new) && $this->settings->enable_new) {
-                $new = Product::find();
-                if (isset($this->settings->label_expire_new) && $this->settings->label_expire_new) {
-                    $new->int2between(time(), time() - (86400 * $this->settings->label_expire_new));
-                } else {
-                    $new->int2between(-1, -1);
+                $newQuery = Product::find()->published();
+                if (Yii::$app->settings->get('app', 'availability_hide')) {
+                    $newQuery->isNotAvailability();
                 }
-                $newCount = $new->count();
+                if (isset($this->settings->label_expire_new) && $this->settings->label_expire_new) {
+                    $newQuery->int2between(time(), time() - (86400 * $this->settings->label_expire_new));
+                } else {
+                    $newQuery->int2between(-1, -1);
+                }
+                $newCount = $newQuery->count();
                 if ($newCount) {
                     $keyboardsFirst[] = [new InlineKeyboardButton([
                         'text' => Yii::t('telegram/default', 'NEW', $newCount),

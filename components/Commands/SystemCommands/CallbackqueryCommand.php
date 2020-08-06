@@ -134,8 +134,8 @@ class CallbackqueryCommand extends SystemCommand
 
         } elseif (preg_match('/getBrandsList/iu', trim($callback_data), $match)) { //preg_match('/^getCatalog\s+([0-9]+)/iu', trim($callback_data), $match)
             return $this->telegram->executeCommand('brands');
-        } elseif (preg_match('/getNewList/iu', trim($callback_data), $match)) { //preg_match('/^getCatalog\s+([0-9]+)/iu', trim($callback_data), $match)
-            return $this->telegram->executeCommand('new');
+        //} elseif (preg_match('/getNewList/iu', trim($callback_data), $match)) { //preg_match('/^getCatalog\s+([0-9]+)/iu', trim($callback_data), $match)
+        //    return $this->telegram->executeCommand('new');
         } elseif (preg_match('/^cartDelete\/([0-9]+)/iu', trim($callback_data), $match)) {
             $user_id = $callback_query->getFrom()->getId();
 
@@ -473,6 +473,11 @@ class CallbackqueryCommand extends SystemCommand
 
             /** @var Product|ProductQuery $query */
             $query = Product::find()->sort();
+
+                                    if(Yii::$app->settings->get('app','availability_hide')){
+                                        $query->isNotAvailability();
+                                    }
+
             if ($params['model'] == 'brands') {
                 if (isset($params['id'])) {
                     $pagerCommand = 'getList&model=brands&id=' . $params['id'];

@@ -4,6 +4,7 @@ namespace shopium\mod\telegram\components\Commands\SystemCommands;
 
 use core\modules\images\models\Image;
 use core\modules\shop\models\Attribute;
+use core\modules\shop\models\Product;
 use shopium\mod\cart\models\OrderProductTemp;
 use shopium\mod\cart\models\OrderTemp;
 use shopium\mod\telegram\components\InlineKeyboardPager;
@@ -87,6 +88,7 @@ class ProductItemCommand extends SystemCommand
         //$this->notify($callbackData);
 
         $order = OrderTemp::findOne($user_id);
+        /** @var Product $product */
         $product = $this->product;
 
 
@@ -186,12 +188,14 @@ class ProductItemCommand extends SystemCommand
                     ]),
                 ];
             } else {
-                $keyboards[] = [
-                    new InlineKeyboardButton([
-                        'text' => Yii::t('telegram/command', 'BUTTON_BUY', $this->number_format($product->getFrontPrice())),
-                        'callback_data' => "query=addCart&product_id={$product->id}&photo_index={$this->photo_index}"
-                    ])
-                ];
+                if ($product->availability != Product::AVAILABILITY_NOT) {
+                    $keyboards[] = [
+                        new InlineKeyboardButton([
+                            'text' => Yii::t('telegram/command', 'BUTTON_BUY', $this->number_format($product->getFrontPrice())),
+                            'callback_data' => "query=addCart&product_id={$product->id}&photo_index={$this->photo_index}"
+                        ])
+                    ];
+                }
             }
             /*$keyboards[] = [
                 new InlineKeyboardButton([
