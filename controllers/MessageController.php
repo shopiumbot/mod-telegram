@@ -126,6 +126,7 @@ class MessageController extends AdminController
 
             $result = $telegram->setWebHook(Yii::$app->user->webhookUrl);
             if ($result->isOk()) {
+                //Если меняеться токет, следует очищать кеш картинок
                 \core\modules\images\models\Image::updateAll(['telegram_file_id' => NULL], ['IS NOT', 'telegram_file_id', null]);
                 Yii::$app->session->setFlash("success-webhook", Yii::t("telegram/default", 'Бот успешно подписан'));
                 return $this->redirect(['/admin']);
