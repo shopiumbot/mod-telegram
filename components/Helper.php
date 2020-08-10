@@ -8,6 +8,76 @@ use yii\helpers\Html;
 
 class Helper
 {
+    public static function Test($text){
+
+        $bb[] = "/<\/p>/si";
+        $html[] = "\n";
+        $bb[] = "/<p>/si";
+        $html[] = "";
+        $bb[] = "/<br>/si";
+        $html[] = "\n";
+        $bb[] = "/<br\/>/si";
+        $html[] = "\n";
+        $bb[] = "/<br \/>/si";
+        $html[] = "\n";
+        $bb[] = "/&nbsp;|\u00a0/si";
+        $html[] = " ";
+
+
+       /* $bb[] = "/\"/si";
+        $html[] = '&quot;';
+
+        $bb[] = "/</si";
+        $html[] = '&lt;';
+
+        $bb[] = "/>/si";
+        $html[] = '&gt;';
+
+        $bb[] = "/&/si";
+        $html[] = '&amp;';*/
+
+
+
+
+        $bb[] = '/<span style=\"text-decoration: ?line-through;\">(.*?)<\/span>/si';
+        $html[] = "<s>$1</s>";
+
+
+        $bb[] = '/<span style=\"text-decoration: ?underline;\">(.*?)<\/span>/si';
+        $html[] = "<u>$1</u>";
+        $bb[] = '/<span class=\"underline\">(.*?)<\/span>/si';
+        $html[] = "<u>$1</u>";
+
+
+
+
+        $source = str_replace(array("&#034;", "&#039;", "&#092;"), array("\"", "'", "\\"), preg_replace($bb, $html, $text));
+        return $source;
+    }
+
+
+    public static function bbcode2Markdown($text){
+
+        $bb[] = "#\[b\](.*?)\[/b\]#si";
+        $html[] = "*\\1*";
+        $bb[] = "#\[i\](.*?)\[/i\]#si";
+        $html[] = "_\\1_";
+        $bb[] = "#\[u\](.*?)\[/u\]#si";
+        $html[] = "__\\1__";
+        $bb[] = "#\[s\](.*?)\[/s\]#si";
+        $html[] = "~\\1~";
+
+        $bb[] = "#\[code\](.*?)\[/code\]#si";
+        $html[] = "`\\1`";
+        /* $bb[] = "#\[li\]#si";
+         $html[] = "&bull; ";
+         $bb[] = "#\[hr\]#si";
+         $html[] = "<hr>";
+         $bb[] = "#\*(\d{2})#";*/
+
+        $source = str_replace(array("&#034;", "&#039;", "&#092;"), array("\"", "'", "\\"), preg_replace($bb, $html, $text));
+        return $source;
+    }
 
     public static function parseMarkdown2($text, $entities)
     {

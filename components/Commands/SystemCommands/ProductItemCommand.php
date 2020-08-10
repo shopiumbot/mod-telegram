@@ -5,8 +5,11 @@ namespace shopium\mod\telegram\components\Commands\SystemCommands;
 use core\modules\images\models\Image;
 use core\modules\shop\models\Attribute;
 use core\modules\shop\models\Product;
+use League\HTMLToMarkdown\HtmlConverter;
+use Mpdf\Tag\P;
 use shopium\mod\cart\models\OrderProductTemp;
 use shopium\mod\cart\models\OrderTemp;
+use shopium\mod\telegram\components\Helper;
 use shopium\mod\telegram\components\InlineKeyboardPager;
 use shopium\mod\telegram\components\KeyboardPagination;
 use shopium\mod\telegram\components\SystemCommand;
@@ -18,6 +21,7 @@ use shopium\mod\cart\models\Order;
 use shopium\mod\cart\models\OrderProduct;
 use panix\engine\Html;
 use Yii;
+use yii\base\Exception;
 
 
 class ProductItemCommand extends SystemCommand
@@ -97,32 +101,39 @@ class ProductItemCommand extends SystemCommand
             $caption .= '🔥🔥🔥';
         }
 
-        $caption .= '*' . $product->name . '* ' . ((!$product->switch) ? '`(наименование скрыто)`' : '') . ' ' . PHP_EOL;
-        $caption .= $this->number_format($product->price) . ' '.Yii::$app->currency->active['symbol'] . PHP_EOL . PHP_EOL;
+        $caption .= '<strong>' . $product->name . '</strong> ' . ((!$product->switch) ? '<code>(наименование скрыто)</code>' : '') . ' ' . PHP_EOL;
+        $caption .= $this->number_format($product->price) . ' ' . Yii::$app->currency->active['symbol'] . PHP_EOL . PHP_EOL;
 
         if ($product->hasDiscount) {
-            $caption .= '*🎁 Скидка*: ' . $product->discountSum . PHP_EOL . PHP_EOL;
+            $caption .= '<strong>🎁 Скидка</strong>: ' . $product->discountSum . PHP_EOL . PHP_EOL;
         }
-
+        if ($product->availability != Product::AVAILABILITY_YES) {
+            $caption .= '<strong>Наличие:</strong> ' . Product::t('AVAILABILITY_' . $product->availability) . '' . PHP_EOL . PHP_EOL;
+        }
         if ($product->manufacturer_id) {
-            $caption .= '*Производитель*: ' . $product->manufacturer->name . PHP_EOL;
+            $caption .= '<strong>Производитель</strong>: ' . $product->manufacturer->name . PHP_EOL;
         }
         if ($product->sku) {
-            $caption .= '*Артикул*: ' . $product->sku . PHP_EOL;
+            $caption .= '<strong>Артикул</strong>: ' . $product->sku . PHP_EOL;
         }
 
 
         $attributes = $this->attributes($product);
+        $attributesList = [];
         if ($attributes) {
-            $caption .= PHP_EOL . '*Характеристики:*' . PHP_EOL;
+            $caption .= PHP_EOL . '<strong>Характеристики:</strong>' . PHP_EOL;
             foreach ($attributes as $name => $data) {
                 if (!empty($data['value'])) {
-                    $caption .= '*' . $name . '*: ' . $data['value'] . ' ' . $data['abbreviation'] . PHP_EOL;
+                    $attributesList[$name] = $data['value'];
+                    $caption .= '<strong>' . $name . '</strong>: ' . $data['value'] . ' ' . $data['abbreviation'] . PHP_EOL;
                 }
             }
         }
+
+
         if ($product->description) {
-            $caption .= PHP_EOL . Html::encode($product->description) . PHP_EOL . PHP_EOL;
+            $caption .= PHP_EOL . 'Описание:' . PHP_EOL;
+            $caption .= Helper::Test($product->description) . PHP_EOL . PHP_EOL;
         }
         if ($order) {
             $orderProduct = OrderProductTemp::findOne(['product_id' => $product->id, 'order_id' => $order->id]);
@@ -232,12 +243,41 @@ class ProductItemCommand extends SystemCommand
         }
 
         $test = [
-
             // 'text' => json_encode($images),
             'chat_id' => $chat_id,
         ];
+
+
+        $discount = [];
+        $discount['exist'] = $product->hasDiscount;
+        if ($discount['exist']) {
+            $discount['sum'] = $product->discountSum;
+            $discount['end_date'] = $product->discountEndDate;
+            $discount['price'] = $product->discountPrice;
+        }
+
         //  Request::sendMessage($test);
 
+        $caption = Yii::$app->controller->renderPartial('@telegram/views/templates/product.twig', [
+            'product' => [
+                'name' => Html::decode($product->name),
+                'price' => $this->number_format($product->price),
+                'description' => ($product->description) ? Helper::Test($product->description) : false,
+                'sku' => ($product->sku) ? Html::decode($product->sku) : false,
+                'discount' => $discount,
+                'brand' => ($product->manufacturer_id) ? Html::decode($product->manufacturer->name) : false,
+                'availability' => $product->availability,
+                'attributes' => $attributesList,
+
+            ],
+            'is_admin'=>($this->telegram->isAdmin($user_id)?true:false),
+            'currency' => [
+                'symbol' => Yii::$app->currency->active['symbol']
+            ]
+        ]);
+        if(!$caption){
+            return $this->notify('Ошибка шаблона','error');
+        }
 
         if ($callbackData == 'changeProductImage') {
 
@@ -252,8 +292,8 @@ class ProductItemCommand extends SystemCommand
             $dataCaption = [
                 'chat_id' => $user_id,
                 'message_id' => $message->getMessageId(),
-                'caption' => $caption,
-                'parse_mode' => 'Markdown',
+                'caption' => preg_replace("/\n+/","\n",$caption),
+                'parse_mode' => 'HTML',
                 'reply_markup' => new InlineKeyboard([
                     'inline_keyboard' => $keyboards
                 ])
@@ -300,7 +340,7 @@ class ProductItemCommand extends SystemCommand
                 //'photo' => Url::to($product->getImage()->getUrl('800x800'), true),
                 'photo' => $image,
                 'chat_id' => $chat_id,
-                'parse_mode' => 'Markdown',
+                'parse_mode' => 'HTML',
                 'caption' => $caption,
                 'reply_markup' => new InlineKeyboard([
                     'inline_keyboard' => $keyboards
