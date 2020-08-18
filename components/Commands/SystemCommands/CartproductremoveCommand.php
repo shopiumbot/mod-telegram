@@ -4,6 +4,7 @@ namespace shopium\mod\telegram\components\Commands\SystemCommands;
 
 
 use Longman\TelegramBot\Request;
+use shopium\mod\cart\models\OrderProductTemp;
 use shopium\mod\telegram\components\SystemCommand;
 use shopium\mod\cart\models\OrderProduct;
 use Yii;
@@ -56,12 +57,11 @@ class CartproductremoveCommand extends SystemCommand
         $chat_id = $message->getChat()->getId();
 
 
-        $orderProduct = OrderProduct::findOne($this->id);
+        $product = OrderProductTemp::findOne($this->id);
 
-
-        if($orderProduct){
-            $originalProduct = $orderProduct->originalProduct;
-            $orderProduct->delete();
+        if($product){
+       //     $originalProduct = $orderProduct->originalProduct;
+            $product->delete();
 
             return $this->telegram->executeCommand('cart');
 

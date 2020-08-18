@@ -52,6 +52,7 @@ class Helper
 
 
         $source = str_replace(array("&#034;", "&#039;", "&#092;"), array("\"", "'", "\\"), preg_replace($bb, $html, $text));
+       // $source = preg_replace($bb, $html, $text);
         return $source;
     }
 

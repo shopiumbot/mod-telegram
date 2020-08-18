@@ -133,7 +133,8 @@ class ProductItemCommand extends SystemCommand
 
         if ($product->description) {
             $caption .= PHP_EOL . 'Описание:' . PHP_EOL;
-            $caption .= Helper::Test($product->description) . PHP_EOL . PHP_EOL;
+           // $caption .= Helper::Test($product->description) . PHP_EOL . PHP_EOL;
+            $caption .= $product->description . PHP_EOL . PHP_EOL;
         }
         if ($order) {
             $orderProduct = OrderProductTemp::findOne(['product_id' => $product->id, 'order_id' => $order->id]);
@@ -258,7 +259,7 @@ class ProductItemCommand extends SystemCommand
 
         //  Request::sendMessage($test);
 
-        $caption = Yii::$app->controller->renderPartial('@telegram/views/templates/product.twig', [
+        /*$caption = Yii::$app->controller->renderPartial('@telegram/views/templates/product.twig', [
             'product' => [
                 'name' => Html::decode($product->name),
                 'price' => $this->number_format($product->price),
@@ -277,7 +278,7 @@ class ProductItemCommand extends SystemCommand
         ]);
         if(!$caption){
             return $this->notify('Ошибка шаблона','error');
-        }
+        }*/
 
         if ($callbackData == 'changeProductImage') {
 
