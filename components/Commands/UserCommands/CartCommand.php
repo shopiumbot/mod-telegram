@@ -83,7 +83,6 @@ class CartCommand extends UserCommand
         $order = OrderTemp::findOne($user_id);
 
 
-
         if ($order) {
 
 
@@ -117,9 +116,14 @@ class CartCommand extends UserCommand
             $keyboards = [];
 
             if ($queryCount) {
-               // $total_price = 0;
+                // $total_price = 0;
                 foreach ($products as $product) {
                     $original = $product->originalProduct;
+                    if (!$original) {//todo: пересмотреть
+                        $delete = $product->delete();
+                        if($delete)
+                            $order->updateTotalPrice();
+                    }
                     $keyboards[] = [
                         new InlineKeyboardButton([
                             'text' => '❌',
@@ -163,7 +167,7 @@ class CartCommand extends UserCommand
                     }
 
                     // $text .= '_описание товара_ ' . PHP_EOL;
-                    $text .= '`' . $this->number_format($original->price) . ' '.Yii::$app->currency->active['symbol'].' / ' . $product->quantity . ' шт = ' . $this->number_format(($original->price * $product->quantity)) . ' '.Yii::$app->currency->active['symbol'].'`' . PHP_EOL;
+                    $text .= '`' . $this->number_format($original->price) . ' ' . Yii::$app->currency->active['symbol'] . ' / ' . $product->quantity . ' шт = ' . $this->number_format(($original->price * $product->quantity)) . ' ' . Yii::$app->currency->active['symbol'] . '`' . PHP_EOL;
 
                     //  $data['chat_id'] = $chat_id;
                     $data['text'] = $text;
@@ -185,7 +189,8 @@ class CartCommand extends UserCommand
                         return Request::editMessageReplyMarkup(array_merge($data, $dataReplyMarkup));
                     }
                     $response = $data;
-                 //   $total_price += $original->price;
+                    //   $total_price += $original->price;
+
                 }
             } else {
                 if ($update->getCallbackQuery()) {

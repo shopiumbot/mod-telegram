@@ -620,9 +620,8 @@ class CheckOutCommand extends SystemCommand
                     break;
             }
         } else {
-            $data['text'] = 'Уже оформлен!';
+            $data['text'] = $this->settings->empty_cart_text;
             $data['reply_markup'] = $this->startKeyboards();
-
             $result = Request::sendMessage($data);
 
         }
