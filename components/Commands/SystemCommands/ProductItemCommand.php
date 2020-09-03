@@ -133,7 +133,7 @@ class ProductItemCommand extends SystemCommand
 
         if ($product->description) {
             $caption .= PHP_EOL . 'Описание:' . PHP_EOL;
-           // $caption .= Helper::Test($product->description) . PHP_EOL . PHP_EOL;
+            // $caption .= Helper::Test($product->description) . PHP_EOL . PHP_EOL;
             $caption .= $product->description . PHP_EOL . PHP_EOL;
         }
         if ($order) {
@@ -259,27 +259,37 @@ class ProductItemCommand extends SystemCommand
 
         //  Request::sendMessage($test);
 
-        /*$caption = Yii::$app->controller->renderPartial('@telegram/views/templates/product.twig', [
-            'product' => [
-                'name' => Html::decode($product->name),
-                'price' => $this->number_format($product->price),
-                'description' => ($product->description) ? Helper::Test($product->description) : false,
-                'sku' => ($product->sku) ? Html::decode($product->sku) : false,
-                'discount' => $discount,
-                'brand' => ($product->manufacturer_id) ? Html::decode($product->manufacturer->name) : false,
-                'availability' => $product->availability,
-                'attributes' => $attributesList,
+        if ($user_id == 812367093) {
 
-            ],
-            'is_admin'=>($this->telegram->isAdmin($user_id)?true:false),
-            'currency' => [
-                'symbol' => Yii::$app->currency->active['symbol']
-            ]
-        ]);
-        if(!$caption){
-            return $this->notify('Ошибка шаблона','error');
-        }*/
-
+            if (file_exists(Yii::getAlias('@app/web') . DIRECTORY_SEPARATOR . 'product.twig')) {
+                $tpl = '@app/web/product.twig';
+            } else {
+                $tpl = '@telegram/views/templates/product.twig';
+            }
+            $caption = Yii::$app->controller->renderPartial($tpl, [
+                'product' => [
+                    'id' => $product->id,
+                    'name' => Html::decode($product->name),
+                    'price' => $this->number_format($product->price),
+                    // 'description' => ($product->description) ? Helper::Test($product->description) : false,
+                    'description' => ($product->description) ? $product->description : false,
+                    'sku' => ($product->sku) ? Html::decode($product->sku) : false,
+                    'discount' => $discount,
+                    'brand' => ($product->manufacturer_id) ? Html::decode($product->manufacturer->name) : false,
+                    'category' => ($product->main_category_id) ? ($product->mainCategory) ? Html::decode($product->mainCategory->name) : false : false,
+                    'availability' => $product->availability,
+                    'attributes' => $attributesList,
+                ],
+                'is_admin' => ($this->telegram->isAdmin($user_id) ? true : false),
+                'currency' => [
+                    'symbol' => Yii::$app->currency->active['symbol'],
+                    'name' => Yii::$app->currency->active['name']
+                ]
+            ]);
+            if (!$caption) {
+                return $this->notify('Ошибка шаблона', 'error');
+            }
+        }
         if ($callbackData == 'changeProductImage') {
 
             $dataMedia = [
@@ -293,7 +303,7 @@ class ProductItemCommand extends SystemCommand
             $dataCaption = [
                 'chat_id' => $user_id,
                 'message_id' => $message->getMessageId(),
-                'caption' => preg_replace("/\n+/","\n",$caption),
+                'caption' => preg_replace("/\n+/", "\n", $caption),
                 'parse_mode' => 'HTML',
                 'reply_markup' => new InlineKeyboard([
                     'inline_keyboard' => $keyboards

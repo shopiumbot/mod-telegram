@@ -1,9 +1,10 @@
-{% if product.hasDiscount %}🔥🔥🔥{% endif %}{{ product.name }}
+{% if product.discount.exist %}🔥🔥🔥{% endif %}<strong>{{ product.name }}</strong>
 {{ product.price }} {{ currency.symbol }}
 
 {% if product.discount.exist %}🎁 Скидка: -{{ product.discount.sum }}{% endif %}
 {% if not product.availability %}Наличие: Под заказ{% endif %}
 {% if product.brand %}<strong>Производитель:</strong> {{ product.brand }}{% endif %}
+
 {% if product.attributes %}
 <strong>Характеристики:</strong>
 {% for name, value in product.attributes %}
@@ -12,10 +13,11 @@
 {% endif %}
 
 {% if product.description %}
-    <strong>Описание:</strong>
-    {{ product.description }}
+<strong>Описание:</strong>
+{{ product.description }}
 {% endif %}
 
 {% if is_admin %}
-я админ
+<strong>Инфо админастратора:</strong>
+ID товара: {{ product.id }}
 {% endif %}
