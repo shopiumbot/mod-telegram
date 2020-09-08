@@ -13,6 +13,9 @@ use core\components\controllers\AdminController;
 use shopium\mod\telegram\models\forms\SendMessageForm;
 use shopium\mod\telegram\models\Mailing;
 use shopium\mod\telegram\models\search\MailingSearch;
+use yii\helpers\FileHelper;
+use yii\validators\RequiredValidator;
+use yii\validators\UrlValidator;
 use yii\web\UploadedFile;
 
 class MailingController extends AdminController
@@ -25,15 +28,12 @@ class MailingController extends AdminController
 
         $this->pageName = Yii::t('telegram/default', 'MAILING');
         $this->breadcrumbs = [
-            [
-                'label' => $this->module->info['label'],
-                'url' => $this->module->info['url'],
-            ],
+
             $this->pageName
         ];
         $this->buttons = [
             [
-                'label' => Yii::t('telegram/Mailing','CREATE'),
+                'label' => Yii::t('telegram/Mailing', 'CREATE'),
                 'url' => ['create'],
                 'options' => ['class' => 'btn btn-success']
             ],
@@ -68,8 +68,12 @@ class MailingController extends AdminController
             Yii::t('telegram/default', 'Редактирование рассылки');
 
 
-        $this->breadcrumbs[] = [
+        /*$this->breadcrumbs[] = [
             'label' => Yii::t('telegram/default', 'MODULE_NAME'),
+            'url' => ['index']
+        ];*/
+        $this->breadcrumbs[] = [
+            'label' => Yii::t('telegram/default', 'MAILING'),
             'url' => ['index']
         ];
         $this->breadcrumbs[] = $this->pageName;
@@ -84,6 +88,10 @@ class MailingController extends AdminController
             'performer',
             'duration',
             'thumb',
+            'address',
+            'longitude',
+            'latitude',
+            'buttons',
             'send_to_groups', 'send_to_supergroups', 'send_to_channels', 'send_to_users'
         ]);
         $dy_model->setAttributeLabels([
@@ -98,12 +106,67 @@ class MailingController extends AdminController
             'duration' => Yii::t('telegram/Mailing', 'DURATION'),
             'performer' => Yii::t('telegram/Mailing', 'PERFORMER'),
             'thumb' => Yii::t('telegram/Mailing', 'THUMB'),
+            'longitude' => Yii::t('telegram/Mailing', 'LONGITUDE'),
+            'latitude' => Yii::t('telegram/Mailing', 'LATITUDE'),
+            'address' => Yii::t('telegram/Mailing', 'ADDRESS'),
+            'buttons' => Yii::t('telegram/Mailing', 'buttons'),
         ]);
         $dy_model->addRule(['disable_notification', 'send_to_groups', 'send_to_supergroups', 'send_to_channels', 'send_to_users'], 'boolean')
             ->addRule('text', 'string');
 
 
-        if (in_array($model->type,['sendPhoto','sendAudio','sendDocument'])) {
+
+        //$dy_model->addRule('buttons', 'each', ['rule' => ['string']]);
+        $dy_model->addRule('thumb', 'default');
+      //  $dy_model->addRule('buttons', '\shopium\mod\telegram\components\ButtonsValidator');
+
+        $dy_model->addRule('buttons', function ($attribute, $params, $validator) use ($dy_model) {
+
+
+            $items = $dy_model->$attribute;
+            if (!is_array($items)) {
+                $items = [];
+            }
+
+            $multiple = $items;
+            if (!is_array($items)) {
+                $multiple = false;
+                $items = (array)$items;
+            }
+            foreach ($items as $index => $item) {
+
+                $error = null;
+                // $validator = new yii\validators\RequiredValidator();
+
+                // $validator->validate($item['label'], $error);
+                if(empty($item['callback'])){
+                $validator = new UrlValidator();
+                if (!$validator->validate($item['url'], $error)) {
+                    $key = $attribute . ($multiple ? '[' . $index . '][url]' : '');
+                    $dy_model->addError($key, $error);
+                }
+                }
+
+                $validator2 = new RequiredValidator;
+                if (!$validator2->validate($item['label'], $error)) {
+                    $key = $attribute . ($multiple ? '[' . $index . '][label]' : '');
+                    $dy_model->addError($key, $error);
+                }
+                //$validator = new \yii\validators\NumberValidator();
+
+                //$validator->validate($item, $error);
+               // if (!empty($error)) {
+                  //  $key = $attribute . ($multiple ? '[' . $index . '][label]' : '');
+                    // CMS::dump($key);die;
+                  //  $dy_model->addError($key, $error);
+              //  }
+            }
+
+        });
+
+
+
+        if (in_array($model->type, ['sendPhoto', 'sendAudio', 'sendDocument'])) {
             $dy_model->addRule('media', 'string');
             $dy_model->addRule('media', 'required');
         }
@@ -114,19 +177,27 @@ class MailingController extends AdminController
             $dy_model->addRule('media', 'file', ['skipOnEmpty' => true, 'extensions' => ['png', 'jpg']]);
 
         } elseif ($model->type == 'sendAudio') {
-            $dy_model->addRule('title', 'string');
+            $dy_model->addRule(['title','performer'], 'string');
             $dy_model->addRule('duration', 'integer');
-            $dy_model->addRule('performer', 'string');
 
-            $dy_model->addRule('thumb', 'file', ['skipOnEmpty' => true, 'extensions' => ['jpg'], 'maxSize' => 200*1024]);
+            $dy_model->addRule('thumb', 'file', ['skipOnEmpty' => true, 'extensions' => ['jpg'], 'maxSize' => 200 * 1024]);
             $dy_model->addRule('thumb', 'string');
+        } elseif ($model->type == 'sendMediaGroup') {
+            // $dy_model->addRule('media', 'string');
+            $dy_model->addRule('media', 'file', ['skipOnEmpty' => true, 'maxFiles' => 10, 'extensions' => ['png', 'jpg']]);
+        } elseif ($model->type == 'sendVenue') {
+            $dy_model->addRule(['latitude','longitude','address','title'], 'string');
+            $dy_model->addRule(['latitude','longitude','address','title'], 'required');
         }
+
         if (in_array($model->type, ['sendDocument', 'sendPhoto'])) {
             $view = 'forms/_sendMedia';
         } elseif ($model->type == 'sendAudio') {
             $view = 'forms/_sendAudio';
         } elseif ($model->type == 'sendMediaGroup') {
             $view = 'forms/_sendMediaGroup';
+        } elseif ($model->type == 'sendVenue') {
+            $view = 'forms/_sendVenue';
         } else {
             $view = 'forms/_sendMessage';
         }
@@ -138,33 +209,61 @@ class MailingController extends AdminController
         $post = Yii::$app->request->post();
 
         if ($dy_model->load($post)) {
-            $media = UploadedFile::getInstance($dy_model, 'media');
+
+            // foreach ($dy_model->media as $file) {
+            //     $media = UploadedFile::getInstance($dy_model, 'media');
+            // }
+            if ($model->type == 'sendMediaGroup') {
+                $media = UploadedFile::getInstances($dy_model, 'media');
+            } else {
+                $media = UploadedFile::getInstance($dy_model, 'media');
+            }
+            //// CMS::dump($post);
+            // CMS::dump($media);
+            // die;
             $thumb = UploadedFile::getInstance($dy_model, 'thumb');
 
-
+            if (!file_exists(Yii::getAlias('@uploads/tmp'))) {
+                FileHelper::createDirectory(Yii::getAlias('@uploads/tmp'), 750);
+            }
             if ($media) {
-                $path = Yii::getAlias('@runtime') . DIRECTORY_SEPARATOR . $media->getBaseName() . '.' . $media->extension;
-                $media->saveAs($path);
-                $model->media = $path;
-                $dy_model->media = $path;
+                if ($model->type == 'sendMediaGroup') {
+                    foreach ($media as $file) {
+                        $path = Yii::getAlias('@uploads/tmp') . DIRECTORY_SEPARATOR . $file->getBaseName() . '.' . $file->extension;
+                        $file->saveAs($path);
+                        $model->media[] = basename($path);
+                        //  $dy_model->media[] = $path;
+                    }
+                } else {
+
+                    $path = Yii::getAlias('@uploads/tmp') . DIRECTORY_SEPARATOR . $media->getBaseName() . '.' . $media->extension;
+                    $media->saveAs($path);
+                    $model->media[] = basename($path);
+                    $dy_model->media = $path;
+                }
+
             }
             if ($thumb) {
-                $path = Yii::getAlias('@runtime') . DIRECTORY_SEPARATOR . $thumb->getBaseName() . '.' . $thumb->extension;
+                $path = Yii::getAlias('@uploads/tmp') . DIRECTORY_SEPARATOR . $thumb->getBaseName() . '.' . $thumb->extension;
                 $thumb->saveAs($path);
-                $model->thumb = $path;
+                $model->thumb = basename($path);
             }
             if ($dy_model->validate()) {
-
-
-
-
 
 
                 if ($model->type == 'sendAudio') {
                     $model->title = $dy_model->title;
                     $model->duration = $dy_model->duration;
                     $model->performer = $dy_model->performer;
+                }elseif($model->type == 'sendVenue'){
+                    $model->title = $dy_model->title;
+                    $model->address = $dy_model->address;
+                    $model->longitude = $dy_model->longitude;
+                    $model->latitude = $dy_model->latitude;
                 }
+                if($dy_model->buttons)
+                    $model->buttons = json_encode($dy_model->buttons);
+
                 $model->text = $dy_model->text;
                 $model->disable_notification = $dy_model->disable_notification;
                 $model->send_to_groups = $dy_model->send_to_groups;

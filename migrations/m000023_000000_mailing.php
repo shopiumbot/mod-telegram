@@ -26,11 +26,19 @@ class m000023_000000_mailing extends Migration
             'performer' => $this->string(255)->null(),
             'duration' => $this->integer(11)->unsigned()->null(),
             'title' => $this->string(255)->null(),
+            'latitude' => $this->string(255)->null(),
+            'longitude' => $this->string(255)->null(),
+            'address' => $this->text()->null(),
             'created_at' => $this->integer(),
+            'buttons' => $this->text()->null(),
         ], $tableOptions);
 
 
       //  $this->createIndex('user_id', '{{%telegram_mailing}}', 'user_id');
+        $this->createIndex('send_to_groups', Mailing::tableName(), 'send_to_groups');
+        $this->createIndex('send_to_supergroups', Mailing::tableName(), 'send_to_supergroups');
+        $this->createIndex('send_to_channels', Mailing::tableName(), 'send_to_channels');
+        $this->createIndex('send_to_users', Mailing::tableName(), 'send_to_users');
         $this->createIndex('created_at', Mailing::tableName(), 'created_at');
        // $this->createIndex('message_id', '{{%telegram__mailing}}', 'message_id');
 

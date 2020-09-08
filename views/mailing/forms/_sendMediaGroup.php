@@ -1,5 +1,7 @@
 <?php
-
+use panix\ext\multipleinput\MultipleInput;
+use panix\ext\multipleinput\MultipleInputColumn;
+use panix\engine\Html;
 
 /**
  * @var \shopium\mod\telegram\models\Mailing $model
@@ -8,7 +10,5 @@
  */
 
 ?>
-<?= $form->field($dy_model, 'media')->fileInput() ?>
-<?= $form->field($dy_model, 'thumb')->fileInput() ?>
+<?= $form->field($dy_model, 'media[]')->fileInput(['multiple'=>true]) ?>
 <?= $form->field($dy_model, 'text')->textarea() ?>
-
