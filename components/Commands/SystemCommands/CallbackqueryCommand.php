@@ -91,9 +91,9 @@ class CallbackqueryCommand extends SystemCommand
                 $data['provider_token'] = '632593626:TEST:i56982357197';
                 $data['prices'] = $prices;
                 $data['currency'] = 'UAH';
-                $data['photo_url'] = Url::to($images[0]->getUrlToOrigin(),true);
-                $data['photo_width']=200;
-                $data['photo_height']=200;
+                $data['photo_url'] = Url::to($images[0]->getUrlToOrigin(), true);
+                $data['photo_width'] = 200;
+                $data['photo_height'] = 200;
                 /*$data['need_name'] = True;
                 $data['need_phone_number'] = True;
                 $data['need_email'] = True;
@@ -101,7 +101,7 @@ class CallbackqueryCommand extends SystemCommand
                 $data['is_flexible'] = True;*/
 
                 // $data['reply_markup'] = $inline_keyboard;
-                 $this->notify($images[0]->getUrlToOrigin());
+                $this->notify($images[0]->getUrlToOrigin());
                 $pay = Request::sendInvoice($data);
 
                 if (!$pay->getOk()) {
@@ -134,8 +134,22 @@ class CallbackqueryCommand extends SystemCommand
 
         } elseif (preg_match('/getBrandsList/iu', trim($callback_data), $match)) { //preg_match('/^getCatalog\s+([0-9]+)/iu', trim($callback_data), $match)
             return $this->telegram->executeCommand('brands');
-        //} elseif (preg_match('/getNewList/iu', trim($callback_data), $match)) { //preg_match('/^getCatalog\s+([0-9]+)/iu', trim($callback_data), $match)
-        //    return $this->telegram->executeCommand('new');
+            //} elseif (preg_match('/getNewList/iu', trim($callback_data), $match)) { //preg_match('/^getCatalog\s+([0-9]+)/iu', trim($callback_data), $match)
+            //    return $this->telegram->executeCommand('new');
+        } elseif (preg_match('/getProduct/iu', trim($callback_data), $match)) { //preg_match('/^getCatalog\s+([0-9]+)/iu', trim($callback_data), $match)
+            parse_str($callback_data, $params);
+            if (isset($params['id'])) {
+                $product = Product::findOne((int)$params['id']);
+                $this->telegram->setCommandConfig('productitem', [
+                    'product' => $product,
+                    'photo_index' => 0,
+                ]);
+                return $this->telegram->executeCommand('productitem');
+            } else {
+                return $this->notify('err product item');
+            }
+            //} elseif (preg_match('/getNewList/iu', trim($callback_data), $match)) { //preg_match('/^getCatalog\s+([0-9]+)/iu', trim($callback_data), $match)
+            //    return $this->telegram->executeCommand('new');
         } elseif (preg_match('/^cartDelete\/([0-9]+)/iu', trim($callback_data), $match)) {
             $user_id = $callback_query->getFrom()->getId();
 
@@ -474,9 +488,9 @@ class CallbackqueryCommand extends SystemCommand
             /** @var Product|ProductQuery $query */
             $query = Product::find()->sort();
 
-                                    if(Yii::$app->settings->get('app','availability_hide')){
-                                        $query->isNotAvailability();
-                                    }
+            if (Yii::$app->settings->get('app', 'availability_hide')) {
+                $query->isNotAvailability();
+            }
 
             if ($params['model'] == 'brands') {
                 if (isset($params['id'])) {

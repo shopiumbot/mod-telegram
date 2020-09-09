@@ -7,6 +7,7 @@ use Longman\TelegramBot\Entities\InlineKeyboard;
 use Longman\TelegramBot\Entities\InlineKeyboardButton;
 use Longman\TelegramBot\Entities\InputMedia\InputMediaPhoto;
 use panix\engine\components\ImageHandler;
+use shopium\mod\telegram\components\Telegram;
 use Yii;
 use Longman\TelegramBot\Request;
 use panix\engine\CMS;
@@ -24,6 +25,7 @@ use yii\helpers\Url;
  * @property boolean $send_to_supergroups
  * @property boolean $send_to_channels
  * @property boolean $send_to_users
+ * @property boolean $send_to_admins
  * @property string $type
  * @property string $text
  * @property string performer
@@ -57,7 +59,7 @@ class Mailing extends ActiveRecord
         return [
             [['text'], 'required'],
             [['text', 'type', 'media', 'thumb'], 'safe'],
-            [['disable_notification', 'send_to_groups', 'send_to_supergroups', 'send_to_channels', 'send_to_users'], 'boolean'],
+            [['disable_notification', 'send_to_groups', 'send_to_supergroups', 'send_to_channels', 'send_to_users','send_to_admins'], 'boolean'],
             [['text'], 'string', 'max' => 4100],
         ];
     }
@@ -104,17 +106,23 @@ class Mailing extends ActiveRecord
             $where[] = 'supergroup';
         if ($this->send_to_channels)
             $where[] = 'channel';
-
+        if($this->send_to_admins){
+            //CMS::dump(Yii::$app->user->getBotAdmins());die;
+            $chatsQuery->where(['id'=>123]);
+        }
 
         $chatsQuery->where(['in', 'type', $where]);
 
-
+echo $chatsQuery->createCommand()->rawSql;die;
         $chats = $chatsQuery->asArray()->all();
-
+        /** @var Telegram $api */
+        $api = Yii::$app->telegram;
         $results = [];
         $data = [];
+        $senders = [];
+
         if ($chats) {
-            $api = Yii::$app->telegram;
+
             $text = 'text';
 
             if ($this->type == 'sendPhoto') {
@@ -188,9 +196,6 @@ class Mailing extends ActiveRecord
                 $data['reply_markup'] = new InlineKeyboard([
                     'inline_keyboard' => $keyboards
                 ]);
-
-
-
                 $results[] = Request::send($this->type, $data);
             }
         }

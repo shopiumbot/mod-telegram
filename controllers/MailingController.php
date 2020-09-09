@@ -92,7 +92,7 @@ class MailingController extends AdminController
             'longitude',
             'latitude',
             'buttons',
-            'send_to_groups', 'send_to_supergroups', 'send_to_channels', 'send_to_users'
+            'send_to_groups', 'send_to_supergroups', 'send_to_channels', 'send_to_users', 'send_to_admins'
         ]);
         $dy_model->setAttributeLabels([
             'send_to_groups' => Yii::t('telegram/Mailing', 'SEND_TO_GROUPS'),
@@ -100,6 +100,7 @@ class MailingController extends AdminController
             'send_to_channels' => Yii::t('telegram/Mailing', 'SEND_TO_CHANNELS'),
             'send_to_users' => Yii::t('telegram/Mailing', 'SEND_TO_USERS'),
             'disable_notification' => Yii::t('telegram/Mailing', 'DISABLE_NOTIFICATION'),
+            'send_to_admins'=>Yii::t('telegram/Mailing', 'SEND_TO_ADMINS'),
             'text' => Yii::t('telegram/Mailing', 'TEXT'),
             'media' => Yii::t('telegram/Mailing', 'MEDIA'),
             'title' => Yii::t('telegram/Mailing', 'TITLE'),
@@ -110,8 +111,9 @@ class MailingController extends AdminController
             'latitude' => Yii::t('telegram/Mailing', 'LATITUDE'),
             'address' => Yii::t('telegram/Mailing', 'ADDRESS'),
             'buttons' => Yii::t('telegram/Mailing', 'buttons'),
+
         ]);
-        $dy_model->addRule(['disable_notification', 'send_to_groups', 'send_to_supergroups', 'send_to_channels', 'send_to_users'], 'boolean')
+        $dy_model->addRule(['disable_notification', 'send_to_groups', 'send_to_supergroups', 'send_to_channels', 'send_to_users','send_to_admins'], 'boolean')
             ->addRule('text', 'string');
 
 
@@ -270,8 +272,16 @@ class MailingController extends AdminController
                 $model->send_to_supergroups = $dy_model->send_to_supergroups;
                 $model->send_to_channels = $dy_model->send_to_channels;
                 $model->send_to_users = $dy_model->send_to_users;
-                $model->save(false);
+                $model->send_to_admins = $dy_model->send_to_admins;
+                if($model->validate()){
+                    $model->save(false);
+                }else{
+                    print_r($model->getErrors());die;
+                }
+
                 //   return $this->redirectPage($isNew, $post);
+            }else{
+                print_r($dy_model->getErrors());die;
             }
         }
 

@@ -37,12 +37,13 @@ use panix\ext\multipleinput\MultipleInputColumn;
         ?>
 
         <div class="card-body">
-            <?= $this->render($view, ['model' => $model, 'form' => $form,'dy_model'=>$dy_model]); ?>
+            <?= $this->render($view, ['model' => $model, 'form' => $form, 'dy_model' => $dy_model]); ?>
             <?= $form->field($dy_model, 'disable_notification')->checkbox() ?>
             <?= $form->field($dy_model, 'send_to_groups')->checkbox() ?>
             <?= $form->field($dy_model, 'send_to_supergroups')->checkbox() ?>
             <?= $form->field($dy_model, 'send_to_channels')->checkbox() ?>
             <?= $form->field($dy_model, 'send_to_users')->checkbox() ?>
+            <?= $form->field($dy_model, 'send_to_admins')->checkbox() ?>
 
             <div class="form-group row">
                 <div class="col-sm-4 col-md-4 col-lg-3 col-xl-2"></div>
@@ -104,26 +105,58 @@ use panix\ext\multipleinput\MultipleInputColumn;
         <div class="card-footer text-center">
             <?= $model->submitButton(); ?>
         </div>
-        <?php ActiveForm::end();
+
+        <?php ActiveForm::end(); ?>
+        <?php
+
+        $callbacks = [
+            [
+                'callback' => 'getList&model=catalog&id=<code>'.Html::encode('<CATEGORY_ID>').'</code>',
+                'text' => 'Каталог'
+            ],
+            [
+                'callback' => 'getList&model=brands&id=<code>'.Html::encode('<BRAND_ID>').'</code>',
+                'text' => 'Бренд'
+            ],
+            [
+                'callback' => 'getList&model=new',
+                'text' => 'Новые товары'
+            ],
+            [
+                'callback' => 'checkOut',
+                'text' => 'Оформление заказа'
+            ],
+            [
+                'callback' => 'getCart',
+                'text' => 'Корзина'
+            ],
+            [
+                'callback' => 'getHistory',
+                'text' => 'История заказов'
+            ],
+            [
+                'callback' => 'getProduct&id=<code>'.Html::encode('<PRODUCT_ID>').'</code>',
+                'text' => 'Товар'
+            ],
+        ]
+        ?>
+        <table class="table table-striped">
+            <tr>
+                <th>Callback</th>
+                <th>Описание</th>
+            </tr>
+            <?php foreach($callbacks as $callback){ ?>
+                <tr>
+                    <td><?= $callback['callback']; ?></td>
+                    <td><?= $callback['text']; ?></td>
+                </tr>
+            <?php } ?>
+
+        </table>
+        <?php
     }
     ?>
 </div>
 
-<table class="table table-striped">
-    <tr>
-        <th>sad</th>
-    </tr>
-    <tr>
-        <td><code>getList&model=catalog&id=<?= Html::encode('<CATEGORY_ID>');?></code></td>
-    </tr>
-    <tr>
-        <td><code>getList&model=brands&id=<?= Html::encode('<BRAND_ID>');?></code></td>
-    </tr>
-    <tr>
-        <td><code>getList&model=new</code></td>
-    </tr>
-    <tr>
-        <td><code>checkOut</code></td>
-    </tr>
-</table>
+
 

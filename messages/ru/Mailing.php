@@ -7,6 +7,7 @@ return [
     'SEND_TO_SUPERGROUPS' => 'Всем супер-группам',
     'SEND_TO_CHANNELS' => 'Всем каналам',
     'SEND_TO_USERS' => 'Всем пользователям',
+    'SEND_TO_ADMINS' => 'Всем администраторам',
     'DISABLE_NOTIFICATION' => 'Звукове уведомление',
     'MEDIA' => 'Файл',
     'TITLE' => 'Название',
