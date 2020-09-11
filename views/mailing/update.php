@@ -138,7 +138,13 @@ use panix\ext\multipleinput\MultipleInputColumn;
                 'callback' => 'getProduct&id=<code>'.Html::encode('<PRODUCT_ID>').'</code>',
                 'text' => 'Товар'
             ],
+            [
+                'callback' => 'addCart&product_id=<code>'.Html::encode('<PRODUCT_ID>').'</code>',
+                'text' => 'Добавление товара в корзину'
+            ],
         ]
+
+
         ?>
         <table class="table table-striped">
             <tr>

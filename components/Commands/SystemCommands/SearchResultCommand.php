@@ -3,6 +3,7 @@
 namespace shopium\mod\telegram\components\Commands\SystemCommands;
 
 
+use core\modules\shop\components\EavBehavior;
 use Longman\TelegramBot\Entities\InlineKeyboard;
 use Longman\TelegramBot\Entities\InlineKeyboardButton;
 use Longman\TelegramBot\Request;
@@ -46,6 +47,10 @@ class SearchResultCommand extends SystemCommand
     public $string;
     public $page;
 
+    protected $_attributes;
+    public $model;
+    protected $_models;
+
     /**
      * Command execute method
      *
@@ -61,7 +66,7 @@ class SearchResultCommand extends SystemCommand
             $message = $callbackQuery->getMessage();
             $chat = $message->getChat();
             $user = $callbackQuery->getFrom();
-        }else{
+        } else {
             $message = $this->getMessage();
             $chat = $message->getChat();
             $user = $message->getFrom();
@@ -86,7 +91,7 @@ class SearchResultCommand extends SystemCommand
         if (!in_array($user_id, $this->telegram->getAdminList())) {
             $query->published();
         }
-        if(Yii::$app->settings->get('app','availability_hide')){
+        if (Yii::$app->settings->get('app', 'availability_hide')) {
             $query->isNotAvailability();
         }
         $query->sort();
@@ -146,27 +151,29 @@ class SearchResultCommand extends SystemCommand
                     $caption .= '🔥🔥🔥';
                 }
 
-                $caption .= '*' . $product->name . '*' . PHP_EOL;
-                $caption .= $this->number_format($product->price) . ' '.Yii::$app->currency->active['symbol'] . PHP_EOL . PHP_EOL;
+                $caption .= '<strong>' . $product->name . '</strong>' . PHP_EOL;
+                $caption .= $this->number_format($product->price) . ' ' . Yii::$app->currency->active['symbol'] . PHP_EOL . PHP_EOL;
 
                 if ($product->hasDiscount) {
-                    $caption .= '*🎁 Скидка*: ' . $product->discountSum . PHP_EOL . PHP_EOL;
+                    $caption .= '<strong>🎁 Скидка</strong>: ' . $product->discountSum . PHP_EOL . PHP_EOL;
                 }
 
                 if ($product->manufacturer_id) {
-                    $caption .= '*Производитель*: ' . $product->manufacturer->name . PHP_EOL;
+                    $caption .= '<strong>Производитель</strong>: ' . $product->manufacturer->name . PHP_EOL;
                 }
                 if ($product->sku) {
-                    $caption .= '*Артикул*: ' . $product->sku . PHP_EOL;
+                    $caption .= '<strong>Артикул</strong>: ' . $product->sku . PHP_EOL;
                 }
 
 
                 $attributes = $this->attributes($product);
+                $attributesList = [];
                 if ($attributes) {
-                    $caption .= '*Характеристики:*' . PHP_EOL;
+                    $caption .= PHP_EOL . '<strong>Характеристики:</strong>' . PHP_EOL;
                     foreach ($attributes as $name => $data) {
                         if (!empty($data['value'])) {
-                            $caption .= '*' . $name . '*: ' . $data['value'] . ' ' . $data['abbreviation'] . PHP_EOL;
+                            $attributesList[$name] = $data['value'];
+                            $caption .= '<strong>' . $name . '</strong>: ' . $data['value'] . ' ' . $data['abbreviation'] . PHP_EOL;
                         }
                     }
                 }
@@ -222,6 +229,49 @@ class SearchResultCommand extends SystemCommand
                 }
 
 
+                $discount = [];
+                $discount['exist'] = $product->hasDiscount;
+                if ($discount['exist']) {
+                    $discount['sum'] = $product->discountSum;
+                    $discount['end_date'] = $product->discountEndDate;
+                    $discount['price'] = $product->discountPrice;
+                }
+
+                //  Request::sendMessage($test);
+
+                if ($user_id == 812367093) {
+
+                    if (file_exists(Yii::getAlias('@app/web') . DIRECTORY_SEPARATOR . 'product.twig')) {
+                        $tpl = '@app/web/product.twig';
+                    } else {
+                        $tpl = '@telegram/views/templates/product.twig';
+                    }
+                    $caption = Yii::$app->controller->renderPartial($tpl, [
+                        'product' => [
+                            'id' => $product->id,
+                            'name' => Html::decode($product->name),
+                            'price' => $this->number_format($product->price),
+                            // 'description' => ($product->description) ? Helper::Test($product->description) : false,
+                            'description' => ($product->description) ? $product->description : false,
+                            'sku' => ($product->sku) ? Html::decode($product->sku) : false,
+                            'discount' => $discount,
+                            'brand' => ($product->manufacturer_id) ? Html::decode($product->manufacturer->name) : false,
+                            'category' => ($product->main_category_id) ? ($product->mainCategory) ? Html::decode($product->mainCategory->name) : false : false,
+                            'availability' => $product->availability,
+                            'attributes' => $attributesList,
+                        ],
+                        'is_admin' => ($this->telegram->isAdmin($user_id) ? true : false),
+                        'currency' => [
+                            'symbol' => Yii::$app->currency->active['symbol'],
+                            'name' => Yii::$app->currency->active['name']
+                        ]
+                    ]);
+                    if (!$caption) {
+                        return $this->notify('Ошибка шаблона', 'error');
+                    }
+                }
+
+
                 //Url::to($product->getImage()->getUrlToOrigin(),true),
                 $dataPhoto = [
 
@@ -229,7 +279,8 @@ class SearchResultCommand extends SystemCommand
                     //'photo'=>'https://www.meme-arsenal.com/memes/50569ac974c29121ff9075e45a334942.jpg',
                     // 'photo' => Url::to($product->getImage()->getUrl('800x800'), true),
                     'chat_id' => $chat_id,
-                    'parse_mode' => 'Markdown',
+                    //'parse_mode' => 'Markdown',
+                    'parse_mode' => 'HTML',
                     'caption' => $caption,
                     'reply_markup' => new InlineKeyboard([
                         'inline_keyboard' => $keyboards
@@ -262,15 +313,12 @@ class SearchResultCommand extends SystemCommand
 
     }
 
-    protected $_attributes;
-    public $model;
-    protected $_models;
 
     public function attributes($product)
     {
 
         $eav = $product;
-        /** @var \app\modules\shop\components\EavBehavior $eav */
+        /** @var EavBehavior $eav */
         $this->_attributes = $eav->getEavAttributes();
 
 
@@ -279,9 +327,10 @@ class SearchResultCommand extends SystemCommand
             /** @var Attribute $model */
             $abbr = ($model->abbreviation) ? ' ' . $model->abbreviation : '';
 
-
-            $data[$model->title]['value'] = $model->renderValue($this->_attributes[$model->name]);
-            $data[$model->title]['abbreviation'] = $abbr;
+            if (isset($this->_attributes[$model->name])) {
+                $data[$model->title]['value'] = $model->renderValue($this->_attributes[$model->name]);
+                $data[$model->title]['abbreviation'] = $abbr;
+            }
         }
 
         return $data;
