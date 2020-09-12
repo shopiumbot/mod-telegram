@@ -38,7 +38,7 @@ use panix\ext\multipleinput\MultipleInputColumn;
 
         <div class="card-body">
             <?= $this->render($view, ['model' => $model, 'form' => $form, 'dy_model' => $dy_model]); ?>
-            <?= $form->field($dy_model, 'disable_notification')->checkbox() ?>
+            <?= $form->field($dy_model, 'disable_notification')->checkbox(['checked'=>true]) ?>
             <?= $form->field($dy_model, 'send_to_groups')->checkbox() ?>
             <?= $form->field($dy_model, 'send_to_supergroups')->checkbox() ?>
             <?= $form->field($dy_model, 'send_to_channels')->checkbox() ?>

@@ -59,7 +59,7 @@ class Mailing extends ActiveRecord
         return [
             [['text'], 'required'],
             [['text', 'type', 'media', 'thumb'], 'safe'],
-            [['disable_notification', 'send_to_groups', 'send_to_supergroups', 'send_to_channels', 'send_to_users','send_to_admins'], 'boolean'],
+            [['disable_notification', 'send_to_groups', 'send_to_supergroups', 'send_to_channels', 'send_to_users', 'send_to_admins'], 'boolean'],
             [['text'], 'string', 'max' => 4100],
         ];
     }
@@ -80,14 +80,14 @@ class Mailing extends ActiveRecord
     public static function typeList()
     {
         return [
-            'sendMessage' => 'sendMessage',
-            'sendPhoto' => 'sendPhoto',
-            'sendAudio' => 'sendAudio',
-            'sendDocument' => 'sendDocument',
-            'sendVideo' => 'sendVideo',
-            'sendMediaGroup' => 'sendMediaGroup',
-            'sendVoice' => 'sendVoice',
-            'sendVenue' => 'sendVenue'
+            'sendMessage' => self::t('TYPE_SEND_MESSAGE'),
+            'sendPhoto' => self::t('TYPE_SEND_PHOTO'),
+            'sendAudio' => self::t('TYPE_SEND_AUDIO'),
+            'sendDocument' => self::t('TYPE_SEND_DOCUMENT'),
+            'sendVideo' => self::t('TYPE_SEND_VIDEO'),
+            'sendMediaGroup' => self::t('TYPE_SEND_GALLERY'),
+            //'sendVoice' => 'Голосовае',
+            'sendVenue' => self::t('TYPE_SEND_VENUE')
         ];
     }
 
@@ -106,15 +106,17 @@ class Mailing extends ActiveRecord
             $where[] = 'supergroup';
         if ($this->send_to_channels)
             $where[] = 'channel';
-        if($this->send_to_admins){
-            //CMS::dump(Yii::$app->user->getBotAdmins());die;
-            $chatsQuery->where(['id'=>123]);
+
+
+        if ($where)
+            $chatsQuery->where(['in', 'type', $where]);
+
+        if ($this->send_to_admins) {
+            $chatsQuery->andWhere(['id' => Yii::$app->user->getBotAdmins()]);
         }
 
-        $chatsQuery->where(['in', 'type', $where]);
-
-echo $chatsQuery->createCommand()->rawSql;die;
         $chats = $chatsQuery->asArray()->all();
+
         /** @var Telegram $api */
         $api = Yii::$app->telegram;
         $results = [];
@@ -170,32 +172,35 @@ echo $chatsQuery->createCommand()->rawSql;die;
                     $data['title'] = $this->title;
             }
             $data[$text] = $this->text;
-            $data['disable_notification'] = $this->disable_notification;
+            $data['disable_notification'] = !$this->disable_notification;
 
-            $keyboards=[];
-            $btn_data=[];
-            $buttons = json_decode($this->buttons,true);
+            $keyboards = [];
+            $btn_data = [];
+            $buttons = json_decode($this->buttons, true);
 
-            foreach ($buttons as $btn){
+            if ($buttons) {
+                foreach ($buttons as $btn) {
 
-                $btn_data['text']=$btn['label'];
-                if($btn['callback']){
-                    $btn_data['callback_data']=$btn['callback'];
+                    $btn_data['text'] = $btn['label'];
+                    if ($btn['callback']) {
+                        $btn_data['callback_data'] = $btn['callback'];
+                    }
+                    if (!empty($btn['url'])) {
+                        $btn_data['url'] = $btn['url'];
+                    }
+                    $keyboards[] = [
+                        new InlineKeyboardButton($btn_data)
+                    ];
                 }
-                if(!empty($btn['url'])){
-                    $btn_data['url']=$btn['url'];
-                }
-                $keyboards[] = [
-                    new InlineKeyboardButton($btn_data)
-                ];
             }
-
 
             foreach ($chats as $row) {
                 $data['chat_id'] = $row['id'];
-                $data['reply_markup'] = new InlineKeyboard([
-                    'inline_keyboard' => $keyboards
-                ]);
+                if ($keyboards) {
+                    $data['reply_markup'] = new InlineKeyboard([
+                        'inline_keyboard' => $keyboards
+                    ]);
+                }
                 $results[] = Request::send($this->type, $data);
             }
         }

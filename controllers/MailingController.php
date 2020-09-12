@@ -192,7 +192,7 @@ class MailingController extends AdminController
             $dy_model->addRule(['latitude','longitude','address','title'], 'required');
         }
 
-        if (in_array($model->type, ['sendDocument', 'sendPhoto'])) {
+        if (in_array($model->type, ['sendDocument', 'sendPhoto', 'sendVideo'])) {
             $view = 'forms/_sendMedia';
         } elseif ($model->type == 'sendAudio') {
             $view = 'forms/_sendAudio';
@@ -275,6 +275,8 @@ class MailingController extends AdminController
                 $model->send_to_admins = $dy_model->send_to_admins;
                 if($model->validate()){
                     $model->save(false);
+                    Yii::$app->session->setFlash('success','Рассылка успешно отправлена.');
+                    return $this->redirect(['index']);
                 }else{
                     print_r($model->getErrors());die;
                 }

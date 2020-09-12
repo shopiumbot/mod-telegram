@@ -19,4 +19,11 @@ return [
     'LONGITUDE' => 'Долгота',
     'LATITUDE' => 'Широта',
     'ADDRESS' => 'Адрес',
+    'TYPE_SEND_MESSAGE' => 'Сообщение',
+    'TYPE_SEND_VENUE' => 'Локацию',
+    'TYPE_SEND_PHOTO' => 'Изображение',
+    'TYPE_SEND_AUDIO' => 'Аудио',
+    'TYPE_SEND_DOCUMENT' => 'Документ',
+    'TYPE_SEND_GALLERY' => 'Фото галерея',
+    'TYPE_SEND_VIDEO' => 'Видео',
 ];
