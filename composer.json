@@ -18,7 +18,6 @@
     }
   ],
   "require": {
-    "php": ">=5.5.0",
     "yiisoft/yii2": ">=2.0.1",
     "panix/wgt-bootstrap-select": "dev-master",
     "panix/wgt-leaflet": "dev-master",
