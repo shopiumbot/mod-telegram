@@ -21,6 +21,7 @@
     "php": ">=5.5.0",
     "yiisoft/yii2": ">=2.0.1",
     "panix/wgt-bootstrap-select": "dev-master",
+    "panix/wgt-leaflet": "dev-master",
     "league/html-to-markdown": "^4.10@dev",
     "longman/telegram-bot": "~0.61"
   },
