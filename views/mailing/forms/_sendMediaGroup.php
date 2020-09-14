@@ -10,5 +10,5 @@ use panix\engine\Html;
  */
 
 ?>
-<?= $form->field($dy_model, 'media[]')->fileInput(['multiple'=>true]) ?>
+<?= $form->field($dy_model, 'media[]')->fileInput(['multiple'=>true])->hint('Выберите одно или несколько изображений удерживая Shift') ?>
 <?= $form->field($dy_model, 'text')->textarea() ?>

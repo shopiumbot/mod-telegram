@@ -80,7 +80,7 @@ class CatalogCommand extends UserCommand
 
         $root = Category::findOne($this->id);
         if ($root) {
-            $categories = $root->children()->all();
+            $categories = $root->children()->published()->all();
 
 
             $keyboards = [];
@@ -91,13 +91,13 @@ class CatalogCommand extends UserCommand
 //$s=$category->products;
                     //$count = $s->isNotAvailability()->count();
 
-                    $countQuery = Product::find()->where(['main_category_id' => $category->id])->published();
+                    /*$countQuery = Product::find()->where(['main_category_id' => $category->id])->published();
                     if (Yii::$app->settings->get('app', 'availability_hide')) {
                         $countQuery->isNotAvailability();
                     }
 
-                    $count = $countQuery->count();
-
+                    $count = $countQuery->count();*/
+                  //  $count = $category->countItems();
 
                     $icon = ($category->icon) ? $category->icon . ' ' : '';
                     $child = $category->children()->count();
@@ -110,12 +110,12 @@ class CatalogCommand extends UserCommand
                         ]);
 
                     } else {
-                        if ($count) {
+                       // if ($count) {
                             $keyboards[] = new InlineKeyboardButton([
-                                'text' => $icon . $category->name . ' (' . $count . ')',
+                                'text' => $icon . $category->name, // . ' (' . $child . ')'
                                 'callback_data' => 'query=getList&model=catalog&id=' . $category->id
                             ]);
-                        }
+                      //  }
 
                     }
 
