@@ -12,6 +12,7 @@ use Longman\TelegramBot\Request;
 use core\modules\shop\models\Category;
 use shopium\mod\telegram\components\UserCommand;
 use Yii;
+use yii\db\Query;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -99,10 +100,11 @@ class CatalogCommand extends UserCommand
                     $count = $countQuery->count();*/
                   //  $count = $category->countItems();
 
-                    $icon = ($category->icon) ? $category->icon . ' ' : '';
-                    $child = $category->children()->count();
 
-                    if ($child) {
+                    $icon = ($category->icon) ? $category->icon . ' ' : '';
+                    $childCount = $category->children()->count();
+
+                    if ($childCount) {
 
                         $keyboards[] = new InlineKeyboardButton([
                             'text' => $icon . $category->name,
@@ -110,12 +112,13 @@ class CatalogCommand extends UserCommand
                         ]);
 
                     } else {
-                       // if ($count) {
+                        $count = $category->countByAvailabilityItems;
+                        if ($count) {
                             $keyboards[] = new InlineKeyboardButton([
-                                'text' => $icon . $category->name, // . ' (' . $child . ')'
+                                'text' => $icon . $category->name . ' (' . $count . ')',
                                 'callback_data' => 'query=getList&model=catalog&id=' . $category->id
                             ]);
-                      //  }
+                        }
 
                     }
 

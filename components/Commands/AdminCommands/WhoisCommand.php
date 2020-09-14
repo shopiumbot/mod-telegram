@@ -182,7 +182,7 @@ class WhoisCommand extends AdminCommand
                 $text = 'Чат не найден';
             }
         }
-
+        $data['parse_mode'] = 'Markdown';
         $data['text'] = $text;
 
         return Request::sendMessage($data);
