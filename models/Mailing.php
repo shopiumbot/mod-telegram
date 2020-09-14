@@ -57,7 +57,7 @@ class Mailing extends ActiveRecord
     public function rules()
     {
         return [
-            [['text'], 'required'],
+            //[['text'], 'required'],
             [['text', 'type', 'media', 'thumb'], 'safe'],
             [['disable_notification', 'send_to_groups', 'send_to_supergroups', 'send_to_channels', 'send_to_users', 'send_to_admins'], 'boolean'],
             [['text'], 'string', 'max' => 4100],
@@ -171,7 +171,9 @@ class Mailing extends ActiveRecord
                 if ($this->title)
                     $data['title'] = $this->title;
             }
-            $data[$text] = $this->text;
+            if($this->text)
+                $data[$text] = $this->text;
+
             $data['disable_notification'] = !$this->disable_notification;
 
             $keyboards = [];

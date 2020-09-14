@@ -266,7 +266,9 @@ class MailingController extends AdminController
                 if($dy_model->buttons)
                     $model->buttons = json_encode($dy_model->buttons);
 
-                $model->text = $dy_model->text;
+                if($dy_model->text)
+                    $model->text = $dy_model->text;
+
                 $model->disable_notification = $dy_model->disable_notification;
                 $model->send_to_groups = $dy_model->send_to_groups;
                 $model->send_to_supergroups = $dy_model->send_to_supergroups;

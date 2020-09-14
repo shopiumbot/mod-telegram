@@ -15,5 +15,5 @@
 <?= $form->field($dy_model, 'address')->textarea() ?>
 
 <?= \panix\ext\leaflet\LeafletWidget::widget([
-
+'height'=>'500px'
 ]) ?>
