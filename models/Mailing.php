@@ -2,19 +2,17 @@
 
 namespace shopium\mod\telegram\models;
 
-
+use Yii;
 use Longman\TelegramBot\Entities\InlineKeyboard;
 use Longman\TelegramBot\Entities\InlineKeyboardButton;
 use Longman\TelegramBot\Entities\InputMedia\InputMediaPhoto;
+use Longman\TelegramBot\Request;
 use panix\engine\components\ImageHandler;
 use shopium\mod\telegram\components\Telegram;
-use Yii;
-use Longman\TelegramBot\Request;
-use panix\engine\CMS;
+use shopium\mod\telegram\models\query\MailingQuery;
 use core\components\ActiveRecord;
 use yii\behaviors\TimestampBehavior;
-use shopium\mod\telegram\models\query\MailingQuery;
-use yii\helpers\Url;
+
 
 /**
  * This is the model class for table "tbl_mailing".
@@ -96,7 +94,8 @@ class Mailing extends ActiveRecord
     {
         $path = Yii::getAlias('@uploads/tmp') . DIRECTORY_SEPARATOR;
 
-        $chatsQuery = Chat::find();
+        $chatsQuery = Chat::find()->select('id');
+        $adminsQuery = clone $chatsQuery;
         $where = [];
         if ($this->send_to_users)
             $where[] = 'private';
@@ -112,10 +111,14 @@ class Mailing extends ActiveRecord
             $chatsQuery->where(['in', 'type', $where]);
 
         if ($this->send_to_admins) {
-            $chatsQuery->andWhere(['id' => Yii::$app->user->getBotAdmins()]);
+            $adminsQuery->where(['id' => Yii::$app->user->getBotAdmins()]);
         }
 
         $chats = $chatsQuery->asArray()->all();
+        $admins = $adminsQuery->asArray()->all();
+
+        $ids = array_unique(array_merge($admins,$chats), SORT_REGULAR);
+
 
         /** @var Telegram $api */
         $api = Yii::$app->telegram;
@@ -123,7 +126,7 @@ class Mailing extends ActiveRecord
         $data = [];
         $senders = [];
 
-        if ($chats) {
+        if ($ids) {
 
             $text = 'text';
 
@@ -196,7 +199,7 @@ class Mailing extends ActiveRecord
                 }
             }
 
-            foreach ($chats as $row) {
+            foreach ($ids as $row) {
                 $data['chat_id'] = $row['id'];
                 if ($keyboards) {
                     $data['reply_markup'] = new InlineKeyboard([
