@@ -94,13 +94,16 @@ class MailingController extends AdminController
             'buttons',
             'send_to_groups', 'send_to_supergroups', 'send_to_channels', 'send_to_users', 'send_to_admins'
         ]);
+
+        $chats = Chat::find()->where(['type'=>'private'])->count();
+
         $dy_model->setAttributeLabels([
-            'send_to_groups' => Yii::t('telegram/Mailing', 'SEND_TO_GROUPS'),
-            'send_to_supergroups' => Yii::t('telegram/Mailing', 'SEND_TO_SUPERGROUPS'),
-            'send_to_channels' => Yii::t('telegram/Mailing', 'SEND_TO_CHANNELS'),
-            'send_to_users' => Yii::t('telegram/Mailing', 'SEND_TO_USERS'),
+            'send_to_groups' => Yii::t('telegram/Mailing', 'SEND_TO_GROUPS',[Chat::find()->where(['type'=>'group'])->count()]),
+            'send_to_supergroups' => Yii::t('telegram/Mailing', 'SEND_TO_SUPERGROUPS',[Chat::find()->where(['type'=>'supergroup'])->count()]),
+            'send_to_channels' => Yii::t('telegram/Mailing', 'SEND_TO_CHANNELS',[Chat::find()->where(['type'=>'channel'])->count()]),
+            'send_to_users' => Yii::t('telegram/Mailing', 'SEND_TO_USERS',[Chat::find()->where(['type'=>'private'])->count()]),
             'disable_notification' => Yii::t('telegram/Mailing', 'DISABLE_NOTIFICATION'),
-            'send_to_admins'=>Yii::t('telegram/Mailing', 'SEND_TO_ADMINS'),
+            'send_to_admins'=>Yii::t('telegram/Mailing', 'SEND_TO_ADMINS',[count(Yii::$app->user->getBotAdmins())]),
             'text' => Yii::t('telegram/Mailing', 'TEXT'),
             'media' => Yii::t('telegram/Mailing', 'MEDIA'),
             'title' => Yii::t('telegram/Mailing', 'TITLE'),
