@@ -95,15 +95,15 @@ class MailingController extends AdminController
             'send_to_groups', 'send_to_supergroups', 'send_to_channels', 'send_to_users', 'send_to_admins'
         ]);
 
-        $chats = Chat::find()->where(['type'=>'private'])->count();
+        $chats = Chat::find()->where(['type' => 'private'])->count();
 
         $dy_model->setAttributeLabels([
-            'send_to_groups' => Yii::t('telegram/Mailing', 'SEND_TO_GROUPS',[Chat::find()->where(['type'=>'group'])->count()]),
-            'send_to_supergroups' => Yii::t('telegram/Mailing', 'SEND_TO_SUPERGROUPS',[Chat::find()->where(['type'=>'supergroup'])->count()]),
-            'send_to_channels' => Yii::t('telegram/Mailing', 'SEND_TO_CHANNELS',[Chat::find()->where(['type'=>'channel'])->count()]),
-            'send_to_users' => Yii::t('telegram/Mailing', 'SEND_TO_USERS',[Chat::find()->where(['type'=>'private'])->count()]),
+            'send_to_groups' => Yii::t('telegram/Mailing', 'SEND_TO_GROUPS', [Chat::find()->where(['type' => 'group'])->count()]),
+            'send_to_supergroups' => Yii::t('telegram/Mailing', 'SEND_TO_SUPERGROUPS', [Chat::find()->where(['type' => 'supergroup'])->count()]),
+            'send_to_channels' => Yii::t('telegram/Mailing', 'SEND_TO_CHANNELS', [Chat::find()->where(['type' => 'channel'])->count()]),
+            'send_to_users' => Yii::t('telegram/Mailing', 'SEND_TO_USERS', [Chat::find()->where(['type' => 'private'])->count()]),
             'disable_notification' => Yii::t('telegram/Mailing', 'DISABLE_NOTIFICATION'),
-            'send_to_admins'=>Yii::t('telegram/Mailing', 'SEND_TO_ADMINS',[count(Yii::$app->user->getBotAdmins())]),
+            'send_to_admins' => Yii::t('telegram/Mailing', 'SEND_TO_ADMINS', [count(Yii::$app->user->getBotAdmins())]),
             'text' => Yii::t('telegram/Mailing', 'TEXT'),
             'media' => Yii::t('telegram/Mailing', 'MEDIA'),
             'title' => Yii::t('telegram/Mailing', 'TITLE'),
@@ -116,14 +116,13 @@ class MailingController extends AdminController
             'buttons' => Yii::t('telegram/Mailing', 'buttons'),
 
         ]);
-        $dy_model->addRule(['disable_notification', 'send_to_groups', 'send_to_supergroups', 'send_to_channels', 'send_to_users','send_to_admins'], 'boolean')
+        $dy_model->addRule(['disable_notification', 'send_to_groups', 'send_to_supergroups', 'send_to_channels', 'send_to_users', 'send_to_admins'], 'boolean')
             ->addRule('text', 'string');
-
 
 
         //$dy_model->addRule('buttons', 'each', ['rule' => ['string']]);
         $dy_model->addRule('thumb', 'default');
-      //  $dy_model->addRule('buttons', '\shopium\mod\telegram\components\ButtonsValidator');
+        //  $dy_model->addRule('buttons', '\shopium\mod\telegram\components\ButtonsValidator');
 
         $dy_model->addRule('buttons', function ($attribute, $params, $validator) use ($dy_model) {
 
@@ -141,16 +140,41 @@ class MailingController extends AdminController
             foreach ($items as $index => $item) {
 
                 $error = null;
-                // $validator = new yii\validators\RequiredValidator();
+                 $validator = new RequiredValidator();
+                 $validator->validate($item['callback'], $error);
 
-                // $validator->validate($item['label'], $error);
-                if(empty($item['callback'])){
-                $validator = new UrlValidator();
-                if (!$validator->validate($item['url'], $error)) {
-                    $key = $attribute . ($multiple ? '[' . $index . '][url]' : '');
-                    $dy_model->addError($key, $error);
+
+                $isUrl = preg_match('/http(s?)\:\/\//i', $item['callback']);
+
+                if($isUrl){
+                    $validator = new UrlValidator();
+                    if (!$validator->validate($item['callback'], $error)) {
+                        $key = $attribute . ($multiple ? '[' . $index . '][callback]' : '');
+                        $dy_model->addError($key, 'zzzzz');
+                    }
+                }else{
+
+                    if (!preg_match('/getList|checkOut|getCart|getHistory|getProduct|addCart/iu', $item['callback'], $match)) {
+                        $key = $attribute . ($multiple ? '[' . $index . '][callback]' : '');
+                        $dy_model->addError($key, 'Не доступный callback');
+                    }
+
                 }
-                }
+
+
+
+
+
+
+
+                /*if (empty($item['callback'])) {
+                    $validator = new UrlValidator();
+                    if (!$validator->validate($item['url'], $error)) {
+                        $key = $attribute . ($multiple ? '[' . $index . '][url]' : '');
+                        $dy_model->addError($key, $error);
+                    }
+                }*/
+
 
                 $validator2 = new RequiredValidator;
                 if (!$validator2->validate($item['label'], $error)) {
@@ -160,15 +184,14 @@ class MailingController extends AdminController
                 //$validator = new \yii\validators\NumberValidator();
 
                 //$validator->validate($item, $error);
-               // if (!empty($error)) {
-                  //  $key = $attribute . ($multiple ? '[' . $index . '][label]' : '');
-                    // CMS::dump($key);die;
-                  //  $dy_model->addError($key, $error);
-              //  }
+                // if (!empty($error)) {
+                //  $key = $attribute . ($multiple ? '[' . $index . '][label]' : '');
+                // CMS::dump($key);die;
+                //  $dy_model->addError($key, $error);
+                //  }
             }
 
         });
-
 
 
         if (in_array($model->type, ['sendPhoto', 'sendAudio', 'sendDocument'])) {
@@ -177,22 +200,27 @@ class MailingController extends AdminController
         }
 
         if ($model->type == 'sendDocument') {
-            $dy_model->addRule('media', 'file', ['skipOnEmpty' => true]);
+            $dy_model->addRule('media', 'file', ['maxSize' => 1024*1024*50,'skipOnEmpty' => true]);
+
+
+        } elseif ($model->type == 'sendMessage') {
+            $dy_model->addRule('text', 'required');
+
         } elseif ($model->type == 'sendPhoto') {
-            $dy_model->addRule('media', 'file', ['skipOnEmpty' => true, 'extensions' => ['png', 'jpg']]);
+            $dy_model->addRule('media', 'file', ['maxSize' => 1024*1024*10,'skipOnEmpty' => true, 'extensions' => ['png', 'jpg']]);
 
         } elseif ($model->type == 'sendAudio') {
-            $dy_model->addRule(['title','performer'], 'string');
+            $dy_model->addRule(['title', 'performer'], 'string');
             $dy_model->addRule('duration', 'integer');
 
-            $dy_model->addRule('thumb', 'file', ['skipOnEmpty' => true, 'extensions' => ['jpg'], 'maxSize' => 200 * 1024]);
+            $dy_model->addRule('thumb', 'file', ['maxSize' => 1024*1024*50,'skipOnEmpty' => true, 'extensions' => ['jpg'], 'maxSize' => 200 * 1024]);
             $dy_model->addRule('thumb', 'string');
         } elseif ($model->type == 'sendMediaGroup') {
             // $dy_model->addRule('media', 'string');
-            $dy_model->addRule('media', 'file', ['skipOnEmpty' => true, 'maxFiles' => 10, 'extensions' => ['png', 'jpg']]);
+            $dy_model->addRule('media', 'file', ['maxSize' => 1024*1024*50,'skipOnEmpty' => true, 'maxFiles' => 10, 'extensions' => ['png', 'jpg']]);
         } elseif ($model->type == 'sendVenue') {
-            $dy_model->addRule(['latitude','longitude','address','title'], 'string');
-            $dy_model->addRule(['latitude','longitude','address','title'], 'required');
+            $dy_model->addRule(['latitude', 'longitude', 'address', 'title'], 'string');
+            $dy_model->addRule(['latitude', 'longitude', 'address', 'title'], 'required');
         }
 
         if (in_array($model->type, ['sendDocument', 'sendPhoto', 'sendVideo'])) {
@@ -235,9 +263,10 @@ class MailingController extends AdminController
                 if ($model->type == 'sendMediaGroup') {
                     foreach ($media as $file) {
                         $path = Yii::getAlias('@uploads/tmp') . DIRECTORY_SEPARATOR . $file->getBaseName() . '.' . $file->extension;
-                        $file->saveAs($path);
+                        $file->saveAs($path); //comment for attach://
+                       // $model->media[] = $file; //for attach://
                         $model->media[] = basename($path);
-                        //  $dy_model->media[] = $path;
+                       //  $dy_model->media[] = $path;
                     }
                 } else {
 
@@ -260,16 +289,16 @@ class MailingController extends AdminController
                     $model->title = $dy_model->title;
                     $model->duration = $dy_model->duration;
                     $model->performer = $dy_model->performer;
-                }elseif($model->type == 'sendVenue'){
+                } elseif ($model->type == 'sendVenue') {
                     $model->title = $dy_model->title;
                     $model->address = $dy_model->address;
                     $model->longitude = $dy_model->longitude;
                     $model->latitude = $dy_model->latitude;
                 }
-                if($dy_model->buttons)
+                if ($dy_model->buttons)
                     $model->buttons = json_encode($dy_model->buttons);
 
-                if($dy_model->text)
+                if ($dy_model->text)
                     $model->text = $dy_model->text;
 
                 $model->disable_notification = $dy_model->disable_notification;
@@ -278,17 +307,20 @@ class MailingController extends AdminController
                 $model->send_to_channels = $dy_model->send_to_channels;
                 $model->send_to_users = $dy_model->send_to_users;
                 $model->send_to_admins = $dy_model->send_to_admins;
-                if($model->validate()){
+                if ($model->validate()) {
                     $model->save(false);
-                    Yii::$app->session->setFlash('success','Рассылка успешно отправлена.');
+                    Yii::$app->session->setFlash('success', 'Рассылка успешно отправлена.');
                     return $this->redirect(['index']);
-                }else{
-                    print_r($model->getErrors());die;
+                } else {
+                    print_r($model->getErrors());
+                    die;
                 }
 
                 //   return $this->redirectPage($isNew, $post);
-            }else{
-                print_r($dy_model->getErrors());die;
+            } else {
+               // echo 'ee';
+                //print_r($dy_model->getErrors());
+              //  die;
             }
         }
 

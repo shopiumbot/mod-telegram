@@ -21,7 +21,12 @@ $response =  Yii::$app->telegram->getUserProfilePhotos([
 
 /** @var \shopium\mod\telegram\components\Api $api */
 $api = Yii::$app->telegram->getApi();
+if (Yii::$app->session->hasFlash('telegram-error')) {
+    foreach (Yii::$app->session->getFlash('telegram-error') as $error) {
+        echo '<div class="alert alert-danger">' . $error . '</div>';
+    }
 
+}
 Pjax::begin([
     'dataProvider' => $dataProvider
 ]);
@@ -32,7 +37,7 @@ echo GridView::widget([
     'filterModel' => $searchModel,
     'columns' => [
         [
-           // 'header' => 'Type',
+            // 'header' => 'Type',
             'attribute' => 'type',
             'format' => 'raw',
             'filter' => Html::dropDownList(Html::getInputName(new MailingSearch, 'type'), (isset(Yii::$app->request->get('MailingSearch')['type'])) ? Yii::$app->request->get('MailingSearch')['type'] : null, \shopium\mod\telegram\models\Mailing::typeList(),
@@ -44,11 +49,11 @@ echo GridView::widget([
             'value' => function ($model) {
 
 
-                return str_replace('send','',$model->type);
+                return str_replace('send', '', $model->type);
             }
         ],
         [
-           // 'header' => 'text',
+            // 'header' => 'text',
             'attribute' => 'text',
             'format' => 'raw',
             'value' => function ($model) {

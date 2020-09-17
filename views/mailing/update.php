@@ -72,23 +72,10 @@ use panix\ext\multipleinput\MultipleInputColumn;
 
                             ],
                             [
-                                'name' => 'url',
-                                'title' => $model::t('URL'),
-                                'enableError' => true,
-                                'type' => MultipleInputColumn::TYPE_TEXT_INPUT,
-
-                                'options' => ['class' => 'text-center2'],
-                                'headerOptions' => [
-                                    'style' => 'width: 70px;',
-                                ],
-
-                            ],
-                            [
                                 'name' => 'callback',
                                 'title' => $model::t('Callback'),
-                                'enableError' => false,
+                                'enableError' => true,
                                 'type' => MultipleInputColumn::TYPE_TEXT_INPUT,
-
                                 'options' => ['class' => 'text-center2'],
                                 'headerOptions' => [
                                     'style' => 'width: 70px;',
@@ -104,6 +91,10 @@ use panix\ext\multipleinput\MultipleInputColumn;
         </div>
         <div class="card-footer text-center">
             <?= $model->submitButton(); ?>
+
+            <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#docsCallbackModal">
+                Документация Callback's
+            </button>
         </div>
 
         <?php ActiveForm::end(); ?>
@@ -146,19 +137,41 @@ use panix\ext\multipleinput\MultipleInputColumn;
 
 
         ?>
-        <table class="table table-striped">
-            <tr>
-                <th>Callback</th>
-                <th>Описание</th>
-            </tr>
-            <?php foreach($callbacks as $callback){ ?>
-                <tr>
-                    <td><?= $callback['callback']; ?></td>
-                    <td><?= $callback['text']; ?></td>
-                </tr>
-            <?php } ?>
 
-        </table>
+
+
+        <!-- Modal -->
+        <div class="modal fade" id="docsCallbackModal" tabindex="-1" role="dialog" aria-labelledby="docsCallbackModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document" style="max-width: 800px">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="docsCallbackModalLabel">Callback's</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert alert-info">Укажите в поле Callback из списка или URL</div>
+                        <table class="table table-striped">
+                            <tr>
+                                <th>Callback</th>
+                                <th>Описание</th>
+                            </tr>
+                            <?php foreach($callbacks as $callback){ ?>
+                                <tr>
+                                    <td><?= $callback['callback']; ?></td>
+                                    <td><?= $callback['text']; ?></td>
+                                </tr>
+                            <?php } ?>
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
         <?php
     }
     ?>

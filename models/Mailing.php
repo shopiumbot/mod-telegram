@@ -2,6 +2,7 @@
 
 namespace shopium\mod\telegram\models;
 
+use panix\engine\CMS;
 use Yii;
 use Longman\TelegramBot\Entities\InlineKeyboard;
 use Longman\TelegramBot\Entities\InlineKeyboardButton;
@@ -97,6 +98,8 @@ class Mailing extends ActiveRecord
         $chatsQuery = Chat::find()->select('id');
         $adminsQuery = clone $chatsQuery;
         $where = [];
+        $chats=[];
+        $admins=[];
         if ($this->send_to_users)
             $where[] = 'private';
         if ($this->send_to_groups)
@@ -107,15 +110,15 @@ class Mailing extends ActiveRecord
             $where[] = 'channel';
 
 
-        if ($where)
+        if ($where){
             $chatsQuery->where(['in', 'type', $where]);
-
+            $chats = $chatsQuery->asArray()->all();
+        }
         if ($this->send_to_admins) {
             $adminsQuery->where(['id' => Yii::$app->user->getBotAdmins()]);
+            $admins = $adminsQuery->asArray()->all();
         }
 
-        $chats = $chatsQuery->asArray()->all();
-        $admins = $adminsQuery->asArray()->all();
 
         $ids = array_unique(array_merge($admins,$chats), SORT_REGULAR);
 
@@ -155,17 +158,29 @@ class Mailing extends ActiveRecord
                 }
 
             } elseif ($this->type == 'sendMediaGroup') {
-                $media = [];
-                if (is_array($this->media)) {
+                $text = 'caption';
+
+              //  if (is_array($this->media)) {
+                    $media = [];
+                    if($this->media){
                     foreach ($this->media as $key => $file) {
+                        $item=[];
                         //$data['media_file_'.$i] = [];
                         if (file_exists($path . $file)) {
                             //$data['photo_'.$i] = Request::encodeFile($file);
-                            $media[] = new InputMediaPhoto(['media' => 'https://' . Yii::$app->request->getHostName() . '/uploads/tmp/' . $file, 'caption' => $this->text]);
+                            //$item['media'] = 'attach://' . $file->tempName;
+                            $item['media'] = 'https://' . Yii::$app->request->getHostName() . '/uploads/tmp/' . $file;
+                            if($this->text)
+                                $item['caption'] = $this->text;
+
+                            $media[] = new InputMediaPhoto($item);
                         }
                     }
                 }
+
                 $data['media'] = $media;
+
+                  //  CMS::dump($data);die;
             } elseif ($this->type == 'sendVenue') {
                 $data['latitude'] = $this->latitude;
                 $data['longitude'] = $this->longitude;
@@ -187,17 +202,19 @@ class Mailing extends ActiveRecord
                 foreach ($buttons as $btn) {
 
                     $btn_data['text'] = $btn['label'];
-                    if ($btn['callback']) {
+                    $isUrl = preg_match('/http(s?)\:\/\//i', $btn['callback']);
+
+                    if($isUrl){
+                        $btn_data['url'] = $btn['callback'];
+                    }else{
                         $btn_data['callback_data'] = $btn['callback'];
-                    }
-                    if (!empty($btn['url'])) {
-                        $btn_data['url'] = $btn['url'];
                     }
                     $keyboards[] = [
                         new InlineKeyboardButton($btn_data)
                     ];
                 }
             }
+
 
             foreach ($ids as $row) {
                 $data['chat_id'] = $row['id'];
@@ -207,6 +224,16 @@ class Mailing extends ActiveRecord
                     ]);
                 }
                 $results[] = Request::send($this->type, $data);
+            }
+        }
+
+
+        if($results){
+            foreach ($results as $res){
+                /** @var \Longman\TelegramBot\Entities\ServerResponse $res */
+                if(!$res->getOk()){
+                    Yii::$app->session->addFlash('telegram-error', $res->getDescription());
+                }
             }
         }
 

@@ -1,5 +1,5 @@
 <?php
-
+use panix\engine\CMS;
 
 /**
  * @var \shopium\mod\telegram\models\Mailing $model
@@ -8,7 +8,7 @@
  */
 
 ?>
-<?= $form->field($dy_model, 'media')->fileInput() ?>
+<?= $form->field($dy_model, 'media')->fileInput()->hint('max file size '.CMS::fileSize(1024*1024*50)) ?>
 <?= $form->field($dy_model, 'thumb')->fileInput() ?>
 <?= $form->field($dy_model, 'title') ?>
 <?= $form->field($dy_model, 'duration') ?>
