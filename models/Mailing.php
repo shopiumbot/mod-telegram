@@ -2,6 +2,7 @@
 
 namespace shopium\mod\telegram\models;
 
+use Longman\TelegramBot\Entities\PollOption;
 use panix\engine\CMS;
 use Yii;
 use Longman\TelegramBot\Entities\InlineKeyboard;
@@ -27,9 +28,17 @@ use yii\behaviors\TimestampBehavior;
  * @property boolean $send_to_admins
  * @property string $type
  * @property string $text
- * @property string performer
- * @property integer duration
- * @property string title
+ * @property string $performer
+ * @property integer $duration
+ * @property string $title
+ * @property string $poll_options
+ * @property string $buttons
+ * @property string $first_name
+ * @property string $last_name
+ * @property string $phone_number
+ * @property string $latitude
+ * @property string $longitude
+ * @property string $address
  */
 class Mailing extends ActiveRecord
 {
@@ -57,7 +66,7 @@ class Mailing extends ActiveRecord
     {
         return [
             //[['text'], 'required'],
-            [['text', 'type', 'media', 'thumb'], 'safe'],
+            [['text', 'type', 'media', 'thumb', 'phone_number', 'first_name', 'last_name'], 'safe'],
             [['disable_notification', 'send_to_groups', 'send_to_supergroups', 'send_to_channels', 'send_to_users', 'send_to_admins'], 'boolean'],
             [['text'], 'string', 'max' => 4100],
         ];
@@ -86,7 +95,9 @@ class Mailing extends ActiveRecord
             'sendVideo' => self::t('TYPE_SEND_VIDEO'),
             'sendMediaGroup' => self::t('TYPE_SEND_GALLERY'),
             //'sendVoice' => 'Голосовае',
-            'sendVenue' => self::t('TYPE_SEND_VENUE')
+            'sendContact' => self::t('TYPE_SEND_CONTACT'),
+            'sendVenue' => self::t('TYPE_SEND_VENUE'),
+            'sendPoll' => self::t('TYPE_SEND_POLL'),
         ];
     }
 
@@ -98,8 +109,8 @@ class Mailing extends ActiveRecord
         $chatsQuery = Chat::find()->select('id');
         $adminsQuery = clone $chatsQuery;
         $where = [];
-        $chats=[];
-        $admins=[];
+        $chats = [];
+        $admins = [];
         if ($this->send_to_users)
             $where[] = 'private';
         if ($this->send_to_groups)
@@ -110,7 +121,7 @@ class Mailing extends ActiveRecord
             $where[] = 'channel';
 
 
-        if ($where){
+        if ($where) {
             $chatsQuery->where(['in', 'type', $where]);
             $chats = $chatsQuery->asArray()->all();
         }
@@ -120,7 +131,7 @@ class Mailing extends ActiveRecord
         }
 
 
-        $ids = array_unique(array_merge($admins,$chats), SORT_REGULAR);
+        $ids = array_unique(array_merge($admins, $chats), SORT_REGULAR);
 
 
         /** @var Telegram $api */
@@ -139,6 +150,16 @@ class Mailing extends ActiveRecord
             } elseif ($this->type == 'sendDocument') {
                 $text = 'caption';
                 $data['document'] = $path . $this->media[0];
+            } elseif ($this->type == 'sendVideo') {
+                $text = 'caption';
+                $data['video'] = $path . $this->media[0];
+            } elseif ($this->type == 'sendContact') {
+                if ($this->phone_number)
+                    $data['phone_number'] = $this->phone_number;
+                if ($this->last_name)
+                    $data['last_name'] = $this->last_name;
+                if ($this->first_name)
+                    $data['first_name'] = $this->first_name;
             } elseif ($this->type == 'sendAudio') {
                 $text = 'caption';
                 $data['audio'] = $path . $this->media[0];
@@ -160,17 +181,17 @@ class Mailing extends ActiveRecord
             } elseif ($this->type == 'sendMediaGroup') {
                 $text = 'caption';
 
-              //  if (is_array($this->media)) {
-                    $media = [];
-                    if($this->media){
+                //  if (is_array($this->media)) {
+                $media = [];
+                if ($this->media) {
                     foreach ($this->media as $key => $file) {
-                        $item=[];
+                        $item = [];
                         //$data['media_file_'.$i] = [];
                         if (file_exists($path . $file)) {
                             //$data['photo_'.$i] = Request::encodeFile($file);
                             //$item['media'] = 'attach://' . $file->tempName;
                             $item['media'] = 'https://' . Yii::$app->request->getHostName() . '/uploads/tmp/' . $file;
-                            if($this->text)
+                            if ($this->text)
                                 $item['caption'] = $this->text;
 
                             $media[] = new InputMediaPhoto($item);
@@ -180,7 +201,7 @@ class Mailing extends ActiveRecord
 
                 $data['media'] = $media;
 
-                  //  CMS::dump($data);die;
+                //  CMS::dump($data);die;
             } elseif ($this->type == 'sendVenue') {
                 $data['latitude'] = $this->latitude;
                 $data['longitude'] = $this->longitude;
@@ -188,8 +209,23 @@ class Mailing extends ActiveRecord
                     $data['address'] = $this->address;
                 if ($this->title)
                     $data['title'] = $this->title;
+
+
+            } elseif ($this->type == 'sendPoll') {
+                $options = json_decode($this->poll_options,true);
+
+                $data['options'] = $options['option'];
+                $data['is_anonymous'] = false;
+                $data['allows_multiple_answers'] = false;
+                $data['question'] = $this->poll_question;
+
+
             }
-            if($this->text)
+
+            //'options' => json_encode(['👍 Классно','👌 Нормально','👎 Не очень'])
+
+
+            if ($this->text)
                 $data[$text] = $this->text;
 
             $data['disable_notification'] = !$this->disable_notification;
@@ -200,13 +236,11 @@ class Mailing extends ActiveRecord
 
             if ($buttons) {
                 foreach ($buttons as $btn) {
-
                     $btn_data['text'] = $btn['label'];
                     $isUrl = preg_match('/http(s?)\:\/\//i', $btn['callback']);
-
-                    if($isUrl){
+                    if ($isUrl) {
                         $btn_data['url'] = $btn['callback'];
-                    }else{
+                    } else {
                         $btn_data['callback_data'] = $btn['callback'];
                     }
                     $keyboards[] = [
@@ -228,10 +262,10 @@ class Mailing extends ActiveRecord
         }
 
 
-        if($results){
-            foreach ($results as $res){
+        if ($results) {
+            foreach ($results as $res) {
                 /** @var \Longman\TelegramBot\Entities\ServerResponse $res */
-                if(!$res->getOk()){
+                if (!$res->getOk()) {
                     Yii::$app->session->addFlash('telegram-error', $res->getDescription());
                 }
             }
@@ -249,7 +283,8 @@ class Mailing extends ActiveRecord
                 unlink($path . $this->thumb);
             }
         }
-
+      //  CMS::dump($results);
+      //  die;
 
         parent::afterSave($insert, $changedAttributes); // TODO: Change the autogenerated stub
     }

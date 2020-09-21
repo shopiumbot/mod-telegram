@@ -30,8 +30,20 @@ class m000023_000000_mailing extends Migration
             'latitude' => $this->string(255)->null(),
             'longitude' => $this->string(255)->null(),
             'address' => $this->text()->null(),
+            'width' => $this->integer()->null(),
+            'height' => $this->integer()->null(),
+            'phone_number' => $this->string(50)->null(),
+            'first_name' => $this->string(50)->null(),
+            'last_name' => $this->string(50)->null(),
             'created_at' => $this->integer(),
             'buttons' => $this->text()->null(),
+            'poll_options' => $this->text()->null(),
+            'poll_question' => $this->string(255)->null(),
+
+            'poll_is_anonymous' => $this->tinyInteger(1)->defaultValue(0),
+            'poll_type' => $this->string(10)->null(),
+            'poll_allows_multiple_answers' => $this->tinyInteger(1)->defaultValue(1),
+
         ], $tableOptions);
 
 

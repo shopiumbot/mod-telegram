@@ -92,10 +92,16 @@ class MailingController extends AdminController
             'longitude',
             'latitude',
             'buttons',
+            'phone_number',
+            'first_name',
+            'last_name',
+            'poll_options',
+            'poll_question',
+            'poll_is_anonymous',
+            'poll_type',
+            'poll_allows_multiple_answers',
             'send_to_groups', 'send_to_supergroups', 'send_to_channels', 'send_to_users', 'send_to_admins'
         ]);
-
-        $chats = Chat::find()->where(['type' => 'private'])->count();
 
         $dy_model->setAttributeLabels([
             'send_to_groups' => Yii::t('telegram/Mailing', 'SEND_TO_GROUPS', [Chat::find()->where(['type' => 'group'])->count()]),
@@ -114,6 +120,12 @@ class MailingController extends AdminController
             'latitude' => Yii::t('telegram/Mailing', 'LATITUDE'),
             'address' => Yii::t('telegram/Mailing', 'ADDRESS'),
             'buttons' => Yii::t('telegram/Mailing', 'buttons'),
+
+            'phone_number' => Yii::t('telegram/Mailing', 'phone_number'),
+            'first_name' => Yii::t('telegram/Mailing', 'first_name'),
+            'last_name' => Yii::t('telegram/Mailing', 'last_name'),
+            'poll_options' => Yii::t('telegram/Mailing', 'poll_options'),
+            'poll_question' => Yii::t('telegram/Mailing', 'question'),
 
         ]);
         $dy_model->addRule(['disable_notification', 'send_to_groups', 'send_to_supergroups', 'send_to_channels', 'send_to_users', 'send_to_admins'], 'boolean')
@@ -140,19 +152,19 @@ class MailingController extends AdminController
             foreach ($items as $index => $item) {
 
                 $error = null;
-                 $validator = new RequiredValidator();
-                 $validator->validate($item['callback'], $error);
+                $validator = new RequiredValidator();
+                $validator->validate($item['callback'], $error);
 
 
                 $isUrl = preg_match('/http(s?)\:\/\//i', $item['callback']);
 
-                if($isUrl){
+                if ($isUrl) {
                     $validator = new UrlValidator();
                     if (!$validator->validate($item['callback'], $error)) {
                         $key = $attribute . ($multiple ? '[' . $index . '][callback]' : '');
                         $dy_model->addError($key, 'zzzzz');
                     }
-                }else{
+                } else {
 
                     if (!preg_match('/getList|checkOut|getCart|getHistory|getProduct|addCart/iu', $item['callback'], $match)) {
                         $key = $attribute . ($multiple ? '[' . $index . '][callback]' : '');
@@ -161,63 +173,77 @@ class MailingController extends AdminController
 
                 }
 
-
-
-
-
-
-
-                /*if (empty($item['callback'])) {
-                    $validator = new UrlValidator();
-                    if (!$validator->validate($item['url'], $error)) {
-                        $key = $attribute . ($multiple ? '[' . $index . '][url]' : '');
-                        $dy_model->addError($key, $error);
-                    }
-                }*/
-
-
                 $validator2 = new RequiredValidator;
                 if (!$validator2->validate($item['label'], $error)) {
                     $key = $attribute . ($multiple ? '[' . $index . '][label]' : '');
                     $dy_model->addError($key, $error);
                 }
-                //$validator = new \yii\validators\NumberValidator();
-
-                //$validator->validate($item, $error);
-                // if (!empty($error)) {
-                //  $key = $attribute . ($multiple ? '[' . $index . '][label]' : '');
-                // CMS::dump($key);die;
-                //  $dy_model->addError($key, $error);
-                //  }
             }
 
         });
 
 
-        if (in_array($model->type, ['sendPhoto', 'sendAudio', 'sendDocument'])) {
+
+        if (in_array($model->type, ['sendPhoto', 'sendAudio', 'sendDocument', 'sendVideo'])) {
             $dy_model->addRule('media', 'string');
             $dy_model->addRule('media', 'required');
         }
 
         if ($model->type == 'sendDocument') {
-            $dy_model->addRule('media', 'file', ['maxSize' => 1024*1024*50,'skipOnEmpty' => true]);
-
-
+            $dy_model->addRule('media', 'file', ['maxSize' => 1024 * 1024 * 50, 'skipOnEmpty' => true]);
         } elseif ($model->type == 'sendMessage') {
             $dy_model->addRule('text', 'required');
+        } elseif ($model->type == 'sendPoll') {
+            $dy_model->addRule(['poll_question','poll_options'], 'required');
+            $dy_model->addRule(['poll_is_anonymous','poll_allows_multiple_answers'], 'boolean');
+
+
+            $dy_model->addRule('poll_options', function ($attribute, $params, $validator) use ($dy_model) {
+
+
+                $items = $dy_model->$attribute;
+                if (!is_array($items)) {
+                    $items = [];
+                }
+
+                $multiple = $items;
+                if (!is_array($items)) {
+                    $multiple = false;
+                    $items = (array)$items;
+                }
+
+                foreach ($items['option'] as $index => $item) {
+
+                    $error = null;
+                    /*$validator = new RequiredValidator();
+                    $validator->validate($item['callback'], $error);*/
+
+                    $validator2 = new RequiredValidator;
+                    if (!$validator2->validate($item, $error)) {
+                        $key = $attribute . ($multiple ? '[' . $index . ']' : '');
+                        $dy_model->addError($key, $error);
+                    }
+                }
+
+            });
+
+
 
         } elseif ($model->type == 'sendPhoto') {
-            $dy_model->addRule('media', 'file', ['maxSize' => 1024*1024*10,'skipOnEmpty' => true, 'extensions' => ['png', 'jpg']]);
-
+            $dy_model->addRule('media', 'file', ['maxSize' => 1024 * 1024 * 10, 'skipOnEmpty' => true, 'extensions' => ['png', 'jpg']]);
+        } elseif ($model->type == 'sendVideo') {
+            $dy_model->addRule('media', 'file', ['maxSize' => 1024 * 1024 * 50, 'skipOnEmpty' => true, 'extensions' => ['mp4', 'avi']]);
+        } elseif ($model->type == 'sendContact') {
+            $dy_model->addRule(['phone_number', 'first_name'], 'required');
+            $dy_model->addRule(['first_name', 'last_name', 'phone_number'], 'string', ['max' => 50]);
         } elseif ($model->type == 'sendAudio') {
             $dy_model->addRule(['title', 'performer'], 'string');
             $dy_model->addRule('duration', 'integer');
-
-            $dy_model->addRule('thumb', 'file', ['maxSize' => 1024*1024*50,'skipOnEmpty' => true, 'extensions' => ['jpg'], 'maxSize' => 200 * 1024]);
+            $dy_model->addRule('thumb', 'file', ['maxSize' => 1024 * 1024 * 50, 'skipOnEmpty' => true, 'extensions' => ['jpg']]);
             $dy_model->addRule('thumb', 'string');
         } elseif ($model->type == 'sendMediaGroup') {
             // $dy_model->addRule('media', 'string');
-            $dy_model->addRule('media', 'file', ['maxSize' => 1024*1024*50,'skipOnEmpty' => true, 'maxFiles' => 10, 'extensions' => ['png', 'jpg']]);
+            $dy_model->addRule('media', 'file', ['maxSize' => 1024 * 1024 * 50, 'skipOnEmpty' => true, 'maxFiles' => 10, 'extensions' => ['png', 'jpg']]);
         } elseif ($model->type == 'sendVenue') {
             $dy_model->addRule(['latitude', 'longitude', 'address', 'title'], 'string');
             $dy_model->addRule(['latitude', 'longitude', 'address', 'title'], 'required');
@@ -229,8 +255,12 @@ class MailingController extends AdminController
             $view = 'forms/_sendAudio';
         } elseif ($model->type == 'sendMediaGroup') {
             $view = 'forms/_sendMediaGroup';
+        } elseif ($model->type == 'sendContact') {
+            $view = 'forms/_sendContact';
         } elseif ($model->type == 'sendVenue') {
             $view = 'forms/_sendVenue';
+        } elseif ($model->type == 'sendPoll') {
+            $view = 'forms/_sendPoll';
         } else {
             $view = 'forms/_sendMessage';
         }
@@ -242,6 +272,7 @@ class MailingController extends AdminController
         $post = Yii::$app->request->post();
 
         if ($dy_model->load($post)) {
+
 
             // foreach ($dy_model->media as $file) {
             //     $media = UploadedFile::getInstance($dy_model, 'media');
@@ -264,9 +295,9 @@ class MailingController extends AdminController
                     foreach ($media as $file) {
                         $path = Yii::getAlias('@uploads/tmp') . DIRECTORY_SEPARATOR . $file->getBaseName() . '.' . $file->extension;
                         $file->saveAs($path); //comment for attach://
-                       // $model->media[] = $file; //for attach://
+                        // $model->media[] = $file; //for attach://
                         $model->media[] = basename($path);
-                       //  $dy_model->media[] = $path;
+                        //  $dy_model->media[] = $path;
                     }
                 } else {
 
@@ -294,6 +325,17 @@ class MailingController extends AdminController
                     $model->address = $dy_model->address;
                     $model->longitude = $dy_model->longitude;
                     $model->latitude = $dy_model->latitude;
+                } elseif ($model->type == 'sendContact') {
+                    $model->first_name = $dy_model->first_name;
+                    $model->last_name = $dy_model->last_name;
+                    $model->phone_number = $dy_model->phone_number;
+                } elseif ($model->type == 'sendPoll') {
+                    $model->poll_question = $dy_model->poll_question;
+
+                    $model->poll_options = json_encode($dy_model->poll_options);
+
+                    if ($dy_model->poll_is_anonymous)
+                        $model->poll_is_anonymous = $dy_model->poll_is_anonymous;
                 }
                 if ($dy_model->buttons)
                     $model->buttons = json_encode($dy_model->buttons);
@@ -318,9 +360,9 @@ class MailingController extends AdminController
 
                 //   return $this->redirectPage($isNew, $post);
             } else {
-               // echo 'ee';
-                //print_r($dy_model->getErrors());
-              //  die;
+                // echo 'ee';
+               // print_r($dy_model->getErrors());
+               //   die;
             }
         }
 

@@ -6,19 +6,6 @@ use panix\engine\Html;
 use panix\engine\CMS;
 use shopium\mod\telegram\models\search\MailingSearch;
 
-/*$limit    = 10;
-$offset   = null;
-$response =  Yii::$app->telegram->getUserProfilePhotos([
-    'user_id' => 812367093,
-    'limit'   => $limit,
-    'offset'  => $offset,
-]);*/
-
-
-//\panix\engine\CMS::dump($response->result->photos);
-
-//\panix\engine\CMS::dump(Yii::$app->telegram->getFile(['file_id'=>$response->result->photos[0][0]->file_id]));
-
 /** @var \shopium\mod\telegram\components\Api $api */
 $api = Yii::$app->telegram->getApi();
 if (Yii::$app->session->hasFlash('telegram-error')) {
@@ -27,6 +14,56 @@ if (Yii::$app->session->hasFlash('telegram-error')) {
     }
 
 }
+
+
+$Viber = new \shopium\mod\telegram\models\ViberTest();
+$s = $Viber->message_post(
+    '380682937379',
+    [
+        'name' => 'Admin', // Имя отправителя. Максимум символов 28.
+        'avatar' => 'http://avatar.example.com' // Ссылка на аватарку. Максимальный размер 100кб.
+    ],
+    'Test'
+);
+CMS::dump($s);die;
+$dataPoll = [
+    'chat_id' => 812367093,
+    'question' => 'Test Poll',
+    'is_anonymous' => false,
+    'type' => 'regular', //quiz, regular
+    'allows_multiple_answers' => false,
+    //'options'=>['test','test2']
+    'options' => json_encode([
+        '123213','213213213213123'
+    ])
+];
+
+
+
+/*  $results = Request::sendToActiveChats(
+      'sendMessage', // Callback function to execute (see Request.php methods)
+      ['text' => $chat->getFirstName().' '.$chat->getLastName().' @'.$chat->getUsername().'! go go go!'], // Param to evaluate the request
+      [
+          'groups'      => true,
+          'supergroups' => true,
+          'channels'    => false,
+          'users'       => true,
+      ]
+  );*/
+// echo $dataPoll['options'].PHP_EOL;
+
+$pollRequest = \Longman\TelegramBot\Request::sendPoll($dataPoll);
+
+if($pollRequest->getOk()){
+  CMS::dump($pollRequest->getResult()->getPoll());die;
+
+
+
+    $db = \Longman\TelegramBot\DB::insertPollRequest($pollRequest->getResult()->getPoll());
+    CMS::dump($db);die;
+}
+
+
 Pjax::begin([
     'dataProvider' => $dataProvider
 ]);
@@ -47,9 +84,7 @@ echo GridView::widget([
                 ]
             ),
             'value' => function ($model) {
-
-
-                return str_replace('send', '', $model->type);
+                return $model::typeList()[$model->type];
             }
         ],
         [
@@ -57,8 +92,6 @@ echo GridView::widget([
             'attribute' => 'text',
             'format' => 'raw',
             'value' => function ($model) {
-
-
                 return $model->text;
             }
         ],
