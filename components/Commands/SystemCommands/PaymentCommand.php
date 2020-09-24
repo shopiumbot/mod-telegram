@@ -6,7 +6,9 @@ use Longman\TelegramBot\Entities\InlineKeyboard;
 use Longman\TelegramBot\Entities\Payments\LabeledPrice;
 use Longman\TelegramBot\Request;
 use panix\engine\CMS;
+use shopium\mod\cart\components\payment\BasePaymentSystem;
 use shopium\mod\cart\models\Order;
+use shopium\mod\cart\models\Payment;
 use shopium\mod\telegram\components\SystemCommand;
 use Yii;
 
@@ -47,7 +49,7 @@ class PaymentCommand extends SystemCommand
 
         $update = $this->getUpdate();
 
-        $callback_query = $update->getCallbackQuery();
+        /*$callback_query = $update->getCallbackQuery();
         $message = $callback_query->getMessage();
         $chat_id = $message->getChat()->getId();
 
@@ -58,42 +60,84 @@ class PaymentCommand extends SystemCommand
 
 
         $callback_query_id = $callback_query->getId();
-        $callback_data = $callback_query->getData();
+        $callback_data = $callback_query->getData();*/
+
+
+        $data = [];
+        if ($update->getCallbackQuery()) {
+            $callbackQuery = $update->getCallbackQuery();
+            $message = $callbackQuery->getMessage();
+            $chat = $message->getChat();
+            $user = $callbackQuery->getFrom();
+        } else {
+            $message = $this->getMessage();
+            $chat = $message->getChat();
+            $user = $message->getFrom();
+        }
+        $chat_id = $chat->getId();
+        $user_id = $user->getId();
+
 
         $config = Yii::$app->settings->get('app');
+
+        $data['chat_id'] = $chat_id;
+
+
         if ($this->order_id) {
             $order = Order::findOne($this->order_id);
             if ($order) {
-                if ($this->system) {
-                    $data['currency'] = 'UAH'; //default currency
-                    if ($this->system == 'liqpay') {
-                        if (isset($config->liqpay_provider) && !empty($config->liqpay_provider)) {
-                            $data['provider_token'] = $config->liqpay_provider;
+                $prices = [];
+                $data['title'] = 'Номер заказа №' . CMS::idToNumber($order->id);
+                if ($order->paymentMethod->system) {
+                    $settings=false;
+                    $model = Payment::findOne($order->payment_id);
+                    $system = $model->getPaymentSystemClass();
+                    if ($system instanceof BasePaymentSystem) {
+                        $settings = $system->getSettings($order->payment_id);
+                    }
+                    $total_price = $order->total_price;
 
-                            //2,75%
-                        }
-                    } elseif ($this->system == 'yandexkassa') {
-                        if (isset($config->yandexkassa_provider) && !empty($config->yandexkassa_provider)) {
-                            $data['provider_token'] = $config->yandexkassa_provider;
-                            $data['currency'] = 'RUB';
+                    if ($order->paymentMethod->system == 'liqpay') {
+                        $data['currency'] = 'UAH';
+                        $data['description'] = 'Оплата заказа';
+                        $data['payload'] = 'order-' . $order->id;
+                        $data['start_parameter'] = CMS::gen(10);
+                        $data['provider_token'] = $settings->key;
 
-                            //2,8%
+                        //$params['amount'] = $price + ($price / 100 * 2.75);
+
+                        if($settings->commission_check){
+                            $total_price = $order->total_price + ($order->total_price / 100 * 2.75);
+
+                            $prices[] = new LabeledPrice([
+                                'label' => 'Комиссия (2.75%)',
+                                'amount' => number_format($order->total_price - ($order->total_price / 100 * 2.75), 2, '', '')
+                            ]);
                         }
+
                     }
 
 
-                    $prices = [];
+
+
+
+
+
                     foreach ($order->products as $product) {
-                        $prices[] = new LabeledPrice(['label' => $product->name . ' (' . $product->quantity . ' шт.)', 'amount' => $product->price * $product->quantity]);
-                        //$prices[] = new LabeledPrice(['label' => $product->name . ' (' . $product->quantity . ' шт.)', 'amount' => 100]);
+
+                        $prices[] = new LabeledPrice([
+                            'label' => $product->name . ' (' . $product->quantity . ' шт.)',
+                            'amount' => number_format($product->price * $product->quantity, 2, '', '')
+                        ]);
                     }
                     $inline_keyboard = new InlineKeyboard([
-                        ['text' => 'Оплатить ' . Yii::$app->currency->number_format($order->total_price) . ' '.$data['currency'], 'pay' => true],
+                        [
+                            'text' => 'Оплатить ' . Yii::$app->currency->number_format($total_price) . ' ' . $data['currency'],
+                            'pay' => true
+                        ],
                     ]);
 
 
-                    $data['chat_id'] = $chat_id;
-                    $data['title'] = 'Номер заказа №' . CMS::idToNumber($order->id);
                     $data['description'] = 'Оплата заказа';
                     $data['payload'] = 'order-' . $order->id;
                     $data['start_parameter'] = CMS::gen(10);
