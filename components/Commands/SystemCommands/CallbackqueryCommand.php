@@ -307,46 +307,56 @@ class CallbackqueryCommand extends SystemCommand
             $product_id = $params['product_id'];
 
 
-            $product = Product::findOne($product_id);
+            $product = Product::findOne($product_id+2222);
+            if ($product) {
+                $order = OrderTemp::findOne($user_id);
+                $quantity = 1;
+                if (!$order) {
+                    $order = new OrderTemp;
+                    $order->id = $user_id;
+                    //$order->firstname = $callback_query->getFrom()->getFirstName();
+                    //$order->lastname = $callback_query->getFrom()->getLastName();
+                    $order->save(false);
+                }
 
-            $order = OrderTemp::findOne($user_id);
-            $quantity = 1;
-            if (!$order) {
-                $order = new OrderTemp;
-                $order->id = $user_id;
-                //$order->firstname = $callback_query->getFrom()->getFirstName();
-                //$order->lastname = $callback_query->getFrom()->getLastName();
-                $order->save(false);
-            }
+
+                $add = $order->addProduct($product, $quantity);
+                if ($add) {
+
+                    $data = [
+                        'callback_query_id' => $callback_query_id,
+                        'text' => "✅ Товар {$product->name} успешно добавлен в корзину",
+                        'show_alert' => false,
+                        'cache_time' => 0,
+                    ];
+                    $notify = Request::answerCallbackQuery($data);
 
 
-            $add = $order->addProduct($product, $quantity);
-            if ($add) {
+                    return $this->telegram
+                        ->setCommandConfig('productitem', [
+                            'product' => $product,
+                            'photo_index' => (isset($params['photo_index'])) ? $params['photo_index'] : 0,
+                            // 'order_id' => $order->id,
+                            //'quantity' => $quantity
+                        ])
+                        ->executeCommand('productitem');
+
+                    /*$this->telegram->setCommandConfig('catalogproductquantity', [
+                        'product_id' => $product->id,
+                        'order_id' => $order->id,
+                        'quantity' => $quantity
+                    ]);
+                    return $this->telegram->executeCommand('catalogproductquantity');*/
+                }
+            } else {
 
                 $data = [
                     'callback_query_id' => $callback_query_id,
-                    'text' => "✅ Товар {$product->name} успешно добавлен в корзину",
+                    'text' => "🙁 На данный момент товара не существует",
                     'show_alert' => false,
                     'cache_time' => 0,
                 ];
-                $notify = Request::answerCallbackQuery($data);
-
-
-                return $this->telegram
-                    ->setCommandConfig('productitem', [
-                        'product' => $product,
-                        'photo_index' => (isset($params['photo_index'])) ? $params['photo_index'] : 0,
-                        // 'order_id' => $order->id,
-                        //'quantity' => $quantity
-                    ])
-                    ->executeCommand('productitem');
-
-                /*$this->telegram->setCommandConfig('catalogproductquantity', [
-                    'product_id' => $product->id,
-                    'order_id' => $order->id,
-                    'quantity' => $quantity
-                ]);
-                return $this->telegram->executeCommand('catalogproductquantity');*/
+                return Request::answerCallbackQuery($data);
             }
             return Request::emptyResponse();
 
