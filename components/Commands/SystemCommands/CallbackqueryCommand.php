@@ -307,7 +307,7 @@ class CallbackqueryCommand extends SystemCommand
             $product_id = $params['product_id'];
 
 
-            $product = Product::findOne($product_id+2222);
+            $product = Product::findOne($product_id);
             if ($product) {
                 $order = OrderTemp::findOne($user_id);
                 $quantity = 1;
