@@ -1,9 +1,9 @@
 {% if product.discount.exist %}🔥🔥🔥{% endif %}<strong>{{ product.name }}</strong>
 {{ product.price }} {{ currency.symbol }}
 
-{% if product.discount.exist %}🎁 Скидка: -{{ product.discount.sum }}{% endif %}
-{% if not product.availability %}Наличие: Под заказ{% endif %}
-{% if product.brand %}<strong>Производитель:</strong> {{ product.brand }}{% endif %}
+{%- if product.discount.exist -%}🎁 Скидка: -{{ product.discount.sum }}{%- endif -%}
+{%- if not product.availability -%}Наличие: Под заказ{%- endif -%}
+{%- if product.brand -%}<strong>Производитель:</strong> {{ product.brand }}{%- endif -%}
 
 {% if product.attributes %}
 <strong>Характеристики:</strong>
@@ -14,7 +14,9 @@
 
 {% if product.description %}
 <strong>Описание:</strong>
+{% apply spaceless %}
 {{ product.description }}
+{% endapply %}
 {% endif %}
 
 {% if is_admin %}

@@ -259,7 +259,7 @@ class ProductItemCommand extends SystemCommand
 
         //  Request::sendMessage($test);
 
-        if ($user_id == 812367093) {
+        //if ($user_id == 812367093) {
 
             if (file_exists(Yii::getAlias('@app/web') . DIRECTORY_SEPARATOR . 'product.twig')) {
                 $tpl = '@app/web/product.twig';
@@ -271,8 +271,7 @@ class ProductItemCommand extends SystemCommand
                     'id' => $product->id,
                     'name' => Html::decode($product->name),
                     'price' => $this->number_format($product->price),
-                    // 'description' => ($product->description) ? Helper::Test($product->description) : false,
-                    'description' => ($product->description) ? $product->description : false,
+                    'description' => ($product->description) ? preg_replace("/<br\s*\/?>\s*/i", PHP_EOL, $product->description) : false,
                     'sku' => ($product->sku) ? Html::decode($product->sku) : false,
                     'discount' => $discount,
                     'brand' => ($product->manufacturer_id) ? Html::decode($product->manufacturer->name) : false,
@@ -289,7 +288,7 @@ class ProductItemCommand extends SystemCommand
             if (!$caption) {
                 return $this->notify('Ошибка шаблона', 'error');
             }
-        }
+       // }
         if ($callbackData == 'changeProductImage') {
 
             $dataMedia = [

@@ -16,7 +16,7 @@ if (Yii::$app->session->hasFlash('telegram-error')) {
 }
 
 
-$Viber = new \shopium\mod\telegram\models\ViberTest();
+/*$Viber = new \shopium\mod\telegram\models\ViberTest();
 $s = $Viber->message_post(
     '380682937379',
     [
@@ -36,7 +36,7 @@ $dataPoll = [
     'options' => json_encode([
         '123213','213213213213123'
     ])
-];
+];*/
 
 
 
@@ -52,7 +52,7 @@ $dataPoll = [
   );*/
 // echo $dataPoll['options'].PHP_EOL;
 
-$pollRequest = \Longman\TelegramBot\Request::sendPoll($dataPoll);
+/*$pollRequest = \Longman\TelegramBot\Request::sendPoll($dataPoll);
 
 if($pollRequest->getOk()){
   CMS::dump($pollRequest->getResult()->getPoll());die;
@@ -61,7 +61,7 @@ if($pollRequest->getOk()){
 
     $db = \Longman\TelegramBot\DB::insertPollRequest($pollRequest->getResult()->getPoll());
     CMS::dump($db);die;
-}
+}*/
 
 
 Pjax::begin([
