@@ -57,6 +57,11 @@ class SearchCommand extends UserCommand
      */
     protected $conversation;
 
+    public function getDescription()
+    {
+        return Yii::t('telegram/default', 'SEARCH');
+    }
+
     /**
      * Command execute method
      *

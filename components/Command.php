@@ -38,9 +38,10 @@ abstract class Command extends \Longman\TelegramBot\Commands\Command
 
     public function preExecute()
     {
+        Yii::$app->language = (isset($this->settings->language)) ? $this->settings->language : 'ru';
         if (time() > $this->telegram->getUser()->expire) {
-            $text = '*Бот отключен!*' . PHP_EOL;
-            $text .= 'Период использование бота окончен, для разблокировки бота, необходимо продлить тарифный план.';
+            $text = Yii::t('telegram/default', 'BOT_BLOCKED') . PHP_EOL;
+            $text .= Yii::t('telegram/default', 'BOT_BLOCKED_REASON');
             return $this->notify($text);
         }
 
@@ -168,7 +169,7 @@ abstract class Command extends \Longman\TelegramBot\Commands\Command
         } else {
             $data['chat_id'] = $this->getUpdate()->getMessage()->getChat()->getId();
         }
-        $data['text'] = ($message) ? $message : 'Ошибка';
+        $data['text'] = ($message) ? $message : Yii::t('telegram/default', 'ERROR');
         return Request::sendMessage($data);
     }
 
@@ -178,13 +179,13 @@ abstract class Command extends \Longman\TelegramBot\Commands\Command
             $type = 'info';
         }
         if ($type == 'success') {
-            $preText = '*✅ Успех:*' . PHP_EOL;
+            $preText = '*✅ ' . Yii::t('telegram/default', 'SUCCESS') . ':*' . PHP_EOL;
         } elseif ($type == 'error') {
-            $preText = '*🚫 Ошибка:*' . PHP_EOL;
+            $preText = '*🚫 ' . Yii::t('telegram/default', 'ERROR') . ':*' . PHP_EOL;
         } elseif ($type == 'warning') {
-            $preText = '*⚠ Внимание:*' . PHP_EOL;
+            $preText = '*⚠ ' . Yii::t('telegram/default', 'WARNING') . ':*' . PHP_EOL;
         } else {
-            $preText = '*ℹ Информация:*' . PHP_EOL;
+            $preText = '*ℹ ' . Yii::t('telegram/default', 'INFO') . ':*' . PHP_EOL;
         }
         $update = $this->getUpdate();
         if ($update->getCallbackQuery()) {

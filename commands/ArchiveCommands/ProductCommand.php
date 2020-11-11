@@ -84,7 +84,7 @@ class ProductCommand extends UserCommand
 
                     $data = [
                         'chat_id' => $chat_id,
-                        'text' => '⬇ Каталог продукции',
+                        'text' => '⬇ '.Yii::t('telegram/default','CATALOG'),
                         'reply_markup' => new InlineKeyboard([
                             'inline_keyboard' => $keyboards
                         ]),

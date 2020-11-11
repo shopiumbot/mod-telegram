@@ -48,6 +48,11 @@ class BrandsCommand extends UserCommand
 
     public $private_only = false;
 
+    public function getDescription()
+    {
+        return Yii::t('shop/default', 'MANUFACTURERS');
+    }
+
     public function __construct(Api $telegram, Update $update = null)
     {
 
@@ -110,13 +115,13 @@ class BrandsCommand extends UserCommand
             }
 
         } else {
-            return $this->notify('Нет информации');
+            return $this->notify(Yii::t('app/default','NO_INFO'));
         }
 
         $keyboards = array_chunk($keyboards, 2);
         if ($isCallback) {
             $keyboards[] = [new InlineKeyboardButton([
-                'text' => '↩ Вернуться в каталог',
+                'text' => Yii::t('telegram/default','BACK_IN_CATALOG'),
                 'callback_data' => 'query=openCatalog&id=1'
             ])];
 

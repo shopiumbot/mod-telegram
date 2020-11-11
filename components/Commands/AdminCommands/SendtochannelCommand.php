@@ -2,6 +2,9 @@
 
 namespace shopium\mod\telegram\components\Commands\AdminCommands;
 
+use Longman\TelegramBot\Entities\Update;
+use shopium\mod\telegram\components\Api;
+use Yii;
 use shopium\mod\telegram\components\AdminCommand;
 use Longman\TelegramBot\Conversation;
 use Longman\TelegramBot\Entities\Chat;
@@ -21,7 +24,7 @@ class SendtochannelCommand extends AdminCommand
     /**
      * @var string
      */
-    protected $description = 'Отправить сообщение на канал';
+    // protected $description = 'Отправить сообщение на канал';
 
     /**
      * @var string
@@ -44,6 +47,11 @@ class SendtochannelCommand extends AdminCommand
      * @var Conversation
      */
     protected $conversation;
+
+    public function getDescription()
+    {
+        return Yii::t('telegram/command', 'COMMAND_SENDTOCHANNEL');
+    }
 
     /**
      * Command execute method

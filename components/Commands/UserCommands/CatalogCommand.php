@@ -48,6 +48,11 @@ class CatalogCommand extends UserCommand
     public $id;
     public $private_only = false;
 
+    public function getDescription()
+    {
+        return Yii::t('telegram/default', 'CATALOG');
+    }
+
     /**
      * Command execute method
      *
@@ -98,7 +103,7 @@ class CatalogCommand extends UserCommand
                     }
 
                     $count = $countQuery->count();*/
-                  //  $count = $category->countItems();
+                    //  $count = $category->countItems();
 
 
                     $icon = ($category->icon) ? $category->icon . ' ' : '';

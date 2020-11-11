@@ -45,6 +45,11 @@ class CartCommand extends UserCommand
     private $page = 0;
     protected $private_only = true;
 
+    public function getDescription()
+    {
+        return Yii::t('telegram/command', 'COMMAND_CART');
+    }
+
     /**
      * Command execute method
      *

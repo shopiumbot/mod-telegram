@@ -176,7 +176,7 @@ class GenericmessageCommand extends SystemCommand
         } elseif ($this->settings->button_text_catalog === $text) { //folder emoji preg_match('/^(\x{1F4C2})/iu', $text, $match)
             $this->telegram->setCommandConfig('catalog', ['id' => 1]);
             return $this->telegram->executeCommand('catalog');
-        } elseif ($this->settings->button_text_start === $text) { //home emoji //preg_match('/^(\x{1F3E0})/iu', $text, $match)
+        } elseif ($this->settings->button_text_start === $text || preg_match('/^(\x{1F3E0})/iu', $text, $match)) { //home emoji //preg_match('/^(\x{1F3E0})/iu', $text, $match)
             $this->telegram->executeCommand('start');
             return $this->telegram->executeCommand('cancel');
         } elseif (self::KEYWORD_ADMIN === $text) {

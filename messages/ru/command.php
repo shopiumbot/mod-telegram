@@ -13,4 +13,6 @@ return [
     'START' => 'Добро пожаловать в наш бот, <strong>{0}</strong>.' . PHP_EOL . 'воспользуйтесь командой /help',
     'SEARCH_RESULT' => 'По Вашему запросу "{query}"',
     'SEARCH_RESULT_TOTAL' => '➡ {count, plural, =0{найдено} =1{найден} other{найдено}} {count, plural, =0{# товаров} =1{# товар} one{# товаров} few{# товара} many{# товаров} other{# товаров}}',
+    'COMMAND_SENDTOCHANNEL'=>'Отправить сообщение на канал',
+    'COMMAND_CART'=>'Корзина заказа',
 ];
