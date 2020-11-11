@@ -84,7 +84,7 @@ $this->notify(json_encode($state));
         //Every time a step is achieved the track is updated
         switch ($state) {
             case 0:
-                if ($notes['state']==0 || $text === static::KEYWORD_CANCEL || preg_match('/^(\x{2709})/iu', $text, $match)) {
+                if ($notes['state']==0 || $text === $this->keyword_cancel || preg_match('/^(\x{2709})/iu', $text, $match)) {
                     $notes['state'] = 0;
                     $this->conversation->update();
 
@@ -92,7 +92,7 @@ $this->notify(json_encode($state));
                     //$data['reply_markup'] = Keyboard::remove(['selective' => true]);
 
 
-                    $keyboards[] = [new KeyboardButton(static::KEYWORD_CANCEL)];
+                    $keyboards[] = [new KeyboardButton($this->keyword_cancel)];
                     $data['reply_markup'] = (new Keyboard(['keyboard' => $keyboards]))
                         ->setResizeKeyboard(true)
                         ->setOneTimeKeyboard(true)

@@ -15,4 +15,6 @@ return [
     'SEARCH_RESULT_TOTAL' => '➡ {count, plural, =0{found} =1{found} other{found}} {count, plural, =0{# goods} =1{# product} one{# goods} few{# goods} many{# goods} other{# goods}}',
     'COMMAND_SENDTOCHANNEL' => 'Send message to channel',
     'COMMAND_CART'=>'Shopping cart',
+    'COMMAND_DEBUG'=>'Debug command to help find problems',
+    'COMMAND_SENDTOALL' => 'Send a message to all users of the bot',
 ];

@@ -26,17 +26,17 @@ class ContactsCommand extends UserCommand
     /**
      * @var string
      */
-    protected $description = 'Контактная информация';
-
-    /**
-     * @var string
-     */
     protected $usage = '/contacts';
 
     /**
      * @var string
      */
     protected $version = '1.0';
+
+    public function getDescription()
+    {
+        return Yii::t('telegram/default', 'COMMAND_CONTACTS');
+    }
 
     /**
      * Command execute method
@@ -58,7 +58,7 @@ class ContactsCommand extends UserCommand
         $data['text'] = '';
         if (!isset($config->latitude) && !isset($config->longitude)) {
             if (!$config->latitude && !$config->longitude) {
-                $data['text'] .= '*'.Yii::t('contacts/default', 'CONTACT_INFO').'*' . PHP_EOL . PHP_EOL;
+                $data['text'] .= '*' . Yii::t('contacts/default', 'CONTACT_INFO') . '*' . PHP_EOL . PHP_EOL;
             }
         }
         $address = Yii::$app->getModule('contacts')->getAddress();
@@ -70,7 +70,7 @@ class ContactsCommand extends UserCommand
             foreach ($address as $addr) {
                 if (!empty($addr)) {
                     if (isset($config->latitude) && isset($config->longitude)) {
-                        $title = Yii::t('contacts/default', 'CONTACT_INFO'). PHP_EOL . PHP_EOL;
+                        $title = Yii::t('contacts/default', 'CONTACT_INFO') . PHP_EOL . PHP_EOL;
                         $venue = Request::sendVenue([
                             'chat_id' => $chat_id,
                             'latitude' => $config->latitude,
@@ -90,9 +90,9 @@ class ContactsCommand extends UserCommand
 
         if ($phones) {
             foreach ($phones as $phone) {
-                if(!empty($phone['number'])){
-                    $name='';
-                    if(!empty($phone['name'])){
+                if (!empty($phone['number'])) {
+                    $name = '';
+                    if (!empty($phone['name'])) {
                         $name .= '(' . $phone['name'] . ')';
                     }
                     $data['text'] .= '📞 *' . CMS::phone_format($phone['number']) . '* ' . $name . '' . PHP_EOL;

@@ -2,7 +2,7 @@
 
 namespace shopium\mod\telegram\components\Commands\AdminCommands;
 
-
+use Yii;
 use Longman\TelegramBot\DB;
 use Longman\TelegramBot\Entities\Chat;
 use Longman\TelegramBot\Entities\PhotoSize;
@@ -25,11 +25,6 @@ class WhoisCommand extends AdminCommand
     /**
      * @var string
      */
-    protected $description = 'Информации о пользователе или группе';
-
-    /**
-     * @var string
-     */
     protected $usage = '/whois <id> or /whois <search string>';
 
     /**
@@ -41,6 +36,11 @@ class WhoisCommand extends AdminCommand
      * @var bool
      */
     protected $need_mysql = true;
+
+    public function getDescription()
+    {
+        return Yii::t('telegram/default', 'COMMAND_WHOIS');
+    }
 
     /**
      * Command execute method

@@ -43,15 +43,12 @@ class HelpCommand extends UserCommand
 
 
         $keyboards[] = [
-            new KeyboardButton(['text' => '🏠 Начало']),
-            new KeyboardButton(['text' => '✉ Написать']),
+            new KeyboardButton(['text' => $this->settings->button_text_start]),
+            new KeyboardButton(['text' => Yii::t('telegram/default','WRITE')]),
+            //new KeyboardButton(['text' => Yii::t('telegram/default','SETTINGS')]),
             // new KeyboardButton(['text' => '☎ Позвонить']),
 
         ];
-        //  $keyboards[] = [
-        //   new KeyboardButton(['text' => '✉ Написать']),
-        //  new KeyboardButton(['text' => '⚙ Настройки']),
-        // ];
 
         $reply_markup = (new Keyboard([
             'keyboard' => $keyboards
@@ -76,7 +73,7 @@ class HelpCommand extends UserCommand
                 }
             }
 
-            $data['text'] .= PHP_EOL . 'Для полной справки используйте: /help <command>';
+            $data['text'] .= PHP_EOL . Yii::t('telegram/default','FULL_HELP_USE').': /help <command>';
             return Request::sendMessage($data);
         }
 
@@ -85,9 +82,9 @@ class HelpCommand extends UserCommand
             /** @var Command $command */
             $command = $all_commands[$command_str];
 
-            $data['text'] = '*Команда:* ' . $command->getName() . ' (v' . $command->getVersion() . ')' . PHP_EOL;
-            $data['text'] .= '*Описание:* ' . $command->getDescription() . '' . PHP_EOL;
-            $data['text'] .= '*Использование:* ' . $command->getUsage() . '' . PHP_EOL;
+            $data['text'] = '*' . Yii::t('telegram/command', 'COMMAND') . ':* ' . $command->getName() . ' (v' . $command->getVersion() . ')' . PHP_EOL;
+            $data['text'] .= '*' . Yii::t('telegram/command', 'DESCRIPTION') . ':* ' . $command->getDescription() . '' . PHP_EOL;
+            $data['text'] .= '*' . Yii::t('telegram/command', 'USAGE') . ':* ' . $command->getUsage() . '' . PHP_EOL;
 
             $data['parse_mode'] = 'Markdown';
             return Request::sendMessage($data);

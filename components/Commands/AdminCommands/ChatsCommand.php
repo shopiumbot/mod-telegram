@@ -2,6 +2,7 @@
 
 namespace shopium\mod\telegram\components\Commands\AdminCommands;
 
+use Yii;
 use shopium\mod\telegram\components\AdminCommand;
 use Longman\TelegramBot\DB;
 use Longman\TelegramBot\Entities\Chat;
@@ -19,11 +20,6 @@ class ChatsCommand extends AdminCommand
     /**
      * @var string
      */
-    protected $description = 'Список или поиск всех чатов, сохраненных ботом';
-
-    /**
-     * @var string
-     */
     protected $usage = '/chats, /chats * или /chats <search string>';
 
     /**
@@ -35,6 +31,11 @@ class ChatsCommand extends AdminCommand
      * @var bool
      */
     protected $need_mysql = true;
+
+    public function getDescription()
+    {
+        return Yii::t('telegram/default', 'COMMAND_CHATS');
+    }
 
     /**
      * Command execute method

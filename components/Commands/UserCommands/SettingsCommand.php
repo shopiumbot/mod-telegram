@@ -3,6 +3,9 @@
 namespace shopium\mod\telegram\components\Commands\UserCommands;
 
 
+use Longman\TelegramBot\Entities\Keyboard;
+use Yii;
+use Longman\TelegramBot\Entities\KeyboardButton;
 use Longman\TelegramBot\Entities\PollOption;
 use Longman\TelegramBot\Request;
 use shopium\mod\telegram\components\UserCommand;
@@ -22,7 +25,7 @@ class SettingsCommand extends UserCommand
     protected $version = '1.0.1';
     public $enabled = true;
     public $private_only = true;
-    public $show_in_help=false;
+    public $show_in_help = false;
     public $notification = true;
     /**#@-*/
 
@@ -36,53 +39,30 @@ class SettingsCommand extends UserCommand
         $chat_id = $chat->getId();
         $text = trim($message->getText(false));
 
-        //echo $text . ' - ' . $text2 . PHP_EOL;
-
-        $dataPoll = [
-            'chat_id' => $chat_id,
-            'question' => 'Test Poll',
-            'is_anonymous' => false,
-            'type' => 'quiz', //quiz, regular
-            'allows_multiple_answers' => false,
-            //'options'=>['test','test2']
-            'options' => new PollOption(['text'=>'asddsadsa','voter_count'=>5])
+        //if ($text === $this->keyword_cancel) {
+        //    return $this->telegram->executeCommand('settings');
+        //}
+        $keyboards[] = [
+            new KeyboardButton(['text' => Yii::t('telegram/default', 'CHANGE_LANGUAGE')]),
+            new KeyboardButton(['text' => Yii::t('telegram/default', '🔔 Уведомление')]), //🔕
+        ];
+        $keyboards[] = [
+            new KeyboardButton(['text' => $this->keyword_cancel]),
         ];
 
 
-
-        /*  $results = Request::sendToActiveChats(
-              'sendMessage', // Callback function to execute (see Request.php methods)
-              ['text' => $chat->getFirstName().' '.$chat->getLastName().' @'.$chat->getUsername().'! go go go!'], // Param to evaluate the request
-              [
-                  'groups'      => true,
-                  'supergroups' => true,
-                  'channels'    => false,
-                  'users'       => true,
-              ]
-          );*/
-       // echo $dataPoll['options'].PHP_EOL;
-
-        $pollRequest = Request::sendPoll($dataPoll);
-
-print_r($pollRequest);
+        $reply_markup = (new Keyboard([
+            'keyboard' => $keyboards
+        ]))->setResizeKeyboard(true)->setOneTimeKeyboard(true)->setSelective(true);
 
 
+        $data['reply_markup'] = $reply_markup;
 
 
+        $data['chat_id'] = $chat_id;
+        $data['text'] = 'Выберите тип настроек';
 
 
-
-        $data = [
-            'chat_id' => $chat_id,
-            'text' => $pollRequest->toJson(),
-        ];
-
-
-        //$pollOption = new PollOption(['text'=>'test1','voter_count'=>0]);
-
-
-
-
-    return Request::sendMessage($data);
+        return Request::sendMessage($data);
     }
 }

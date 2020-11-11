@@ -17,7 +17,7 @@ use core\components\ActiveRecord;
  * @property integer $client_chat_id
  * @property string $message
  * @property string $time
- * @property string $direction
+ * @property string $language
  */
 class User extends ActiveRecord
 {

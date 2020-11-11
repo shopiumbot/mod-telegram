@@ -560,7 +560,7 @@ class CallbackqueryCommand extends SystemCommand
                 'maxButtonCount' => 1,
                 'internal' => false,
                 'command' => $pagerCommand,
-                'nextPageLabel' => '🔄 загрузить еще...'
+                'nextPageLabel' => '🔄 '.Yii::t('telegram/default','LOAD_MORE')
             ]);
 
 
@@ -655,7 +655,7 @@ class CallbackqueryCommand extends SystemCommand
                     'maxButtonCount' => 1,
                     'internal' => false,
                     'command' => $pagerCommand,
-                    'nextPageLabel' => '🔄 загрузить еще...'
+                    'nextPageLabel' => '🔄 '.Yii::t('telegram/default','LOAD_MORE')
                 ]);
 
 

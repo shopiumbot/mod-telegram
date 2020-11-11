@@ -141,11 +141,11 @@ class CheckOutCommand extends SystemCommand
             //Every time a step is achieved the track is updated
             switch ($state) {
                 case 0:
-                    if ($text === '' || !in_array($text, ['➡ Продолжить', static::KEYWORD_CANCEL], true)) {
+                    if ($text === '' || !in_array($text, ['➡ Продолжить', $this->keyword_cancel], true)) {
                         $notes['state'] = 0;
                         $this->conversation->update();
 
-                        $data['reply_markup'] = (new Keyboard(['➡ Продолжить', static::KEYWORD_CANCEL]))
+                        $data['reply_markup'] = (new Keyboard(['➡ Продолжить', $this->keyword_cancel]))
                             ->setResizeKeyboard(true)
                             ->setOneTimeKeyboard(true)
                             ->setSelective(true);
@@ -166,7 +166,7 @@ class CheckOutCommand extends SystemCommand
                     }
                 case 1:
                     username:
-                    if ($text == static::KEYWORD_BACK) {
+                    if ($text == $this->keyword_back) {
                         $text = '';
                     }
                     if ($text === '' || $notes['confirm'] === '➡ Продолжить') {
@@ -189,7 +189,7 @@ class CheckOutCommand extends SystemCommand
                 // no break
                 case 2:
                     contact:
-                    if ($text === static::KEYWORD_BACK) {
+                    if ($text === $this->keyword_back) {
                         $text = '';
                         goto username;
                     }
@@ -202,8 +202,8 @@ class CheckOutCommand extends SystemCommand
                                 (new KeyboardButton('📞 Оставить контакты'))->setRequestContact(true)
                             ],
                             [
-                                new KeyboardButton(static::KEYWORD_BACK),
-                                new KeyboardButton(static::KEYWORD_CANCEL)
+                                new KeyboardButton($this->keyword_back),
+                                new KeyboardButton($this->keyword_cancel)
                             ]
                         ];
                         $buttons = (new Keyboard(['keyboard' => $keyboards]))
@@ -223,7 +223,7 @@ class CheckOutCommand extends SystemCommand
                 // no break
                 case 3:
                     delivery:
-                    if ($text === static::KEYWORD_BACK) {
+                    if ($text === $this->keyword_back) {
                         $text = '';
                         goto contact;
                     }
@@ -236,8 +236,8 @@ class CheckOutCommand extends SystemCommand
                     }
                     $keyboards = array_chunk($keyboards, 2);
                     $keyboards[] = [
-                        new KeyboardButton(static::KEYWORD_BACK),
-                        new KeyboardButton(static::KEYWORD_CANCEL)
+                        new KeyboardButton($this->keyword_back),
+                        new KeyboardButton($this->keyword_cancel)
                     ];
 
 
@@ -266,7 +266,7 @@ class CheckOutCommand extends SystemCommand
 
                 case '3.1':
                     delivery_novaposhta:
-                    if ($text === static::KEYWORD_BACK) {
+                    if ($text === $this->keyword_back) {
                         $text = '';
                         unset($notes['delivery'], $notes['delivery_id']);
                         goto delivery;
@@ -291,8 +291,8 @@ class CheckOutCommand extends SystemCommand
                         }
                         $keyboards = array_chunk($keyboards, 2);
                         $keyboards[] = [
-                            new KeyboardButton(static::KEYWORD_BACK),
-                            new KeyboardButton(static::KEYWORD_CANCEL)
+                            new KeyboardButton($this->keyword_back),
+                            new KeyboardButton($this->keyword_cancel)
                         ];
 
 
@@ -323,7 +323,7 @@ class CheckOutCommand extends SystemCommand
 
                 case '3.2':
                     delivery_novaposhta_city:
-                    if ($text === static::KEYWORD_BACK) {
+                    if ($text === $this->keyword_back) {
                         $text = '';
                         unset($notes['delivery_area'], $notes['delivery_area_id']);
                         goto delivery_novaposhta;
@@ -367,8 +367,8 @@ class CheckOutCommand extends SystemCommand
 
                         $keyboards = array_chunk($keyboards, 3);
                         $keyboards[] = [
-                            new KeyboardButton(static::KEYWORD_BACK),
-                            new KeyboardButton(static::KEYWORD_CANCEL)
+                            new KeyboardButton($this->keyword_back),
+                            new KeyboardButton($this->keyword_cancel)
                         ];
 
 
@@ -397,7 +397,7 @@ class CheckOutCommand extends SystemCommand
                 // no break
                 case '3.3':
                     delivery_novaposhta_warehouses:
-                    if ($text === static::KEYWORD_BACK) {
+                    if ($text === $this->keyword_back) {
                         $text = '';
                         unset($notes['delivery_city'], $notes['delivery_city_id']);
                         goto delivery_novaposhta_city;
@@ -427,8 +427,8 @@ class CheckOutCommand extends SystemCommand
 
                         $keyboards = array_chunk($keyboards, 4);
                         $keyboards[] = [
-                            new KeyboardButton(static::KEYWORD_BACK),
-                            new KeyboardButton(static::KEYWORD_CANCEL)
+                            new KeyboardButton($this->keyword_back),
+                            new KeyboardButton($this->keyword_cancel)
                         ];
 
 
@@ -458,7 +458,7 @@ class CheckOutCommand extends SystemCommand
 
                 case 4:
                     payment:
-                    if ($text === static::KEYWORD_BACK) {
+                    if ($text === $this->keyword_back) {
                         $text = '';
                         unset($notes['delivery'], $notes['delivery_id'], $notes['delivery_area'], $notes['delivery_area_id'], $notes['delivery_city'], $notes['delivery_city_id'], $notes['delivery_warehouse'], $notes['delivery_warehouse_id']);
                         goto delivery;
@@ -472,8 +472,8 @@ class CheckOutCommand extends SystemCommand
                     }
                     $keyboards = array_chunk($keyboards, 2);
                     $keyboards[] = [
-                        new KeyboardButton(static::KEYWORD_BACK),
-                        new KeyboardButton(static::KEYWORD_CANCEL)
+                        new KeyboardButton($this->keyword_back),
+                        new KeyboardButton($this->keyword_cancel)
                     ];
                     $buttons = (new Keyboard(['keyboard' => $keyboards]))
                         ->setResizeKeyboard(true)

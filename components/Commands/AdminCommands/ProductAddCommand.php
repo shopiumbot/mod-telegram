@@ -139,13 +139,13 @@ class ProductAddCommand extends AdminCommand
                     $list[$item->id] = $item->name;
                     $keyboards[] = new KeyboardButton(['text' => $item->name]);
                 }
-                $list[] = static::KEYWORD_CANCEL;
+                $list[] = $this->keyword_cancel;
 
                 $keyboards = array_chunk($keyboards, 2);
 
                 $keyboards[] = [
                     //  new KeyboardButton('⬅ Назад'),
-                    new KeyboardButton(static::KEYWORD_CANCEL)
+                    new KeyboardButton($this->keyword_cancel)
                 ];
 
 
@@ -175,7 +175,7 @@ class ProductAddCommand extends AdminCommand
             // no break
             case 1:
                 category:
-                if ($text === static::KEYWORD_BACK) {
+                if ($text === $this->keyword_back) {
                     $text = '';
                     unset($notes['category'],$notes['category_id']);
                     goto type;
@@ -193,10 +193,10 @@ class ProductAddCommand extends AdminCommand
                 }
                 $keyboards = array_chunk($keyboards, 1);
                 $keyboards[] = [
-                    new KeyboardButton(static::KEYWORD_BACK),
-                    new KeyboardButton(static::KEYWORD_CANCEL)
+                    new KeyboardButton($this->keyword_back),
+                    new KeyboardButton($this->keyword_cancel)
                 ];
-                $list[] = static::KEYWORD_CANCEL;
+                $list[] = $this->keyword_cancel;
                 $buttons = (new Keyboard(['keyboard' => $keyboards]))
                     ->setResizeKeyboard(true)
                     ->setOneTimeKeyboard(true)
@@ -223,15 +223,15 @@ class ProductAddCommand extends AdminCommand
             // no break
             case 2:
                 productName:
-                if ($text === static::KEYWORD_BACK) {
+                if ($text === $this->keyword_back) {
                     $text = '';
                     unset($notes['name']);
                     goto category;
                 }
                 $keyboards = [];
                 $keyboards[] = [
-                    new KeyboardButton(static::KEYWORD_BACK),
-                    new KeyboardButton(static::KEYWORD_CANCEL)
+                    new KeyboardButton($this->keyword_back),
+                    new KeyboardButton($this->keyword_cancel)
                 ];
 
                 $buttons = (new Keyboard(['keyboard' => $keyboards]))
@@ -240,7 +240,7 @@ class ProductAddCommand extends AdminCommand
                     ->setSelective(true);
 
 
-                if ($text === '' || $text === static::KEYWORD_CANCEL) {
+                if ($text === '' || $text === $this->keyword_cancel) {
                     $notes['state'] = 2;
                     $this->conversation->update();
                     $data['reply_markup'] = $buttons;
@@ -257,15 +257,15 @@ class ProductAddCommand extends AdminCommand
             // no break
             case 3:
                 price:
-                if ($text === static::KEYWORD_BACK) {
+                if ($text === $this->keyword_back) {
                     $text = '';
                     unset($notes['price']);
                     goto productName;
                 }
                 $keyboards = [];
                 $keyboards[] = [
-                    new KeyboardButton(static::KEYWORD_BACK),
-                    new KeyboardButton(static::KEYWORD_CANCEL),
+                    new KeyboardButton($this->keyword_back),
+                    new KeyboardButton($this->keyword_cancel),
                   //  new KeyboardButton('Без фото')
                 ];
 
@@ -274,7 +274,7 @@ class ProductAddCommand extends AdminCommand
                     ->setOneTimeKeyboard(true)
                     ->setSelective(true);
 
-                if ($text === '' || !is_numeric($text) || $text === static::KEYWORD_CANCEL) {
+                if ($text === '' || !is_numeric($text) || $text === $this->keyword_cancel) {
                     $notes['state'] = 3;
                     $this->conversation->update();
                     $data['reply_markup'] = $buttons;
@@ -293,15 +293,15 @@ class ProductAddCommand extends AdminCommand
             // no break
             case 4:
                 image:
-                if ($text === static::KEYWORD_BACK) {
+                if ($text === $this->keyword_back) {
                     $text = '';
                     unset($notes['image'],$notes['image_id']);
                     goto price;
                 }
                 $keyboards = [];
                 $keyboards[] = [
-                    new KeyboardButton(static::KEYWORD_BACK),
-                    new KeyboardButton(static::KEYWORD_CANCEL),
+                    new KeyboardButton($this->keyword_back),
+                    new KeyboardButton($this->keyword_cancel),
                     //  new KeyboardButton('Без фото')
                 ];
 
@@ -310,7 +310,7 @@ class ProductAddCommand extends AdminCommand
                     ->setOneTimeKeyboard(true)
                     ->setSelective(true);
 
-                if ($message->getPhoto() === null || $text === static::KEYWORD_CANCEL) {
+                if ($message->getPhoto() === null || $text === $this->keyword_cancel) {
                     $notes['state'] = 4;
                     $this->conversation->update();
                     $data['reply_markup'] = $buttons;

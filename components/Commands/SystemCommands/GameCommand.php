@@ -127,7 +127,7 @@ class GameCommand extends SystemCommand
         //Every time a step is achieved the track is updated
         switch ($state) {
             case 0:
-                if ($text === '' || !in_array($text, array_merge($gamesList, [static::KEYWORD_CANCEL]), true)) {
+                if ($text === '' || !in_array($text, array_merge($gamesList, [$this->keyword_cancel]), true)) {
                     $notes['state'] = 0;
                     $this->conversation->update();
                     $keyboards=[];
@@ -138,9 +138,9 @@ class GameCommand extends SystemCommand
                     ];
 
                     $keyboards[] = [
-                        new KeyboardButton(['text' => static::KEYWORD_CANCEL]),
+                        new KeyboardButton(['text' => $this->keyword_cancel]),
                     ];
-                   // $ss[]=[static::KEYWORD_CANCEL];
+                   // $ss[]=[$this->keyword_cancel];
                     $data['reply_markup'] = (new Keyboard([
                         'keyboard' => $keyboards
                     ]))->setResizeKeyboard(true)->setOneTimeKeyboard(true)->setSelective(true);
@@ -182,7 +182,7 @@ class GameCommand extends SystemCommand
                             new KeyboardButton(['text' => 6]),
                         ],
                         [
-                            new KeyboardButton(['text' => static::KEYWORD_CANCEL])
+                            new KeyboardButton(['text' => $this->keyword_cancel])
                         ]
                     ];
                     $buttons = (new Keyboard(['keyboard' => $keyboards]))

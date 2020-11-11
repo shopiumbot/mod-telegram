@@ -32,11 +32,6 @@ class HistoryCommand extends UserCommand
     /**
      * @var string
      */
-    protected $description = 'Моя история заказов';
-
-    /**
-     * @var string
-     */
     protected $usage = '/history';
 
     /**
@@ -44,6 +39,11 @@ class HistoryCommand extends UserCommand
      */
     protected $version = '1.0.0';
     private $page = 0;
+
+    public function getDescription()
+    {
+        return Yii::t('telegram/default', 'COMMAND_HISTORY');
+    }
 
     /**
      * Command execute method
@@ -106,14 +106,14 @@ class HistoryCommand extends UserCommand
             $text = '*История заказа*' . PHP_EOL . PHP_EOL;
 
             foreach ($orders as $order) {
-                $text .= 'Номер заказа *№' . CMS::idToNumber($order->id) . '*' . PHP_EOL . PHP_EOL;
+                $text .= ''.Yii::t('cart/Order','ORDER_ID').' *№' . CMS::idToNumber($order->id) . '*' . PHP_EOL . PHP_EOL;
                 if ($pager->buttons)
                     $keyboards[] = $pager->buttons;
 
                 if ($order->paid) {
                     $keyboards[] = [
                         new InlineKeyboardButton([
-                            'text' => Yii::t('telegram/command', '✅ ОПЛАЧЕНО!'),
+                            'text' => '✅ '.Yii::t('telegram/default', 'PAID'),
                             'callback_data' => time()
                         ])];
                 } else {
@@ -136,9 +136,9 @@ class HistoryCommand extends UserCommand
                     $text .= '*' . $product->name . '* ' . $command . ' *(' . $product->quantity . ' шт.):* ' . $this->number_format($product->price) . ' грн. ' . PHP_EOL;
                 }
 
-                $text .= PHP_EOL . 'Дата заказа: *' . CMS::date($order->created_at) . '*' . PHP_EOL;
+                $text .= PHP_EOL . ''.Yii::t('cart/Order','CREATED_AT').': *' . CMS::date($order->created_at) . '*' . PHP_EOL;
                 if ($order->status)
-                    $text .= 'Статус: *' . $order->status->name . '*' . PHP_EOL;
+                    $text .= ''.Yii::t('cart/Order','STATUS_ID').': *' . $order->status->name . '*' . PHP_EOL;
                 if ($order->invoice && !empty($order->invoice)) {
                     $text .= 'TTH: *' . $order->invoice . '*' . PHP_EOL;
                 }

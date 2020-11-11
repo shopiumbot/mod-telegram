@@ -24,11 +24,6 @@ class StartCommand extends UserCommand
     /**
      * @var string
      */
-    protected $description = 'Начало';
-
-    /**
-     * @var string
-     */
     protected $usage = '/start';
 
     /**
@@ -41,6 +36,11 @@ class StartCommand extends UserCommand
      */
     protected $private_only = true;
     protected $need_mysql = true;
+
+    public function getDescription()
+    {
+        return Yii::t('telegram/default', 'COMMAND_START');
+    }
 
     /**
      * Command execute method
@@ -80,7 +80,7 @@ class StartCommand extends UserCommand
         if (Yii::$app->user->planId == 1) {
             $adsData['chat_id'] = $chat_id;
             $adsData['parse_mode'] = 'Markdown';
-            $adsData['text'] = 'Бот работает на платформе 🥇 @shopiumbot' . PHP_EOL;
+            $adsData['text'] = Yii::t('telegram/default', 'PLATFORM_WORK') . PHP_EOL;
             $adsData['text'] .= '👉 https://shopiumbot.com' . PHP_EOL;
             $ads = Request::sendMessage($adsData);
             if ($ads->isOk()) {

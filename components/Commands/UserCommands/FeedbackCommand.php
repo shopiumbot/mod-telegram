@@ -25,10 +25,6 @@ class FeedbackCommand extends UserCommand
      */
     protected $name = 'feedback';
     protected $private_only = true;
-    /**
-     * @var string
-     */
-    protected $description = 'Написать нам сообщение';
 
     /**
      * @var string
@@ -43,6 +39,10 @@ class FeedbackCommand extends UserCommand
 
     protected $conversation;
 
+    public function getDescription()
+    {
+        return Yii::t('telegram/default', 'COMMAND_FEEDBACK');
+    }
 
     /**
      * Command execute method
@@ -61,7 +61,7 @@ class FeedbackCommand extends UserCommand
         $user_id = $user->getId();
 
         $data['chat_id'] = $chat_id;
-        if ($text === static::KEYWORD_CANCEL) {
+        if ($text === $this->keyword_cancel) {
             return $this->telegram->executeCommand('cancel');
             //    return Request::emptyResponse();
         }
@@ -99,7 +99,7 @@ class FeedbackCommand extends UserCommand
                     $result = Request::sendMessage($data);
                     break;
                 }*/
-                if ($text === '' || $text === static::KEYWORD_CANCEL || preg_match('/^(\x{2709})/iu', $text, $match)) {
+                if ($text === '' || $text === $this->keyword_cancel || preg_match('/^(\x{2709})/iu', $text, $match)) {
                     $notes['state'] = 0;
                     $this->conversation->update();
 
@@ -107,7 +107,7 @@ class FeedbackCommand extends UserCommand
                     //$data['reply_markup'] = Keyboard::remove(['selective' => true]);
 
 
-                    $keyboards[] = [new KeyboardButton(static::KEYWORD_CANCEL)];
+                    $keyboards[] = [new KeyboardButton($this->keyword_cancel)];
                     $data['reply_markup'] = (new Keyboard(['keyboard' => $keyboards]))
                         ->setResizeKeyboard(true)
                         ->setOneTimeKeyboard(true)
@@ -142,7 +142,6 @@ class FeedbackCommand extends UserCommand
                 $this->conversation->stop();
 
 
-
                 foreach ($this->telegram->getAdminList() as $admin) {
                     $dataChat['chat_id'] = $admin;
                     $dataChat['parse_mode'] = 'Markdown';
@@ -154,15 +153,12 @@ class FeedbackCommand extends UserCommand
                     $resp = Request::sendMessage($dataChat);
 
 
-
-
-
                     if ($resp->isOk()) {
                         $fb = new Feedback();
                         $fb->text = $message;
                         $fb->user_id = $user_id;
                         $fb->message_id = $resp->getResult()->getMessageId();
-                        if($fb->validate()){
+                        if ($fb->validate()) {
                             $fb->save();
 
 

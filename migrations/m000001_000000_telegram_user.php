@@ -20,7 +20,7 @@ class m000001_000000_telegram_user extends Migration
             'language_code' => $this->char(10)->defaultValue(NULL)->comment('IETF language tag of the user\'s language'),
             'created_at' => $this->timestamp()->null()->defaultValue(NULL)->comment('Entry date creation'),
             'updated_at' => $this->timestamp()->null()->defaultValue(NULL)->comment('Entry date update'),
-
+            'language' => $this->char(5)->defaultValue(NULL)->comment('Language switcher'),
         ], 'CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci ENGINE=InnoDB');
 
         $this->createIndex('username', '{{%telegram__user}}', 'username');

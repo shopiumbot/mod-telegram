@@ -84,9 +84,8 @@ class GenericmessageCommand extends SystemCommand
 
         $text = trim($this->getMessage()->getText());
 
-        if ($text === static::KEYWORD_CANCEL) {
+        if ($text === $this->keyword_cancel) {
             return $this->telegram->executeCommand('cancel');
-            //  return Request::emptyResponse();
         }
 
         $dice = $this->getMessage()->getDice();
@@ -171,6 +170,9 @@ class GenericmessageCommand extends SystemCommand
         }
 
 
+
+
+
         if ($this->settings->button_text_cart === $text) { //cart emoji //preg_match('/^(\x{1F6CD})/iu', $text, $match)
             return $this->telegram->executeCommand('cart');
         } elseif ($this->settings->button_text_catalog === $text) { //folder emoji preg_match('/^(\x{1F4C2})/iu', $text, $match)
@@ -179,10 +181,12 @@ class GenericmessageCommand extends SystemCommand
         } elseif ($this->settings->button_text_start === $text || preg_match('/^(\x{1F3E0})/iu', $text, $match)) { //home emoji //preg_match('/^(\x{1F3E0})/iu', $text, $match)
             $this->telegram->executeCommand('start');
             return $this->telegram->executeCommand('cancel');
-        } elseif (self::KEYWORD_ADMIN === $text) {
+        } elseif ($this->keyword_admin === $text) {
             if ($this->telegram->isAdmin($user_id)) {
                 return $this->telegram->executeCommand('AdminPanel');
             }
+        } elseif (Yii::t('telegram/default', 'CHANGE_LANGUAGE') === $text) {
+            return $this->telegram->executeCommand('languages');
         } elseif (preg_match('/^(\x{2753})/iu', $text, $match)) { //help emoji
             return $this->telegram->executeCommand('help');
         } elseif (preg_match('/^(\x{1F4E2})/iu', $text, $match)) { //news emoji

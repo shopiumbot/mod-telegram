@@ -18,12 +18,15 @@ class MeCommand extends UserCommand
      * {@inheritdoc}
      */
     protected $name = 'me';
-    protected $description = 'Информация обо мне';
     protected $usage = '/me';
     protected $version = '1.0.1';
     protected $public = true;
     public $enabled = true;
-    /**#@-*/
+
+    public function getDescription()
+    {
+        return Yii::t('telegram/default', 'COMMAND_ME');
+    }
 
     /**
      * {@inheritdoc}

@@ -82,10 +82,9 @@ class SearchCommand extends UserCommand
         $data = [
             'chat_id' => $chat_id,
         ];
-        //if ($text === '❌ Отмена') {
-        //    return $this->telegram->executeCommand('cancel');
-        //return Request::emptyResponse();
-        //}
+        if ($text === $this->keyword_cancel) {
+            return $this->telegram->executeCommand('cancel');
+        }
         if ($chat->isGroupChat() || $chat->isSuperGroup()) {
             //reply to message id is applied by default
             //Force reply is applied by default so it can work with privacy on
@@ -112,17 +111,17 @@ class SearchCommand extends UserCommand
                     $notes['state'] = 0;
                     $this->conversation->update();
 
-                    $data['text'] = 'Введите название товара или артикул:';
+                    $data['text'] = Yii::t('telegram/default','SEARCH_STEP_1').':';
                     //$data['reply_markup'] = Keyboard::remove(['selective' => true]);
 
-                    $data['reply_markup'] = (new Keyboard([static::KEYWORD_CANCEL]))
+                    $data['reply_markup'] = (new Keyboard([$this->keyword_cancel]))
                         ->setResizeKeyboard(true)
                         ->setOneTimeKeyboard(true)
                         ->setSelective(true);
 
 
                     if ($text !== '') {
-                        $data['text'] = 'Введите название товара или артикул:';
+                        $data['text'] = Yii::t('telegram/default','SEARCH_STEP_1').':';
                     }
                     $result = Request::sendMessage($data);
                     if ($result->isOk()) {

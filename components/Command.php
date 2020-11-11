@@ -16,13 +16,16 @@ abstract class Command extends \Longman\TelegramBot\Commands\Command
     public $orderHistoryCount = 0;
     public $orderProductCount = 0;
     public $settings;
-
-    const KEYWORD_BACK = '⬅ Назад';
-    const KEYWORD_CANCEL = '❌ Отмена';
-    const KEYWORD_ADMIN = '💎 Админ-панель';
+    public $user;
+    public $keyword_back;
+    public $keyword_cancel;
+    public $keyword_admin;
 
     public function __construct(Api $telegram, Update $update = null)
     {
+        $this->keyword_back = Yii::t('telegram/default', 'KEYWORD_BACK');
+        $this->keyword_cancel = Yii::t('telegram/default', 'KEYWORD_CANCEL');
+        $this->keyword_admin = Yii::t('telegram/default', 'KEYWORD_ADMIN');
         /*$this->orderHistoryCount = Order::find()
             ->where(['checkout' => 1, 'user_id' => $update->getMessage()->getFrom()->getId()])
             ->count();
@@ -33,19 +36,37 @@ abstract class Command extends \Longman\TelegramBot\Commands\Command
             $this->orderProductCount = $orderProductCount->productsCount;
         }*/
         $this->settings = Yii::$app->settings->get('app');
+
+     //   $update = $this->getUpdate();
+
+
         parent::__construct($telegram, $update);
+
+
+        $update = $this->getUpdate();
+        if ($update->getCallbackQuery()) {
+            $user_id = $update->getCallbackQuery()->getMessage()->getFrom()->getId();
+        } else {
+            $user_id = $update->getMessage()->getFrom()->getId();
+        }
+
+        $this->user = \shopium\mod\telegram\models\User::findOne($user_id);
+        Yii::$app->language = ($this->user->language) ? $this->user->language : 'ru';
+
     }
 
     public function preExecute()
     {
-        Yii::$app->language = (isset($this->settings->language)) ? $this->settings->language : 'ru';
+
         if (time() > $this->telegram->getUser()->expire) {
             $text = Yii::t('telegram/default', 'BOT_BLOCKED') . PHP_EOL;
             $text .= Yii::t('telegram/default', 'BOT_BLOCKED_REASON');
             return $this->notify($text);
         }
 
-        parent::preExecute();
+        return parent::preExecute();
+
+
 
     }
 
@@ -134,7 +155,7 @@ abstract class Command extends \Longman\TelegramBot\Commands\Command
         //in_array(812367093, $this->telegram->getAdminList())
         if ($this->telegram->isAdmin($chat->getId())) {
             $keyboards[] = [
-                new KeyboardButton(['text' => self::KEYWORD_ADMIN])
+                new KeyboardButton(['text' => $this->keyword_admin])
             ];
         }
         // $keyboards[] = [
@@ -233,7 +254,7 @@ abstract class Command extends \Longman\TelegramBot\Commands\Command
         //in_array(812367093, $this->telegram->getAdminList())
         if ($this->telegram->isAdmin($this->update->getMessage()->getChat()->getId())) {
             $keyboards[] = [
-                new KeyboardButton(['text' => self::KEYWORD_ADMIN])
+                new KeyboardButton(['text' => $this->keyword_admin])
             ];
         }
         $pages = Pages::find()->published()->asArray()->all();

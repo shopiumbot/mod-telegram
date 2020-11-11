@@ -126,12 +126,12 @@ class ProductswitchCommand extends SystemCommand
             $product = null;
             switch ($state) {
                 case 0:
-                    if ($text === '' || !in_array($text, ['Да', static::KEYWORD_CANCEL], true)) {
+                    if ($text === '' || !in_array($text, ['Да', $this->keyword_cancel], true)) {
                         $notes['state'] = 0;
                         $this->conversation->update();
 
                         $data['parse_mode'] = 'Markdown';
-                        $data['reply_markup'] = (new Keyboard(['Да', static::KEYWORD_CANCEL]))
+                        $data['reply_markup'] = (new Keyboard(['Да', $this->keyword_cancel]))
                             ->setResizeKeyboard(true)
                             ->setOneTimeKeyboard(true)
                             ->setSelective(true);

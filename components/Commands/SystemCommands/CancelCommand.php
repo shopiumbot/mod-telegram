@@ -2,6 +2,7 @@
 
 namespace shopium\mod\telegram\components\Commands\SystemCommands;
 
+use Yii;
 use Longman\TelegramBot\Conversation;
 use Longman\TelegramBot\DB;
 use Longman\TelegramBot\Request;
@@ -31,8 +32,8 @@ class CancelCommand extends SystemCommand
      */
     public function execute()
     {
-        // $text = 'No active conversation!';
-        $text = '';
+       //  $text = 'No active conversation!';
+         $text = '';
         //Cancel current conversation if any
         $conversation = new Conversation(
             $this->getMessage()->getFrom()->getId(),
@@ -45,7 +46,7 @@ class CancelCommand extends SystemCommand
             if ($this->telegram->isAdmin($this->getMessage()->getFrom()->getId())) {
                 $text .= ucfirst($conversation_command) . ': ';
             }
-            $text = 'Отменено!';
+            $text = Yii::t('telegram/default','CANCELED');
         }
         if ($text) {
             return $this->hideKeyboard($text);

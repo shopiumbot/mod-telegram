@@ -22,11 +22,6 @@ class SendtoallCommand extends AdminCommand
     /**
      * @var string
      */
-    protected $description = 'Отправить сообщение всем пользователям бота';
-
-    /**
-     * @var string
-     */
     protected $usage = '/sendtoall <ваше сообщение>';
 
     /**
@@ -40,6 +35,10 @@ class SendtoallCommand extends AdminCommand
     protected $need_mysql = true;
 
 
+    public function getDescription()
+    {
+        return Yii::t('telegram/command', 'COMMAND_SENDTOALL');
+    }
 
     /**
      * Execute command
@@ -68,13 +67,13 @@ class SendtoallCommand extends AdminCommand
         );
 
         if (empty($results)) {
-            return $this->replyToChat('Пользователи или чаты не найдены.');
+            return $this->replyToChat(Yii::t('telegram/default', 'USERS_OR_CHAT_NO_FOUND'));
         }
 
         $total = 0;
         $failed = 0;
 
-        $text = 'Сообщение отправлено:' . PHP_EOL;
+        $text = Yii::t('telegram/default', 'SUCCESS_SEND') . ':' . PHP_EOL;
 
         foreach ($results as $result) {
             $name = '';
@@ -87,10 +86,10 @@ class SendtoallCommand extends AdminCommand
                 $chat = $message->getChat();
                 if ($chat->isPrivateChat()) {
                     $name = $chat->getFirstName();
-                    $type = 'пользователь';
+                    $type = Yii::t('telegram/default', 'USER');
                 } else {
                     $name = $chat->getTitle();
-                    $type = 'чат';
+                    $type = Yii::t('telegram/default', 'CHAT');
                 }
             } else {
                 $status = '❌ ';
@@ -100,7 +99,7 @@ class SendtoallCommand extends AdminCommand
 
             $text .= $total . ') ' . $status . ' ' . $type . ' ' . $name . PHP_EOL;
         }
-        $text .= 'Доставлено: ' . ($total - $failed) . '/' . $total . PHP_EOL;
+        $text .= Yii::t('telegram/default', 'DELIVERED') . ': ' . ($total - $failed) . '/' . $total . PHP_EOL;
 
         return $this->replyToChat($text);
     }

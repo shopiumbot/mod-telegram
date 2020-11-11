@@ -2,6 +2,7 @@
 
 namespace shopium\mod\telegram\components\Commands\AdminCommands;
 
+use Yii;
 use shopium\mod\telegram\components\AdminCommand;
 use Longman\TelegramBot\DB;
 use Longman\TelegramBot\Entities\Update;
@@ -24,17 +25,17 @@ class DebugCommand extends AdminCommand
     /**
      * @var string
      */
-    protected $description = 'Команда отладки, чтобы помочь найти проблемы';
-
-    /**
-     * @var string
-     */
     protected $usage = '/debug';
 
     /**
      * @var string
      */
     protected $version = '1.0.0';
+
+    public function getDescription()
+    {
+        return Yii::t('telegram/command', 'COMMAND_DEBUG');
+    }
 
     public function __construct2(Api $telegram, Update $update = null)
     {
@@ -79,14 +80,14 @@ class DebugCommand extends AdminCommand
         $data = ['chat_id' => $chat->getId()];
 
         if ($text !== 'glasnost' && !$chat->isPrivateChat()) {
-            $data['text'] = 'Доступно только в приватном чате.';
+            $data['text'] = Yii::t('telegram/default', 'ONLY_PRIVATE_CHAT');
 
             return Request::sendMessage($data);
         }
 
         $debug_info = [];
 
-        $debug_info[] = sprintf('*Версия Бота:* `%s`', $this->telegram->getVersion());
+        $debug_info[] = sprintf('*' . Yii::t('telegram/default', 'BOT_VERSION') . ':* `%s`', $this->telegram->getVersion());
         $debug_info[] = sprintf('*Download path:* `%s`', $this->telegram->getDownloadPath() ?: '`_Not set_`');
         $debug_info[] = sprintf('*Upload path:* `%s`', $this->telegram->getUploadPath() ?: '`_Not set_`');
 
@@ -100,16 +101,16 @@ class DebugCommand extends AdminCommand
         $php_bit = '';
         PHP_INT_SIZE === 4 && $php_bit = ' (32bit)';
         PHP_INT_SIZE === 8 && $php_bit = ' (64bit)';
-        $debug_info[] = sprintf('*PHP версия:* `%1$s%2$s; %3$s; %4$s`', PHP_VERSION, $php_bit, PHP_SAPI, PHP_OS);
+        $debug_info[] = sprintf('*PHP:* `%1$s%2$s; %3$s; %4$s`', PHP_VERSION, $php_bit, PHP_SAPI, PHP_OS);
         $debug_info[] = sprintf('*Maximum PHP script execution time:* `%d сек`', ini_get('max_execution_time'));
 
         $mysql_version = $pdo ? $pdo->query('SELECT VERSION() AS version')->fetchColumn() : null;
-        $debug_info[] = sprintf('*MySQL версия:* `%s`', $mysql_version ?: 'disabled');
+        $debug_info[] = sprintf('*MySQL:* `%s`', $mysql_version ?: 'disabled');
 
-        $debug_info[] = sprintf('*Операционная система:* `%s`', php_uname());
+        $debug_info[] = sprintf('*'.Yii::t('telegram/default', 'OS').':* `%s`', php_uname());
 
         if (isset($_SERVER['SERVER_SOFTWARE'])) {
-            $debug_info[] = sprintf('*Веб-сервер:* `%s`', $_SERVER['SERVER_SOFTWARE']);
+            $debug_info[] = sprintf('*'.Yii::t('telegram/default', 'WEB_SERVER').':* `%s`', $_SERVER['SERVER_SOFTWARE']);
         }
         if (function_exists('curl_init')) {
             $curlversion = curl_version();

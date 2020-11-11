@@ -129,7 +129,7 @@ class SearchResultCommand extends SystemCommand
             'internal' => false,
             'callback_data' => 'command={command}&page={page}',
             'command' => 'search&string=' . $this->string,
-            'nextPageLabel' => '🔄 загрузить еще...'
+            'nextPageLabel' => '🔄 '.Yii::t('telegram/default','LOAD_MORE')
         ]);
 
 
