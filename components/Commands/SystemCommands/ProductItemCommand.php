@@ -203,7 +203,10 @@ class ProductItemCommand extends SystemCommand
                 if ($product->availability != Product::AVAILABILITY_NOT) {
                     $keyboards[] = [
                         new InlineKeyboardButton([
-                            'text' => Yii::t('telegram/command', 'BUTTON_BUY', $this->number_format($product->getFrontPrice())),
+                            'text' => Yii::t('telegram/command', 'BUTTON_BUY', [
+                                'price' => $this->number_format($product->getFrontPrice()),
+                                'currency' => Yii::$app->currency->active['symbol']
+                            ]),
                             'callback_data' => "query=addCart&product_id={$product->id}&photo_index={$this->photo_index}"
                         ])
                     ];
@@ -261,34 +264,34 @@ class ProductItemCommand extends SystemCommand
 
         //if ($user_id == 812367093) {
 
-            if (file_exists(Yii::getAlias('@app/web') . DIRECTORY_SEPARATOR . 'product.twig')) {
-                $tpl = '@app/web/product.twig';
-            } else {
-                $tpl = '@telegram/views/templates/product.twig';
-            }
-            $caption = Yii::$app->controller->renderPartial($tpl, [
-                'product' => [
-                    'id' => $product->id,
-                    'name' => Html::decode($product->name),
-                    'price' => $this->number_format($product->price),
-                    'description' => ($product->description) ? preg_replace("/<br\s*\/?>\s*/i", PHP_EOL, $product->description) : false,
-                    'sku' => ($product->sku) ? Html::decode($product->sku) : false,
-                    'discount' => $discount,
-                    'brand' => ($product->manufacturer_id) ? Html::decode($product->manufacturer->name) : false,
-                    'category' => ($product->main_category_id) ? ($product->mainCategory) ? Html::decode($product->mainCategory->name) : false : false,
-                    'availability' => $product->availability,
-                    'attributes' => $attributesList,
-                ],
-                'is_admin' => ($this->telegram->isAdmin($user_id) ? true : false),
-                'currency' => [
-                    'symbol' => Yii::$app->currency->active['symbol'],
-                    'name' => Yii::$app->currency->active['name']
-                ]
-            ]);
-            if (!$caption) {
-                return $this->notify('Ошибка шаблона', 'error');
-            }
-       // }
+        if (file_exists(Yii::getAlias('@app/web') . DIRECTORY_SEPARATOR . 'product.twig')) {
+            $tpl = '@app/web/product.twig';
+        } else {
+            $tpl = '@telegram/views/templates/product.twig';
+        }
+        $caption = Yii::$app->controller->renderPartial($tpl, [
+            'product' => [
+                'id' => $product->id,
+                'name' => Html::decode($product->name),
+                'price' => $this->number_format($product->price),
+                'description' => ($product->description) ? preg_replace("/<br\s*\/?>\s*/i", PHP_EOL, $product->description) : false,
+                'sku' => ($product->sku) ? Html::decode($product->sku) : false,
+                'discount' => $discount,
+                'brand' => ($product->manufacturer_id) ? Html::decode($product->manufacturer->name) : false,
+                'category' => ($product->main_category_id) ? ($product->mainCategory) ? Html::decode($product->mainCategory->name) : false : false,
+                'availability' => $product->availability,
+                'attributes' => $attributesList,
+            ],
+            'is_admin' => ($this->telegram->isAdmin($user_id) ? true : false),
+            'currency' => [
+                'symbol' => Yii::$app->currency->active['symbol'],
+                'name' => Yii::$app->currency->active['name']
+            ]
+        ]);
+        if (!$caption) {
+            return $this->notify('Ошибка шаблона', 'error');
+        }
+        // }
         if ($callbackData == 'changeProductImage') {
 
             $dataMedia = [

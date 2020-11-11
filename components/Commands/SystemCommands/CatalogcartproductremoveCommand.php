@@ -70,7 +70,10 @@ class CatalogcartproductremoveCommand extends SystemCommand
           //  $originalProduct = $orderProduct->originalProduct;
             $keyboards[] = [
                 new InlineKeyboardButton([
-                    'text' => Yii::t('telegram/command','BUTTON_BUY',$orderProduct->price),
+                    'text' => Yii::t('telegram/command','BUTTON_BUY',[
+                        'price'=>$this->number_format($orderProduct->price),
+                        'currency'=>Yii::$app->currency->active['symbol']
+                    ]),
                     'callback_data' => "query=addCart&product_id={$orderProduct->product_id}"
                 ])
             ];

@@ -1,9 +1,9 @@
 <?php
 
 return [
-    "BUTTON_CHECKOUT" => '✅ Оформить заказ на — {0} грн.',
-    'BUTTON_PAY'=>'💳 Оплатить заказ — {0} грн.',
-    "BUTTON_BUY" => '👉 {0} грн. — Купить 👈',
+    "BUTTON_CHECKOUT" => '✅ Оформить заказ на — {price} {currency}.',
+    'BUTTON_PAY'=>'💳 Оплатить заказ — {price} {currency}.',
+    "BUTTON_BUY" => '👉 {price} {currency}. — Купить 👈',
     'USAGE'=>'Используйте: {0}',
     'COMMAND_NOT_FOUND_1'=>'🚫 Команда /{0} не найдена.',
     'COMMAND_NOT_FOUND_2'=>'Воспользуйтесь командой 👉 /help',

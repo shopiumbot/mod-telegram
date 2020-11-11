@@ -8,6 +8,7 @@ use Longman\TelegramBot\Entities\InlineKeyboardButton;
 use Longman\TelegramBot\Request;
 use shopium\mod\cart\models\Order;
 use Yii;
+
 /**
  *
  * Display an inline keyboard with a few buttons.
@@ -83,12 +84,13 @@ class CartproductquantityCommand extends SystemCommand
         ];
         $keyboards[] = [
             new InlineKeyboardButton([
-                'text' => Yii::t('telegram/command', 'BUTTON_CHECKOUT', $order->total_price),
+                'text' => Yii::t('telegram/command', 'BUTTON_CHECKOUT', [
+                    'price' => $this->number_format($order->total_price),
+                    'currency' => Yii::$app->currency->active['symbol']
+                ]),
                 'callback_data' => 'query=checkOut&id=' . $order->id
             ]),
         ];
-
-
 
 
         $dataEdit['chat_id'] = $chat_id;

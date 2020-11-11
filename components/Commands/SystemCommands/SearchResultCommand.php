@@ -212,7 +212,10 @@ class SearchResultCommand extends SystemCommand
                 } else {
                     $keyboards[] = [
                         new InlineKeyboardButton([
-                            'text' => Yii::t('telegram/command', 'BUTTON_BUY', $this->number_format($product->price)),
+                            'text' => Yii::t('telegram/command', 'BUTTON_BUY',[
+                                'price'=>$this->number_format($product->price),
+                                'currency'=>Yii::$app->currency->active['symbol']
+                            ]),
                             'callback_data' => "query=addCart&product_id={$product->id}"
                         ])
                     ];

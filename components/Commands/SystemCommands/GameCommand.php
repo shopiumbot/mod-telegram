@@ -234,7 +234,10 @@ class GameCommand extends SystemCommand
                     $system = ($o->paymentMethod) ? $o->paymentMethod->system : 0;
                     $inlineKeyboards[] = [
                         new InlineKeyboardButton([
-                            'text' => Yii::t('telegram/command', 'BUTTON_PAY', $this->number_format($o->total_price)),
+                            'text' => Yii::t('telegram/command', 'BUTTON_PAY', [
+                                'price'=>$this->number_format($o->total_price),
+                                'currency'=>Yii::$app->currency->active['symbol']
+                            ]),
                             'callback_data' => "query=orderPay&id={$o->id}&system={$system}"
                         ]),
                     ];

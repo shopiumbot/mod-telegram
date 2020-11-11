@@ -121,7 +121,7 @@ class CartCommand extends UserCommand
                     $original = $product->originalProduct;
                     if (!$original) {//todo: пересмотреть
                         $delete = $product->delete();
-                        if($delete)
+                        if ($delete)
                             $order->updateTotalPrice();
                     }
                     $keyboards[] = [
@@ -150,7 +150,10 @@ class CartCommand extends UserCommand
 
                     $keyboards[] = [
                         new InlineKeyboardButton([
-                            'text' => Yii::t('telegram/command', 'BUTTON_CHECKOUT', $this->number_format($order->total_price)),
+                            'text' => Yii::t('telegram/command', 'BUTTON_CHECKOUT', [
+                                'price' => $this->number_format($order->total_price),
+                                'currency' => Yii::$app->currency->active['symbol']
+                            ]),
                             'callback_data' => 'query=checkOut&id=' . $order->id
 
                         ]),

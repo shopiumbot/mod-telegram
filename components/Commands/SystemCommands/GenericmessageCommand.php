@@ -116,6 +116,10 @@ class GenericmessageCommand extends SystemCommand
                 sleep(4);//time of animation game dice
                 $text = "Вы выйграли *{$diceValue}%* скидки";
                 $this->notify($text, 'success');
+            } elseif ($dice->getEmoji() == '🎰') {
+                sleep(4);//time of animation game dice
+                $text = "Вы выйграли *{$diceValue}*";
+                $this->notify($text, 'success');
 
             }
         }

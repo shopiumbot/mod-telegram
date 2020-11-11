@@ -99,7 +99,7 @@ class HistoryCommand extends UserCommand
             'command' => 'getHistory'
         ]);
 
-        $keyboards=[];
+        $keyboards = [];
         if ($orders) {
 
 
@@ -120,7 +120,10 @@ class HistoryCommand extends UserCommand
                     $system = ($order->paymentMethod) ? $order->paymentMethod->system : 0;
                     $keyboards[] = [
                         new InlineKeyboardButton([
-                            'text' => Yii::t('telegram/command', 'BUTTON_PAY', $this->number_format($order->total_price)),
+                            'text' => Yii::t('telegram/command', 'BUTTON_PAY', [
+                                'price' => $this->number_format($order->total_price),
+                                'currency' => Yii::$app->currency->active['symbol']
+                            ]),
                             'callback_data' => "query=orderPay&id={$order->id}&system={$system}"
                         ])];
                 }
@@ -134,7 +137,7 @@ class HistoryCommand extends UserCommand
                 }
 
                 $text .= PHP_EOL . 'Дата заказа: *' . CMS::date($order->created_at) . '*' . PHP_EOL;
-                if($order->status)
+                if ($order->status)
                     $text .= 'Статус: *' . $order->status->name . '*' . PHP_EOL;
                 if ($order->invoice && !empty($order->invoice)) {
                     $text .= 'TTH: *' . $order->invoice . '*' . PHP_EOL;
