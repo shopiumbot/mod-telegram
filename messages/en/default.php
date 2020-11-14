@@ -57,5 +57,6 @@ return [
     'PRODUCT_REMOVE_CART' => 'Product removed from cart',
     'PRODUCT_PREV_REMOVE_CART' => 'The product was previously removed from the cart',
     'PRODUCT_ADDED_CART_SUCCESS' => '✅ Product {0} added to cart successfully',
-    'PRODUCT_NOT_FOUND' => '🙁 The product does not exist at the moment'
+    'PRODUCT_NOT_FOUND' => '🙁 The product does not exist at the moment',
+    'NO_TRANSLATE'=>'No translate',
 ];

@@ -1,0 +1,31 @@
+<?php
+
+return [
+    'TYPE' => 'Тип розсилки',
+    'TEXT' => 'Текст',
+    'SEND_TO_GROUPS' => 'Всім групам ({0})',
+    'SEND_TO_SUPERGROUPS' => 'Всім супер-групам ({0})',
+    'SEND_TO_CHANNELS' => 'Всім каналах ({0})',
+    'SEND_TO_USERS' => 'Всім користувачам ({0})',
+    'SEND_TO_ADMINS' => 'Всім адміністраторам ({0})',
+    'DISABLE_NOTIFICATION' => 'Звукове повідомлення',
+    'MEDIA' => 'Файл',
+    'TITLE' => 'Назва',
+    'DURATION' => 'Тривалість',
+    'PERFORMER' => 'Виконавець',
+    'THUMB' => 'Мініатюра відправленого файлу',
+    'CREATED_AT' => 'Дата',
+    'CREATE' => 'Створити розсилку',
+    'LONGITUDE' => 'Довгота',
+    'LATITUDE' => 'Широта',
+    'ADDRESS' => 'Адреса',
+    'TYPE_SEND_MESSAGE' => 'Повідомлення',
+    'TYPE_SEND_VENUE' => 'Локація',
+    'TYPE_SEND_PHOTO' => 'Зображення',
+    'TYPE_SEND_AUDIO' => 'Аудіо',
+    'TYPE_SEND_DOCUMENT' => 'Документ',
+    'TYPE_SEND_GALLERY' => 'Фото галерея',
+    'TYPE_SEND_VIDEO' => 'Відео',
+    'TYPE_SEND_POLL' => 'Опитування',
+    'TYPE_SEND_CONTACT' => 'Контакт'
+];

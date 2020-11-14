@@ -94,6 +94,7 @@ class CatalogCommand extends UserCommand
 
             if ($categories) {
                 foreach ($categories as $category) {
+
 //$s=$category->products;
                     //$count = $s->isNotAvailability()->count();
 
@@ -107,20 +108,20 @@ class CatalogCommand extends UserCommand
 
 
                     $icon = ($category->icon) ? $category->icon . ' ' : '';
-                    $childCount = $category->children()->count();
-
+                    $childCount = $category->children()->published()->count();
+                    $name = (!empty($category->name)) ? $category->name : '' . Yii::t('telegram/default', 'NO_TRANSLATE') . ' ' . Yii::$app->languageManager->active['icon'];
                     if ($childCount) {
-
                         $keyboards[] = new InlineKeyboardButton([
-                            'text' => $icon . $category->name,
+                            'text' => $icon . $name,
                             'callback_data' => 'query=openCatalog&id=' . $category->id
                         ]);
 
                     } else {
+
                         $count = $category->countByAvailabilityItems;
                         if ($count) {
                             $keyboards[] = new InlineKeyboardButton([
-                                'text' => $icon . $category->name . ' (' . $count . ')',
+                                'text' => $icon . $name . ' (' . $count . ')',
                                 'callback_data' => 'query=getList&model=catalog&id=' . $category->id
                             ]);
                         }
@@ -128,6 +129,7 @@ class CatalogCommand extends UserCommand
                     }
 
                 }
+
                 $keyboards = array_chunk($keyboards, $root->chunk);
             } else {
                 return $this->notify(Yii::t('telegram/default', 'CATALOG_NO_ITEMS'), 'info');
@@ -208,6 +210,7 @@ class CatalogCommand extends UserCommand
             } else {
                 return $this->notify('non-keywords', 'error');
             }
+
         } else {
 
             if (isset($this->settings->enable_brands) && $this->settings->enable_brands) {
@@ -219,7 +222,7 @@ class CatalogCommand extends UserCommand
                     ])]);
                 }
             }
-
+            //Todo сделать как в магазине. (рабочий вариант)
             if (isset($this->settings->enable_discounts) && $this->settings->enable_discounts && false) {
                 $discountsQuery = Product::find()->published();
                 if (Yii::$app->settings->get('app', 'availability_hide')) {
