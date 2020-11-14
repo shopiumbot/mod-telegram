@@ -52,7 +52,7 @@ abstract class Command extends \Longman\TelegramBot\Commands\Command
 
         $this->user = \shopium\mod\telegram\models\User::findOne($user_id);
         Yii::$app->language = ($this->user->language) ? $this->user->language : 'ru';
-
+        Yii::$app->languageManager->setActive(Yii::$app->language);
     }
 
     public function preExecute()

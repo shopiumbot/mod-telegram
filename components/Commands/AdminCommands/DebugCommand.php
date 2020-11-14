@@ -102,7 +102,7 @@ class DebugCommand extends AdminCommand
         PHP_INT_SIZE === 4 && $php_bit = ' (32bit)';
         PHP_INT_SIZE === 8 && $php_bit = ' (64bit)';
         $debug_info[] = sprintf('*PHP:* `%1$s%2$s; %3$s; %4$s`', PHP_VERSION, $php_bit, PHP_SAPI, PHP_OS);
-        $debug_info[] = sprintf('*Maximum PHP script execution time:* `%d сек`', ini_get('max_execution_time'));
+        $debug_info[] = sprintf('*Maximum PHP script execution time:* `%d sec`', ini_get('max_execution_time'));
 
         $mysql_version = $pdo ? $pdo->query('SELECT VERSION() AS version')->fetchColumn() : null;
         $debug_info[] = sprintf('*MySQL:* `%s`', $mysql_version ?: 'disabled');
@@ -114,10 +114,10 @@ class DebugCommand extends AdminCommand
         }
         if (function_exists('curl_init')) {
             $curlversion = curl_version();
-            $debug_info[] = sprintf('*CURL версия:* `%1$s; %2$s`', $curlversion['version'], $curlversion['ssl_version']);
+            $debug_info[] = sprintf('*CURL:* `%1$s; %2$s`', $curlversion['version'], $curlversion['ssl_version']);
         }
 
-        $webhook_info_title = '*Webhook информация:*';
+        $webhook_info_title = '*Webhook:*';
         try {
             // Check if we're actually using the Webhook method.
             if (Request::getInput() === '') {

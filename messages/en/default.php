@@ -37,7 +37,7 @@ return [
     'COMMAND_ME' => 'Information about me',
     'COMMAND_START' => 'Start',
     'PAID' => 'PAID!',
-    'LOAD_MORE' => 'Load more...',
+    'LOAD_MORE' => '🔄 Load more...',
     'PLATFORM_WORK' => 'The bot works on the platform 🥇 @shopiumbot',
     'SEARCH_STEP_1' => 'Enter product name or SKU',
     'KEYWORD_BACK' => '⬅ Return',
@@ -52,4 +52,10 @@ return [
     'DESCRIPTION' => 'Description',
     'USAGE' => 'Usage',
     'WRITE' => '✉ Write message',
+    'NO_PRODUCTS' => 'No products',
+    'PAYMENT_SYSTEM_NO_CONFIG' => 'Payment system not configured',
+    'PRODUCT_REMOVE_CART' => 'Product removed from cart',
+    'PRODUCT_PREV_REMOVE_CART' => 'The product was previously removed from the cart',
+    'PRODUCT_ADDED_CART_SUCCESS' => '✅ Product {0} added to cart successfully',
+    'PRODUCT_NOT_FOUND' => '🙁 The product does not exist at the moment'
 ];

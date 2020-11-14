@@ -59,7 +59,7 @@ class CallbackqueryCommand extends SystemCommand
                     'month' => $params['month'],
                 ])->executeCommand('plan');
             } else {
-                return $this->notify('Ошибка #planPay');
+                return $this->notify('Error #planPay');
             }
 
         } elseif (preg_match('/sendMessage/iu', trim($callback_data), $match)) {
@@ -123,7 +123,7 @@ class CallbackqueryCommand extends SystemCommand
                     'system' => $params['system'],
                 ])->executeCommand('payment');
             } else {
-                return $this->notify('Система оплаты не настроена');
+                return $this->notify(Yii::t('telegram/default', 'PAYMENT_SYSTEM_NO_CONFIG'));
             }
 
         } elseif (preg_match('/openCatalog/iu', trim($callback_data), $match)) { //preg_match('/^getCatalog\s+([0-9]+)/iu', trim($callback_data), $match)
@@ -195,7 +195,7 @@ class CallbackqueryCommand extends SystemCommand
 
                 $data = [
                     'callback_query_id' => $callback_query_id,
-                    'text' => 'Товар убран из корзины',
+                    'text' => Yii::t('telegram/default', 'PRODUCT_REMOVE_CART'),
                     'show_alert' => false,
                     'cache_time' => 0,
                 ];
@@ -287,7 +287,7 @@ class CallbackqueryCommand extends SystemCommand
                     ])
                     ->executeCommand('productitem');
             }
-            return $this->notify('Товара ранее был удален из корзины', 'info');
+            return $this->notify(Yii::t('telegram/default', 'PRODUCT_PREV_REMOVE_CART'), 'info');
 
         } elseif (preg_match('/checkOut/iu', trim($callback_data), $match)) {
             parse_str($callback_data, $params);
@@ -325,7 +325,7 @@ class CallbackqueryCommand extends SystemCommand
 
                     $data = [
                         'callback_query_id' => $callback_query_id,
-                        'text' => "✅ Товар {$product->name} успешно добавлен в корзину",
+                        'text' => Yii::t('telegram/default', 'PRODUCT_ADDED_CART_SUCCESS', $product->name),
                         'show_alert' => false,
                         'cache_time' => 0,
                     ];
@@ -352,7 +352,7 @@ class CallbackqueryCommand extends SystemCommand
 
                 $data = [
                     'callback_query_id' => $callback_query_id,
-                    'text' => "🙁 На данный момент товара не существует",
+                    'text' => Yii::t('telegram/default', 'PRODUCT_NOT_FOUND'),
                     'show_alert' => false,
                     'cache_time' => 0,
                 ];
@@ -560,7 +560,7 @@ class CallbackqueryCommand extends SystemCommand
                 'maxButtonCount' => 1,
                 'internal' => false,
                 'command' => $pagerCommand,
-                'nextPageLabel' => '🔄 '.Yii::t('telegram/default','LOAD_MORE')
+                'nextPageLabel' => Yii::t('telegram/default', 'LOAD_MORE')
             ]);
 
 
@@ -576,7 +576,7 @@ class CallbackqueryCommand extends SystemCommand
             } else {
                 $data = [
                     'callback_query_id' => $callback_query_id,
-                    'text' => 'Товаров нет',
+                    'text' => Yii::t('telegram/default', 'NO_PRODUCTS'),
                     //'show_alert' => true,
                     'cache_time' => 100,
                 ];
@@ -655,7 +655,7 @@ class CallbackqueryCommand extends SystemCommand
                     'maxButtonCount' => 1,
                     'internal' => false,
                     'command' => $pagerCommand,
-                    'nextPageLabel' => '🔄 '.Yii::t('telegram/default','LOAD_MORE')
+                    'nextPageLabel' => Yii::t('telegram/default', 'LOAD_MORE')
                 ]);
 
 

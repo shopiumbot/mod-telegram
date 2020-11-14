@@ -46,8 +46,6 @@ class HelpCommand extends UserCommand
             new KeyboardButton(['text' => $this->settings->button_text_start]),
             new KeyboardButton(['text' => Yii::t('telegram/default','WRITE')]),
             //new KeyboardButton(['text' => Yii::t('telegram/default','SETTINGS')]),
-            // new KeyboardButton(['text' => '☎ Позвонить']),
-
         ];
 
         $reply_markup = (new Keyboard([

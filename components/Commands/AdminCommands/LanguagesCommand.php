@@ -113,18 +113,17 @@ class LanguagesCommand extends AdminCommand
         //   $notes['status'] = false;
         $result = Request::emptyResponse();
 
-        $langs = [
-            'ru' => '🇷🇺 Русский',
-            //'uk' => '🇺🇦 Український',
-            'en' => '🇬🇧 English',
-        ];
+        $langs=[];
+        foreach (Yii::$app->languageManager->getLanguages() as $lang) {
+            $langs[$lang->code] = $lang->icon . ' ' . $lang->name;
+        }
         switch ($state) {
             case 0:
                 if ($text === '' || !in_array($text, array_values($langs), true)) {
                     $notes['state'] = 0;
                     $this->conversation->update();
 
-                    $data['text'] = Yii::t('telegram/default','CHOOSE_LANGUAGE').':';
+                    $data['text'] = Yii::t('telegram/default', 'CHOOSE_LANGUAGE') . ':';
                     //$data['reply_markup'] = Keyboard::remove(['selective' => true]);
 
                     $keyboards = [];
