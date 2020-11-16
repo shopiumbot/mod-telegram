@@ -8,5 +8,5 @@
  */
 
 ?>
-<?= $form->field($dy_model, 'text')->textarea() ?>
+<?= $form->field($dy_model, 'text')->widget(\core\components\TinyMceTelegram::class) ?>
 

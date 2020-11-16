@@ -2,6 +2,7 @@
 
 namespace shopium\mod\telegram\components;
 
+use core\modules\menu\models\Menu;
 use core\modules\pages\models\Pages;
 use Longman\TelegramBot\DB;
 use Longman\TelegramBot\Entities\InlineKeyboardButton;
@@ -240,7 +241,18 @@ abstract class Command extends \Longman\TelegramBot\Commands\Command
         //    $textMyCart .= ' (' . $this->orderProductCount . ')';
         //}
 
-        $keyboards[] = [
+        $keyboards=[];
+        $menus = Menu::find()->published()->all();
+
+        foreach ($menus as $menu){
+            $keyboards[] = [
+                new KeyboardButton(['text' => $menu->name]),
+            ];
+        }
+
+
+
+        /*$keyboards[] = [
             new KeyboardButton(['text' => $this->settings->button_text_start]),
             new KeyboardButton(['text' => $this->settings->button_text_catalog]),
             new KeyboardButton(['text' => $this->settings->button_text_search]),
@@ -250,14 +262,15 @@ abstract class Command extends \Longman\TelegramBot\Commands\Command
             new KeyboardButton(['text' => $textMyCart]),
             new KeyboardButton(['text' => $textMyOrders]),
             new KeyboardButton(['text' => '❓ Помощь'])
-        ];
+        ];*/
+
         //in_array(812367093, $this->telegram->getAdminList())
         if ($this->telegram->isAdmin($this->update->getMessage()->getChat()->getId())) {
             $keyboards[] = [
                 new KeyboardButton(['text' => $this->keyword_admin])
             ];
         }
-        $pages = Pages::find()->published()->asArray()->all();
+        /*$pages = Pages::find()->published()->asArray()->all();
         $pagesKeywords = [];
         foreach ($pages as $page) {
             $pagesKeywords[] = new KeyboardButton(['text' => $page['name']]);
@@ -265,7 +278,7 @@ abstract class Command extends \Longman\TelegramBot\Commands\Command
         }
         if ($pagesKeywords) {
             $keyboards[] = $pagesKeywords;
-        }
+        }*/
         $data = (new Keyboard([
             'keyboard' => $keyboards
         ]))->setResizeKeyboard(true)->setOneTimeKeyboard(true)->setSelective(true);

@@ -2,6 +2,7 @@
 
 namespace shopium\mod\telegram\components\Commands\SystemCommands;
 
+use core\modules\menu\models\Menu;
 use core\modules\pages\models\Pages;
 use Couchbase\RegexpSearchQuery;
 use Longman\TelegramBot\Entities\Games\Game;
@@ -156,7 +157,7 @@ class GenericmessageCommand extends SystemCommand
         // $result = Request::sendMessage($test);
 
 
-        $page = Pages::find()->published()->where(['name' => $text])->asArray()->one();
+        /*$page = Pages::find()->published()->where(['name' => $text])->asArray()->one();
         if ($page) {
             $data['chat_id'] = $chat_id;
             $data['text'] = $page['text'];
@@ -167,10 +168,59 @@ class GenericmessageCommand extends SystemCommand
                 return $this->notify($send->getDescription(), 'error');
             }
             return $send;
+        }*/
+
+
+        /*$page = Menu::find()
+            ->published()
+            ->where(['name' => $text])
+            //->andWhere(['not', ['content' => null]])
+            ->one();
+        if ($page) {
+            $this->notify($page->id);
+            $data['chat_id'] = $chat_id;
+            $data['text'] = $page->content;
+            $data['parse_mode'] = 'HTML';
+            $data['reply_markup'] = $this->catalogKeyboards();
+            $send = Request::sendMessage($data);
+            if (!$send->isOk()) {
+                return $this->notify($send->getDescription(), 'error');
+            }
+            return $send;
+        }*/
+
+
+        /*$menus = Menu::find()->published()->all();
+        foreach ($menus as $menu){
+            if ($menu->name === $text) {
+                return $this->telegram->executeCommand($menu->callback);
+            }
+        }*/
+
+
+        $page = Menu::find()
+            ->published()->joinWith('translations as translate')
+            ->where(['translate.name' => $text])
+            ->one();
+        if ($page) {
+           // $this->notify($page->id);
+            if($page->callback){
+                return $this->telegram->executeCommand($page->callback);
+            }else{
+                if($page->content){
+
+                $data['chat_id'] = $chat_id;
+                $data['text'] = $page->content;
+                $data['parse_mode'] = 'HTML';
+                $data['reply_markup'] = $this->catalogKeyboards();
+                $send = Request::sendMessage($data);
+                if (!$send->isOk()) {
+                    return $this->notify($send->getDescription(), 'error');
+                }
+                return $send;
+                }
+            }
         }
-
-
-
 
 
         if ($this->settings->button_text_cart === $text) { //cart emoji //preg_match('/^(\x{1F6CD})/iu', $text, $match)

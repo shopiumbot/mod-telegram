@@ -225,8 +225,20 @@ class Mailing extends ActiveRecord
             //'options' => json_encode(['👍 Классно','👌 Нормально','👎 Не очень'])
 
 
+
+            $patters = [
+                "/<br\s*\/?>\s*/i",
+                "/<span style=\"text-decoration: ?underline;\">(.*?)<\/span>/i",
+                "/<span style=\"text-decoration: ?line-through;\">(.*?)<\/span>/i"
+            ];
+            $rep = [
+                PHP_EOL,
+                '<u>$1</u>',
+                '<s>$1</s>',
+            ];
+
             if ($this->text)
-                $data[$text] = $this->text;
+                $data[$text] = preg_replace($patters, $rep, $this->text);
 
             $data['disable_notification'] = !$this->disable_notification;
 
@@ -250,6 +262,9 @@ class Mailing extends ActiveRecord
             }
 
 
+
+
+            $data['parse_mode'] = 'HTML';
             foreach ($ids as $row) {
                 $data['chat_id'] = $row['id'];
                 if ($keyboards) {
