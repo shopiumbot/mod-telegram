@@ -199,7 +199,8 @@ class GenericmessageCommand extends SystemCommand
 
 
         $page = Menu::find()
-            ->published()->joinWith('translations as translate')
+            ->published()
+            ->joinWith('translations as translate')
             ->where(['translate.name' => $text])
             ->one();
         if ($page) {
