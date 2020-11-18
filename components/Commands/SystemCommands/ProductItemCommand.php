@@ -349,31 +349,47 @@ class ProductItemCommand extends SystemCommand
         } else {
             // $image = Url::to($product->getImage()->getUrlToOrigin(), true);
 
-            $dataPhoto = [
-                //'photo' => Url::to($product->getImage()->getUrl('800x800'), true),
-                'photo' => $image,
-                'chat_id' => $chat_id,
-                'parse_mode' => 'HTML',
-                'caption' => $caption,
-                'reply_markup' => new InlineKeyboard([
-                    'inline_keyboard' => $keyboards
-                ]),
-            ];
+            if($images){
+                $data = [
+                    //'photo' => Url::to($product->getImage()->getUrl('800x800'), true),
+                    'photo' => $image,
+                    'chat_id' => $chat_id,
+                    'parse_mode' => 'HTML',
+                    'caption' => $caption,
+                    'reply_markup' => new InlineKeyboard([
+                        'inline_keyboard' => $keyboards
+                    ]),
+                ];
 
-            $reqPhoto = Request::sendPhoto($dataPhoto);
-            if ($reqPhoto->isOk()) {
+                $request = Request::sendPhoto($data);
+            }else{
+                $data = [
+                    //'photo' => Url::to($product->getImage()->getUrl('800x800'), true),
+                    //'photo' => $image,
+                    'chat_id' => $chat_id,
+                    'parse_mode' => 'HTML',
+                    'text' => $caption,
+                    'reply_markup' => new InlineKeyboard([
+                        'inline_keyboard' => $keyboards
+                    ]),
+                ];
+
+                $request = Request::sendMessage($data);
+            }
+
+            if ($request->isOk()) {
 
                 if (isset($imageData)) {
                     if (!$imageData->telegram_file_id) {
-                        $imageData->telegram_file_id = $this->getTelegram()->getBotId() . ':' . $reqPhoto->getResult()->photo[0]['file_id'];
+                        $imageData->telegram_file_id = $this->getTelegram()->getBotId() . ':' . $request->getResult()->photo[0]['file_id'];
                         $imageData->save(false);
                     }
                 }
 
 
             } else {
-                $errorCode = $reqPhoto->getErrorCode();
-                $description = $reqPhoto->getDescription();
+                $errorCode = $request->getErrorCode();
+                $description = $request->getDescription();
                 //print_r($reqPhoto);
                 $s = $this->notify("sendPhoto: {$errorCode} {$description} " . $image, 'error');
             }

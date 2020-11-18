@@ -46,7 +46,7 @@ return [
     'CANCELED' => 'Canceled!',
     'CHOOSE_LANGUAGE' => 'Choose language',
     'CHANGE_LANGUAGE' => '🌍 Change language',
-    'SETTINGS' => '⚙ Settings',
+    'HELP' => '❓ Help',
     'FULL_HELP_USE' => 'For complete reference use',
     'COMMAND' => 'Command',
     'DESCRIPTION' => 'Description',

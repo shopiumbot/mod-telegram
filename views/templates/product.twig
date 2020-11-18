@@ -1,19 +1,19 @@
 {% if product.discount.exist %}🔥🔥🔥{% endif %}<strong>{{ product.name }}</strong>
 {{ product.price }} {{ currency.symbol }}
 
-{%- if product.discount.exist -%}🎁 Скидка: -{{ product.discount.sum }}{%- endif -%}
-{%- if not product.availability -%}Наличие: Под заказ{%- endif -%}
-{%- if product.brand -%}<strong>Производитель:</strong> {{ product.brand }}{%- endif -%}
+{%- if product.discount.exist -%}🎁 {{ t('shop/Product', 'DISCOUNT') }}: -{{ product.discount.sum }}{%- endif -%}
+{%- if not product.availability -%}{{ t('shop/Product', 'AVAILABILITY') }}: {{ t('shop/Product', 'AVAILABILITY_2') }}{%- endif -%}
+{%- if product.brand -%}<strong>{{ t('shop/Product', 'MANUFACTURER_ID') }}:</strong> {{ product.brand }}{%- endif -%}
 
 {% if product.attributes %}
-<strong>Характеристики:</strong>
+<strong>{{ t('shop/default', 'SPECIFICATION') }}:</strong>
 {% for name, value in product.attributes %}
 <strong>{{ name }}:</strong> {{ value }}
 {% endfor %}
 {% endif %}
 
 {% if product.description %}
-<strong>Описание:</strong>
+<strong>{{ t('shop/Product', 'DESCRIPTION') }}:</strong>
 {% apply spaceless %}
 {{ product.description }}
 {% endapply %}
@@ -21,5 +21,5 @@
 
 {% if is_admin %}
 <strong>Инфо админастратора:</strong>
-ID товара: {{ product.id }}
+{{ t('shop/Product', 'ID') }}: {{ product.id }}
 {% endif %}

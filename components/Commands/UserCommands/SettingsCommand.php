@@ -44,11 +44,18 @@ class SettingsCommand extends UserCommand
         //}
         $keyboards[] = [
             new KeyboardButton(['text' => Yii::t('telegram/default', 'CHANGE_LANGUAGE')]),
-            new KeyboardButton(['text' => Yii::t('telegram/default', '🔔 Уведомление')]), //🔕
+            //  new KeyboardButton(['text' => Yii::t('telegram/default', '🔔 Уведомление')]), //🔕
         ];
-        $keyboards[] = [
-            new KeyboardButton(['text' => $this->keyword_cancel]),
-        ];
+
+
+
+        $start = \core\modules\menu\models\Menu::findOne(['callback' => 'start']);
+
+        if ($start) {
+            $keyboards[1][] = new KeyboardButton(['text' => $start->name]);
+        }
+        $keyboards[1][] = new KeyboardButton(['text' => Yii::t('telegram/default', 'WRITE')]);
+        $keyboards[1][] = new KeyboardButton(['text' => Yii::t('telegram/default', 'HELP')]);
 
 
         $reply_markup = (new Keyboard([

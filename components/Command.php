@@ -133,7 +133,7 @@ abstract class Command extends \Longman\TelegramBot\Commands\Command
         //}
 
 
-        $keyboards[] = [
+        /*$keyboards[] = [
             new KeyboardButton(['text' => $this->settings->button_text_catalog]),
             new KeyboardButton(['text' => $this->settings->button_text_search]),
             new KeyboardButton(['text' => $textMyCart])
@@ -142,7 +142,21 @@ abstract class Command extends \Longman\TelegramBot\Commands\Command
             //  new KeyboardButton(['text' => '📢 Новости']),
             new KeyboardButton(['text' => $textMyOrders]),
             new KeyboardButton(['text' => '❓ Помощь'])
-        ];
+        ];*/
+
+
+
+        $menus = \core\modules\menu\models\Menu::find()->published()->andWhere(['!=','id',1])->all();
+        $keyboards = [];
+        $menus = array_chunk($menus, 3);
+        foreach ($menus as $key=>$menu) {
+            $keyboards[$key] = [];
+            foreach ($menu as $item) {
+                $keyboards[$key][] = new KeyboardButton(['text' => $item->name]);
+            }
+        }
+
+
         if ($update->getCallbackQuery()) {
             $callbackQuery = $update->getCallbackQuery();
             $message = $callbackQuery->getMessage();
@@ -163,7 +177,7 @@ abstract class Command extends \Longman\TelegramBot\Commands\Command
         //  new KeyboardButton(['text' => '⚙ Настройки']),
         //   new KeyboardButton(['text' => '❓ Помощь'])
         // ];
-        $pages = Pages::find()->published()->asArray()->all();
+        /*$pages = Pages::find()->published()->asArray()->all();
         $pagesKeywords = [];
         foreach ($pages as $page) {
             $pagesKeywords[] = new KeyboardButton(['text' => $page['name']]);
@@ -171,7 +185,7 @@ abstract class Command extends \Longman\TelegramBot\Commands\Command
         }
         if ($pagesKeywords) {
             $keyboards[] = $pagesKeywords;
-        }
+        }*/
         $data = (new Keyboard([
             'keyboard' => $keyboards
         ]))->setResizeKeyboard(true)->setOneTimeKeyboard(true)->setSelective(true);
@@ -242,12 +256,21 @@ abstract class Command extends \Longman\TelegramBot\Commands\Command
         //}
 
         $keyboards=[];
-        $menus = Menu::find()->published()->all();
+        /*$menus = Menu::find()->published()->all();
 
         foreach ($menus as $menu){
             $keyboards[] = [
                 new KeyboardButton(['text' => $menu->name]),
             ];
+        }*/
+        $menus = \core\modules\menu\models\Menu::find()->published()->all();
+        $keyboards = [];
+        $menus = array_chunk($menus, 3);
+        foreach ($menus as $key=>$menu) {
+            $keyboards[$key] = [];
+            foreach ($menu as $item) {
+                $keyboards[$key][] = new KeyboardButton(['text' => $item->name]);
+            }
         }
 
 

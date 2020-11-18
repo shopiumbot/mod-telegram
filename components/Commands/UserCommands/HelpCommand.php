@@ -42,11 +42,14 @@ class HelpCommand extends UserCommand
         ];
 
 
-        $keyboards[] = [
-            new KeyboardButton(['text' => $this->settings->button_text_start]),
-            new KeyboardButton(['text' => Yii::t('telegram/default','WRITE')]),
-            new KeyboardButton(['text' => Yii::t('telegram/default','SETTINGS')]),
-        ];
+        $start = \core\modules\menu\models\Menu::findOne(['callback' => 'start']);
+
+        if ($start) {
+            $keyboards[1][] = new KeyboardButton(['text' => $start->name]);
+        }
+        $keyboards[1][] = new KeyboardButton(['text' => Yii::t('telegram/default', 'WRITE')]);
+        $keyboards[1][] = new KeyboardButton(['text' => Yii::t('telegram/default', 'HELP')]);
+
 
         $reply_markup = (new Keyboard([
             'keyboard' => $keyboards
