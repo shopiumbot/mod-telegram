@@ -86,10 +86,11 @@ class PaymentCommand extends SystemCommand
         if ($this->order_id) {
             $order = Order::findOne($this->order_id);
             if ($order) {
+
                 $prices = [];
                 $data['title'] = 'Номер заказа №' . CMS::idToNumber($order->id);
-                if ($order->paymentMethod->system) {
-                    $settings=false;
+                if ($order->paymentMethod) {
+                    $settings = false;
                     $model = Payment::findOne($order->payment_id);
                     $system = $model->getPaymentSystemClass();
                     if ($system instanceof BasePaymentSystem) {
@@ -106,7 +107,7 @@ class PaymentCommand extends SystemCommand
 
                         //$params['amount'] = $price + ($price / 100 * 2.75);
 
-                        if($settings->commission_check){
+                        if ($settings->commission_check) {
                             $total_price = $order->total_price + ($order->total_price / 100 * 2.75);
 
                             $prices[] = new LabeledPrice([
@@ -118,11 +119,6 @@ class PaymentCommand extends SystemCommand
                     }
 
 
-
-
-
-
-
                     foreach ($order->products as $product) {
 
                         $prices[] = new LabeledPrice([
@@ -132,7 +128,10 @@ class PaymentCommand extends SystemCommand
                     }
                     $inline_keyboard = new InlineKeyboard([
                         [
-                            'text' => 'Оплатить ' . Yii::$app->currency->number_format($total_price) . ' ' . $data['currency'],
+                            'text' => Yii::t('telegram/command', 'BUTTON_PAY', [
+                                'value' => Yii::$app->currency->number_format($total_price),
+                                'currency' => $data['currency']
+                            ]),
                             'pay' => true
                         ],
                     ]);
@@ -152,7 +151,7 @@ class PaymentCommand extends SystemCommand
                 }
             }
         }
-        return $this->notify('Система оплаты не настроена');
+        return $this->notify(Yii::t('telegram/default', 'PAYMENT_SYSTEM_NO_CONFIG'));
 
     }
 
