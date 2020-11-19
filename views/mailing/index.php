@@ -80,7 +80,7 @@ echo GridView::widget([
             'filter' => Html::dropDownList(Html::getInputName(new MailingSearch, 'type'), (isset(Yii::$app->request->get('MailingSearch')['type'])) ? Yii::$app->request->get('MailingSearch')['type'] : null, \shopium\mod\telegram\models\Mailing::typeList(),
                 [
                     'class' => 'form-control',
-                    'prompt' => html_entity_decode('&mdash; тип &mdash;')
+                    'prompt' => html_entity_decode(Yii::t('telegram/Mailing','SELECT_TYPE'))
                 ]
             ),
             'value' => function ($model) {

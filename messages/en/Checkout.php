@@ -1,11 +1,11 @@
 <?php
 
 return [
-    'USER_ID' => 'Пользователь',
-    'ORDER_INFO' => 'Инфо',
-    'TOTAL_AMOUNT' => 'Сумма',
-    'INVOICE_PAYLOAD' => 'Данные чека',
-    'SHIPPING_OPTION_ID' => 'Опции',
-    'CREATED_AT' => 'Дата',
-    'CURRENCY' => 'Валюта'
+    'USER_ID' => 'User',
+    'ORDER_INFO' => 'Info',
+    'TOTAL_AMOUNT' => 'Amount',
+    'INVOICE_PAYLOAD' => 'Check data',
+    'SHIPPING_OPTION_ID' => 'Options',
+    'CREATED_AT' => 'Date',
+    'CURRENCY' => 'Currency'
 ];

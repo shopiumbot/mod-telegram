@@ -12,7 +12,7 @@ use panix\engine\CMS;
 $api = Yii::$app->telegram->getApi();
 ?>
 <div class="alert alert-info">
-    Источники помогают отслеживать эффективность каналов привлечения трафика. Используйте ссылку "<strong>https://t.me/<?= $api->getBotUsername();?>?start=XXXXXX</strong>" для перехода в бот-магазин
+    <?= Yii::t('telegram/StartSource','INFO',$api->getBotUsername()); ?>
 </div>
 <?php
 
@@ -26,7 +26,7 @@ echo GridView::widget([
     'filterModel' => $searchModel,
     'columns' => [
         [
-            'header'=>'Последний',
+            'header'=>Yii::t('telegram/StartSource','LAST'),
             'attribute' => 'user_id',
             'format' => 'raw',
             'value' => function ($model) {
@@ -51,7 +51,7 @@ echo GridView::widget([
             }
         ],
         [
-            'header' => 'Кол. входов',
+            'header' => Yii::t('telegram/StartSource','COUNT'),
             'format' => 'raw',
             'contentOptions' => ['class' => 'text-center'],
             'headerOptions' => ['class' => 'text-center'],

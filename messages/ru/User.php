@@ -8,4 +8,5 @@ return [
     'LANGUAGE_CODE'=>'Язык',
     'UPDATED_AT'=>'Последняя активность',
     'CREATED_AT'=>'Дата подписки',
+    'PHOTO'=>'Фото',
 ];

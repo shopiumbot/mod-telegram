@@ -27,5 +27,6 @@ return [
     'TYPE_SEND_GALLERY' => 'Фото галерея',
     'TYPE_SEND_VIDEO' => 'Видео',
     'TYPE_SEND_POLL' => 'Опрос',
-    'TYPE_SEND_CONTACT' => 'Контакт'
+    'TYPE_SEND_CONTACT' => 'Контакт',
+    'SELECT_TYPE' => '&mdash; тип &mdash;',
 ];

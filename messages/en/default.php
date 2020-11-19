@@ -59,4 +59,12 @@ return [
     'PRODUCT_ADDED_CART_SUCCESS' => '✅ Product {0} added to cart successfully',
     'PRODUCT_NOT_FOUND' => '🙁 The product does not exist at the moment',
     'NO_TRANSLATE'=>'No translate',
+    'WEBHOOK_SET' => 'Sign bot',
+    'WEBHOOK_UNSET' => '☹️ Unsubscribe bot',
+    'WEBHOOK_CONNECT' => 'Bot is connected',
+    'WEBHOOK_DISCONNECT' => 'The bot is not connected',
+    'MESSAGES' => 'Messages',
+    'USERS' => 'Users',
+    'OPEN_CHAT' => 'Open a chat from the list',
+    'MESSAGE_SEND_BY' => 'the message will be sent on behalf of the Bot.',
 ];

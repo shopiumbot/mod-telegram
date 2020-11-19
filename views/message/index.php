@@ -47,10 +47,10 @@ $api = Yii::$app->telegram->getApi();
         </div>
         <div class="scrollable position-relative" style="height:100%;">
             <div class="p-3 border-bottom">
-                <h5 class="card-title">Поиск</h5>
+                <h5 class="card-title"><?= Yii::t('default','SEARCH');?></h5>
                 <form>
                     <div class="searchbar">
-                        <input class="form-control" type="text" placeholder="Поиск">
+                        <input class="form-control" type="text" placeholder="<?= Yii::t('default','SEARCH');?>">
                     </div>
                 </form>
             </div>
@@ -100,7 +100,7 @@ $api = Yii::$app->telegram->getApi();
             <div class="chat-not-selected">
                 <div class="text-center">
                     <span class="display-5 text-info"><i class="icon-comments"></i></span>
-                    <h5>Откройте чат из списка</h5>
+                    <h5><?= Yii::t('telegram/default','OPEN_CHAT');?></h5>
                 </div>
             </div>
             <div class="card chatting-box mb-0">
@@ -145,7 +145,7 @@ $api = Yii::$app->telegram->getApi();
                             </div>
 
 
-                            <small class="text-muted">сообщение будет отправлено от имени Бота.</small>
+                            <small class="text-muted"><?= Yii::t('telegram/default','MESSAGE_SEND_BY');?></small>
 
                         </div>
                     </div>

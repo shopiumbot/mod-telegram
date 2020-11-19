@@ -29,7 +29,7 @@ echo GridView::widget([
     'filterModel' => $searchModel,
     'columns' => [
         [
-            'header' => 'Фото',
+            'header' => Yii::t('telegram/User','PHOTO'),
             'format' => 'raw',
             'contentOptions' => ['class' => 'text-center', 'style' => 'width:50px'],
             'value' => function ($model) {
@@ -40,7 +40,7 @@ echo GridView::widget([
             }
         ],
         [
-            'header' => 'Имя',
+            'header' => Yii::t('telegram/User','FIRST_NAME'),
             'attribute' => 'username',
             'format' => 'raw',
             'value' => function ($model) use ($api) {

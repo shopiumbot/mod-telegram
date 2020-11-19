@@ -1,11 +1,12 @@
 <?php
 
 return [
-    'USERNAME'=>'Ник',
-    'LAST_NAME'=>'Фамилия',
-    'FIRST_NAME'=>'Имя',
-    'IS_BOT'=>'Бот',
-    'LANGUAGE_CODE'=>'Язык',
-    'UPDATED_AT'=>'Последняя активность',
-    'CREATED_AT'=>'Дата подписки',
+    'USERNAME' => 'Nick',
+    'LAST_NAME' => 'Last name',
+    'FIRST_NAME' => 'Name',
+    'IS_BOT' => 'Bot',
+    'LANGUAGE_CODE' => 'Language',
+    'UPDATED_AT' => 'Last Activity',
+    'CREATED_AT' => 'Subscription date',
+    'PHOTO'=>'Photo',
 ];
