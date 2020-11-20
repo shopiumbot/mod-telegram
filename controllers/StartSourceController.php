@@ -17,7 +17,7 @@ class StartSourceController extends AdminController
     {
 
         $this->pageName = Yii::t('telegram/default', 'START_SOURCE');
-        $this->breadcrumbs = [
+        $this->view->params['breadcrumbs'] = [
             [
                 'label' => $this->module->info['label'],
                 'url' => $this->module->info['url'],
@@ -40,7 +40,7 @@ class StartSourceController extends AdminController
               //  return Html::a('https://t.me/' . $api->getBotUsername() . '?start=' . $model->source, 'https://t.me/' . $api->getBotUsername() . '?start=' . $model->source);
 
         $this->pageName = Yii::t('telegram/default', 'START_SOURCE').' "'.$source.'"';
-        $this->breadcrumbs = [
+        $this->view->params['breadcrumbs'] = [
             [
                 'label' => $this->module->info['label'],
                 'url' => $this->module->info['url'],

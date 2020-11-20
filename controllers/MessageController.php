@@ -27,7 +27,7 @@ class MessageController extends AdminController
     {
         $this->layout = '@theme/views/layouts/dashboard_fluid';
         $this->pageName = Yii::t('app/default', 'SETTINGS');
-        $this->breadcrumbs = [
+        $this->view->params['breadcrumbs'] = [
             [
                 'label' => $this->module->info['label'],
                 'url' => $this->module->info['url'],

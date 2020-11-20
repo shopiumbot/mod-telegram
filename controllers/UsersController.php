@@ -15,7 +15,7 @@ class UsersController extends AdminController
     public function actionIndex()
     {
         $this->pageName = Yii::t('app/default', 'SETTINGS');
-        $this->breadcrumbs = [
+        $this->view->params['breadcrumbs'] = [
             [
                 'label' => $this->module->info['label'],
                 'url' => $this->module->info['url'],

@@ -27,7 +27,7 @@ class MailingController extends AdminController
     {
 
         $this->pageName = Yii::t('telegram/default', 'MAILING');
-        $this->breadcrumbs = [
+        $this->view->params['breadcrumbs'] = [
 
             $this->pageName
         ];
@@ -68,15 +68,15 @@ class MailingController extends AdminController
             Yii::t('telegram/default', 'Редактирование рассылки');
 
 
-        /*$this->breadcrumbs[] = [
+        /*$this->view->params['breadcrumbs'][] = [
             'label' => Yii::t('telegram/default', 'MODULE_NAME'),
             'url' => ['index']
         ];*/
-        $this->breadcrumbs[] = [
+        $this->view->params['breadcrumbs'][] = [
             'label' => Yii::t('telegram/default', 'MAILING'),
             'url' => ['index']
         ];
-        $this->breadcrumbs[] = $this->pageName;
+        $this->view->params['breadcrumbs'][] = $this->pageName;
 
 
         $dy_model = new \yii\base\DynamicModel([
