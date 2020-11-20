@@ -24,6 +24,17 @@ abstract class Command extends \Longman\TelegramBot\Commands\Command
 
     public function __construct(Api $telegram, Update $update = null)
     {
+
+
+        //$update = $this->getUpdate();
+        if ($update->getCallbackQuery()) {
+            $user_id = $update->getCallbackQuery()->getMessage()->getFrom()->getId();
+        } else {
+            $user_id = $update->getMessage()->getFrom()->getId();
+        }
+
+        $this->setLanguage($user_id);
+
         $this->keyword_back = Yii::t('telegram/default', 'KEYWORD_BACK');
         $this->keyword_cancel = Yii::t('telegram/default', 'KEYWORD_CANCEL');
         $this->keyword_admin = Yii::t('telegram/default', 'KEYWORD_ADMIN');
@@ -38,20 +49,9 @@ abstract class Command extends \Longman\TelegramBot\Commands\Command
         }*/
         $this->settings = Yii::$app->settings->get('app');
 
-        //   $update = $this->getUpdate();
-
-
         parent::__construct($telegram, $update);
 
 
-        $update = $this->getUpdate();
-        if ($update->getCallbackQuery()) {
-            $user_id = $update->getCallbackQuery()->getMessage()->getFrom()->getId();
-        } else {
-            $user_id = $update->getMessage()->getFrom()->getId();
-        }
-
-        $this->setLanguage($user_id);
 
     }
 

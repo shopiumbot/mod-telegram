@@ -32,7 +32,7 @@ class CancelCommand extends SystemCommand
      */
     public function execute()
     {
-       //  $text = 'No active conversation!';
+        // $text = 'No active conversation!';
          $text = '';
         //Cancel current conversation if any
         $conversation = new Conversation(
