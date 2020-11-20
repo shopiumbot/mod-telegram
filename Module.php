@@ -17,7 +17,7 @@ class Module extends WebModule implements \yii\base\BootstrapInterface
     public $bot_name = null;
     public $hook_url;
     public $password = null;
-    public $userCommandsPath = '@telegram/commands/UserCommands';
+    public $userCommandsPath = '@telegram/defaults/UserCommands';
     public $timeBeforeResetChatHandler = 0;
     public $db = 'db';
     public $options = [];

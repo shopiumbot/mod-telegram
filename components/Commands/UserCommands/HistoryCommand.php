@@ -103,7 +103,7 @@ class HistoryCommand extends UserCommand
         if ($orders) {
 
 
-            $text = '*История заказа*' . PHP_EOL . PHP_EOL;
+            $text = '*'.Yii::t('cart/default','ORDER_HISTORY').'*' . PHP_EOL . PHP_EOL;
 
             foreach ($orders as $order) {
                 $text .= ''.Yii::t('cart/Order','ORDER_ID').' *№' . CMS::idToNumber($order->id) . '*' . PHP_EOL . PHP_EOL;
@@ -120,7 +120,7 @@ class HistoryCommand extends UserCommand
                     $system = ($order->paymentMethod) ? $order->paymentMethod->system : 0;
                     $keyboards[] = [
                         new InlineKeyboardButton([
-                            'text' => Yii::t('telegram/command', 'BUTTON_PAY', [
+                            'text' => Yii::t('telegram/default', 'BUTTON_PAY', [
                                 'price' => $this->number_format($order->total_price),
                                 'currency' => Yii::$app->currency->active['symbol']
                             ]),
@@ -144,7 +144,7 @@ class HistoryCommand extends UserCommand
                 }
 
                 if ($order->deliveryMethod) {
-                    $text .= PHP_EOL . PHP_EOL . '🚚 Доставка: *' . $order->deliveryMethod->name . '*' . PHP_EOL;
+                    $text .= PHP_EOL . PHP_EOL . '🚚 '.Yii::t('cart/default','DELIVERY').': *' . $order->deliveryMethod->name . '*' . PHP_EOL;
                 }
                 if ($order->area_id && $order->area) {
                     $text .= 'обл. *' . $order->area . '*, ';
@@ -162,9 +162,9 @@ class HistoryCommand extends UserCommand
                     }
                 }
                 if ($order->paymentMethod) {
-                    $text .= PHP_EOL . '💰 Оплата: *' . $order->paymentMethod->name . '*' . PHP_EOL;
+                    $text .= PHP_EOL . '💰 '.Yii::t('cart/default','PAYMENT').': *' . $order->paymentMethod->name . '*' . PHP_EOL;
                 }
-                $text .= 'Общая стоимость заказа: *' . $this->number_format($order->total_price) . ' ' . Yii::$app->currency->active['symbol'] . '*' . PHP_EOL;
+                $text .= Yii::t('cart/default','TOTAL_COST').': *' . $this->number_format($order->total_price) . ' ' . Yii::$app->currency->active['symbol'] . '*' . PHP_EOL;
 
             }
             $data['text'] = $text;

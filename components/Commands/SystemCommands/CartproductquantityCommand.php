@@ -84,7 +84,7 @@ class CartproductquantityCommand extends SystemCommand
         ];
         $keyboards[] = [
             new InlineKeyboardButton([
-                'text' => Yii::t('telegram/command', 'BUTTON_CHECKOUT', [
+                'text' => Yii::t('telegram/default', 'BUTTON_CHECKOUT', [
                     'price' => $this->number_format($order->total_price),
                     'currency' => Yii::$app->currency->active['symbol']
                 ]),

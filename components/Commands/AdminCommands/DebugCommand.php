@@ -34,7 +34,7 @@ class DebugCommand extends AdminCommand
 
     public function getDescription()
     {
-        return Yii::t('telegram/command', 'COMMAND_DEBUG');
+        return Yii::t('telegram/default', 'COMMAND_DEBUG');
     }
 
     public function __construct2(Api $telegram, Update $update = null)

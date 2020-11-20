@@ -88,14 +88,16 @@ class ProductItemCommand extends SystemCommand
         $chat = $message->getChat();
         $chat_id = $chat->getId();
         $user_id = $user->getId();
+
+        $this->setLanguage($user_id);
+
         $keyboards = [];
-        //$this->notify($callbackData);
 
         $order = OrderTemp::findOne($user_id);
         /** @var Product $product */
         $product = $this->product;
 
-
+        $this->notify(Yii::$app->language);
         $caption = '';
         if ($product->hasDiscount) {
             $caption .= '🔥🔥🔥';
@@ -203,7 +205,7 @@ class ProductItemCommand extends SystemCommand
                 if ($product->availability != Product::AVAILABILITY_NOT) {
                     $keyboards[] = [
                         new InlineKeyboardButton([
-                            'text' => Yii::t('telegram/command', 'BUTTON_BUY', [
+                            'text' => Yii::t('telegram/default', 'BUTTON_BUY', [
                                 'price' => $this->number_format($product->getFrontPrice()),
                                 'currency' => Yii::$app->currency->active['symbol']
                             ]),

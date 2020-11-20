@@ -102,8 +102,8 @@ class GenericCommand extends SystemCommand
             return $this->telegram->executeCommand('product');
         }
         //if ($test) {
-        $text = Yii::t('telegram/command', 'COMMAND_NOT_FOUND_1', $command) . PHP_EOL;
-        $text .= Yii::t('telegram/command', 'COMMAND_NOT_FOUND_2');
+        $text = Yii::t('telegram/default', 'COMMAND_NOT_FOUND_1', $command) . PHP_EOL;
+        $text .= Yii::t('telegram/default', 'COMMAND_NOT_FOUND_2');
         $data = [
             'chat_id' => $chat_id,
             'text' => $text,

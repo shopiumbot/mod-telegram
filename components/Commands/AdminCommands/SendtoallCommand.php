@@ -37,7 +37,7 @@ class SendtoallCommand extends AdminCommand
 
     public function getDescription()
     {
-        return Yii::t('telegram/command', 'COMMAND_SENDTOALL');
+        return Yii::t('telegram/default', 'COMMAND_SENDTOALL');
     }
 
     /**
@@ -51,7 +51,7 @@ class SendtoallCommand extends AdminCommand
         $text = $this->getMessage()->getText(true);
 
         if ($text === '') {
-            return $this->replyToChat(Yii::t('telegram/command', 'USAGE', $this->getUsage()));
+            return $this->replyToChat(Yii::t('telegram/default', 'USAGE_COMMAND', $this->getUsage()));
         }
 
         /** @var ServerResponse[] $results */

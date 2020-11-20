@@ -38,7 +38,7 @@ abstract class Command extends \Longman\TelegramBot\Commands\Command
         }*/
         $this->settings = Yii::$app->settings->get('app');
 
-     //   $update = $this->getUpdate();
+        //   $update = $this->getUpdate();
 
 
         parent::__construct($telegram, $update);
@@ -51,8 +51,14 @@ abstract class Command extends \Longman\TelegramBot\Commands\Command
             $user_id = $update->getMessage()->getFrom()->getId();
         }
 
-        $this->user = \shopium\mod\telegram\models\User::findOne($user_id);
-        Yii::$app->language = ($this->user->language) ? $this->user->language : 'ru';
+        $this->setLanguage($user_id);
+
+    }
+
+    public function setLanguage($user_id)
+    {
+        $user = \shopium\mod\telegram\models\User::findOne($user_id);
+        Yii::$app->language = ($user->language) ? $user->language : 'ru';
         Yii::$app->languageManager->setActive(Yii::$app->language);
     }
 
@@ -66,7 +72,6 @@ abstract class Command extends \Longman\TelegramBot\Commands\Command
         }
 
         return parent::preExecute();
-
 
 
     }
@@ -145,11 +150,10 @@ abstract class Command extends \Longman\TelegramBot\Commands\Command
         ];*/
 
 
-
-        $menus = \core\modules\menu\models\Menu::find()->published()->andWhere(['!=','id',1])->all();
+        $menus = \core\modules\menu\models\Menu::find()->published()->andWhere(['!=', 'id', 1])->all();
         $keyboards = [];
         $menus = array_chunk($menus, 3);
-        foreach ($menus as $key=>$menu) {
+        foreach ($menus as $key => $menu) {
             $keyboards[$key] = [];
             foreach ($menu as $item) {
                 $keyboards[$key][] = new KeyboardButton(['text' => $item->name]);
@@ -255,7 +259,7 @@ abstract class Command extends \Longman\TelegramBot\Commands\Command
         //    $textMyCart .= ' (' . $this->orderProductCount . ')';
         //}
 
-        $keyboards=[];
+        $keyboards = [];
         /*$menus = Menu::find()->published()->all();
 
         foreach ($menus as $menu){
@@ -266,13 +270,12 @@ abstract class Command extends \Longman\TelegramBot\Commands\Command
         $menus = \core\modules\menu\models\Menu::find()->published()->all();
         $keyboards = [];
         $menus = array_chunk($menus, 3);
-        foreach ($menus as $key=>$menu) {
+        foreach ($menus as $key => $menu) {
             $keyboards[$key] = [];
             foreach ($menu as $item) {
                 $keyboards[$key][] = new KeyboardButton(['text' => $item->name]);
             }
         }
-
 
 
         /*$keyboards[] = [

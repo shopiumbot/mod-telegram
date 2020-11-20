@@ -77,7 +77,7 @@ class SearchCommand extends UserCommand
         $text = trim($message->getText(true));
         $chat_id = $chat->getId();
         $user_id = $user->getId();
-
+        $this->setLanguage($user_id);
         //Preparing Response
         $data = [
             'chat_id' => $chat_id,
@@ -111,7 +111,7 @@ class SearchCommand extends UserCommand
                     $notes['state'] = 0;
                     $this->conversation->update();
 
-                    $data['text'] = Yii::t('telegram/default','SEARCH_STEP_1').':';
+                    $data['text'] = Yii::t('telegram/default', 'SEARCH_STEP_1') . '1:';
                     //$data['reply_markup'] = Keyboard::remove(['selective' => true]);
 
                     $data['reply_markup'] = (new Keyboard([$this->keyword_cancel]))
@@ -121,7 +121,7 @@ class SearchCommand extends UserCommand
 
 
                     if ($text !== '') {
-                        $data['text'] = Yii::t('telegram/default','SEARCH_STEP_1').':';
+                        $data['text'] = Yii::t('telegram/default', 'SEARCH_STEP_1') . ':3';
                     }
                     $result = Request::sendMessage($data);
                     if ($result->isOk()) {
@@ -137,75 +137,70 @@ class SearchCommand extends UserCommand
             case 1:
 
                 if ($text === '') {
+
                     $notes['state'] = 1;
-                    $query = Product::find()->applySearch($notes['query']);
+                    $query = Product::find()->translate(Yii::$app->languageManager->active['id'])->applySearch($notes['query']);
                     if (!in_array($user_id, $this->telegram->getAdminList())) {
                         $query->published();
                     }
-                    if(Yii::$app->settings->get('app','availability_hide')){
+                    if (Yii::$app->settings->get('app', 'availability_hide')) {
                         $query->isNotAvailability();
                     }
+
                     $query->sort();
                     $query->groupBy(Product::tableName() . '.`id`');
 
                     $count = $query->count();
 
-
+                    $data = [];
+                    $data['chat_id'] = $chat_id;
+                    $data['parse_mode'] = 'Markdown';
                     if ($count) {
                         $buttons[] = [
                             new InlineKeyboardButton([
-                                'text' => Yii::t('telegram/command', 'SEARCH_RESULT_TOTAL', [
+                                'text' => Yii::t('telegram/default', 'SEARCH_QUERY_TOTAL', [
                                     'count' => $count,
                                 ]),
                                 'callback_data' => "query=search&string={$notes['query']}"
                             ])
                         ];
-                        $data['chat_id'] = $chat_id;
-                        $data['parse_mode'] = 'Markdown';
-                        $data['text'] = 'Результат поиска';
+
+
+                        $data['text'] = Yii::t('telegram/default', 'SEARCH_RESULT');
                         $data['reply_markup'] = $this->catalogKeyboards();
                         $result2 = Request::sendMessage($data);
                         if ($result2->isOk()) {
                             $db = DB::insertMessageRequest($result2->getResult());
                         }
-                        $data = [];
-                        $data['chat_id'] = $chat_id;
-                        $data['parse_mode'] = 'Markdown';
-                        $data['text'] = Yii::t('telegram/command', 'SEARCH_RESULT', [
+
+                        $data['text'] = Yii::t('telegram/default', 'SEARCH_QUERY', [
                             'query' => '*' . $notes['query'] . '*',
                         ]);
 
                         $data['reply_markup'] = new InlineKeyboard(['inline_keyboard' => $buttons]);
 
-                        $result = Request::sendMessage($data);
-                        if ($result->isOk()) {
-                            $db = DB::insertMessageRequest($result->getResult());
-                        }
-
                     } else {
-                        $data = [];
-                        $data['chat_id'] = $chat_id;
+
+
                         $data['parse_mode'] = 'Markdown';
-                        $data['text'] = Yii::t('shop/default', 'SEARCH_RESULT', [
+                        $data['text'] = Yii::t('shop/default', 'SEARCH_QUERY', [
                             'count' => $count,
                             'query' => '*' . $notes['query'] . '*',
                         ]);
                         $data['reply_markup'] = $this->catalogKeyboards();
-                        $result = Request::sendMessage($data);
-                        if ($result->isOk()) {
-                            $db = DB::insertMessageRequest($result->getResult());
-                        }
+
                     }
+                    $result = Request::sendMessage($data);
+                    if ($result->isOk()) {
+                        $db = DB::insertMessageRequest($result->getResult());
+                    }
+
                     $notes['status'] = ($count) ? true : false;
                     $this->conversation->update();
                     $this->conversation->stop();
-
-
                     break;
                 }
-
                 $notes['query'] = $text;
-
                 break;
         }
 

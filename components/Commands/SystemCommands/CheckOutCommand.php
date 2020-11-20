@@ -605,7 +605,7 @@ class CheckOutCommand extends SystemCommand
                         $system = ($o->paymentMethod) ? $o->paymentMethod->system : 0;
                         $inlineKeyboards[] = [
                             new InlineKeyboardButton([
-                                'text' => Yii::t('telegram/command', 'BUTTON_PAY', [
+                                'text' => Yii::t('telegram/default', 'BUTTON_PAY', [
                                     'price'=>$this->number_format($o->total_price),
                                     'currency'=>Yii::$app->currency->active['symbol']
                                 ]),

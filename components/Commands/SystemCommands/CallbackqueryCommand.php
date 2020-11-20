@@ -174,7 +174,7 @@ class CallbackqueryCommand extends SystemCommand
 
                 /*$keyboards[] = [
                     new InlineKeyboardButton([
-                        'text' => Yii::t('telegram/command', 'BUTTON_BUY', $this->number_format($orderProduct->originalProduct->getFrontPrice())),
+                        'text' => Yii::t('telegram/default', 'BUTTON_BUY', $this->number_format($orderProduct->originalProduct->getFrontPrice())),
                         // 'callback_data' => "addCart/{$orderProduct->product_id}"
                         'callback_data' => "query=addCart&product_id={$orderProduct->product_id}"
                     ])
@@ -588,9 +588,9 @@ class CallbackqueryCommand extends SystemCommand
             $data['chat_id'] = $chat_id;
             $data['parse_mode'] = 'Markdown';
             if ($begin >= $pages->totalCount) {
-                $data['text'] = 'Все!';
+                $data['text'] = Yii::t('telegram/default', 'PAGE_END');
             } else {
-                $data['text'] = 'показано: *' . $begin . '* из *' . $pages->totalCount . '*';
+                $data['text'] = Yii::t('telegram/default', 'PAGE_SHOWING', [$begin, $pages->totalCount]);
             }
             $data['disable_notification'] = false;
             //todo добавить кнопку вернуться в каталог или еще чтото, после "Все!"

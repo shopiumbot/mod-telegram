@@ -128,7 +128,7 @@ class PaymentCommand extends SystemCommand
                     }
                     $inline_keyboard = new InlineKeyboard([
                         [
-                            'text' => Yii::t('telegram/command', 'BUTTON_PAY', [
+                            'text' => Yii::t('telegram/default', 'BUTTON_PAY', [
                                 'value' => Yii::$app->currency->number_format($total_price),
                                 'currency' => $data['currency']
                             ]),

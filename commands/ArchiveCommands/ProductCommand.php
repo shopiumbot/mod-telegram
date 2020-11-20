@@ -73,7 +73,7 @@ class ProductCommand extends UserCommand
                         //'reply_markup' => $inline_keyboard,
                     ]);
 
-                    $keyboards[] = [new InlineKeyboardButton(['text' => '👉 '.$product->price . ' UAH. Купить 👈', 'callback_data' => 'callbackqueryproduct'])];
+                    $keyboards[] = [new InlineKeyboardButton(['text' => Yii::t('telegram/default','BUTTON_BUY',['price'=>$product->price,'currency'=>'UAH']), 'callback_data' => 'callbackqueryproduct'])];
                     $keyboards[] = [new InlineKeyboardButton(['text' => 'Характеристики', 'callback_data' => 'product_attributes'])];
 
                     if ($this->telegram->isAdmin($chat_id)) {

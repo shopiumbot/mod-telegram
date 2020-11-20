@@ -32,7 +32,7 @@ class CallCommand extends UserCommand
         $text = trim($message->getText(true));
 
         if ($text === '') {
-            $text = Yii::t('telegram/command', 'USAGE', $this->getUsage());
+            $text = Yii::t('telegram/default', 'USAGE_COMMAND', $this->getUsage());
         }
 
         $data = [

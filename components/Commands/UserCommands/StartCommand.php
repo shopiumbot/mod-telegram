@@ -70,7 +70,7 @@ class StartCommand extends UserCommand
                 }
             }
         }
-        $text = Yii::t('telegram/command', 'START', [$user->getFirstName() . ' ' . $user->getLastName()]);
+        $text = Yii::t('telegram/default', 'START', [$user->getFirstName() . ' ' . $user->getLastName()]);
 
         $data = [
             'parse_mode' => 'HTML',

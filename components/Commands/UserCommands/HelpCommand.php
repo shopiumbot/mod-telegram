@@ -62,13 +62,13 @@ class HelpCommand extends UserCommand
         list($all_commands, $user_commands, $admin_commands) = $this->getUserAdminCommands();
         // If no command parameter is passed, show the list.
         if ($command_str === '' || preg_match('/^(\x{2753})/iu', $command_str, $match)) {
-            $data['text'] = '*' . Yii::t('telegram/command', 'COMMAND_LIST') . '*:' . PHP_EOL;
+            $data['text'] = '*' . Yii::t('telegram/default', 'COMMAND_LIST') . '*:' . PHP_EOL;
             foreach ($user_commands as $user_command) {
                 $data['text'] .= '/' . $user_command->getName() . ' - ' . $user_command->getDescription() . PHP_EOL;
             }
 
             if ($safe_to_show && count($admin_commands) > 0) {
-                $data['text'] .= PHP_EOL . '*' . Yii::t('telegram/command', 'COMMAND_LIST_ADMIN') . '*:' . PHP_EOL;
+                $data['text'] .= PHP_EOL . '*' . Yii::t('telegram/default', 'COMMAND_LIST_ADMIN') . '*:' . PHP_EOL;
                 foreach ($admin_commands as $admin_command) {
                     $data['text'] .= '/' . $admin_command->getName() . ' - ' . $admin_command->getDescription() . PHP_EOL;
                 }
@@ -83,9 +83,9 @@ class HelpCommand extends UserCommand
             /** @var Command $command */
             $command = $all_commands[$command_str];
 
-            $data['text'] = '*' . Yii::t('telegram/command', 'COMMAND') . ':* ' . $command->getName() . ' (v' . $command->getVersion() . ')' . PHP_EOL;
-            $data['text'] .= '*' . Yii::t('telegram/command', 'DESCRIPTION') . ':* ' . $command->getDescription() . '' . PHP_EOL;
-            $data['text'] .= '*' . Yii::t('telegram/command', 'USAGE') . ':* ' . $command->getUsage() . '' . PHP_EOL;
+            $data['text'] = '*' . Yii::t('telegram/default', 'COMMAND') . ':* ' . $command->getName() . ' (v' . $command->getVersion() . ')' . PHP_EOL;
+            $data['text'] .= '*' . Yii::t('telegram/default', 'DESCRIPTION') . ':* ' . $command->getDescription() . '' . PHP_EOL;
+            $data['text'] .= '*' . Yii::t('telegram/default', 'USAGE') . ':* ' . $command->getUsage() . '' . PHP_EOL;
 
             $data['parse_mode'] = 'Markdown';
             return Request::sendMessage($data);

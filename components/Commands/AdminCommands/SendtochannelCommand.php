@@ -50,7 +50,7 @@ class SendtochannelCommand extends AdminCommand
 
     public function getDescription()
     {
-        return Yii::t('telegram/command', 'COMMAND_SENDTOCHANNEL');
+        return Yii::t('telegram/default', 'COMMAND_SENDTOCHANNEL');
     }
 
     /**

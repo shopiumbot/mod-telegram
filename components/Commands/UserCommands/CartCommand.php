@@ -47,7 +47,7 @@ class CartCommand extends UserCommand
 
     public function getDescription()
     {
-        return Yii::t('telegram/command', 'COMMAND_CART');
+        return Yii::t('telegram/default', 'COMMAND_CART');
     }
 
     /**
@@ -155,7 +155,7 @@ class CartCommand extends UserCommand
 
                     $keyboards[] = [
                         new InlineKeyboardButton([
-                            'text' => Yii::t('telegram/command', 'BUTTON_CHECKOUT', [
+                            'text' => Yii::t('telegram/default', 'BUTTON_CHECKOUT', [
                                 'price' => $this->number_format($order->total_price),
                                 'currency' => Yii::$app->currency->active['symbol']
                             ]),
