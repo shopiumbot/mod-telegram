@@ -224,15 +224,15 @@ class GenericmessageCommand extends SystemCommand
         }
 
 
-        if ($this->settings->button_text_cart === $text) { //cart emoji //preg_match('/^(\x{1F6CD})/iu', $text, $match)
-            return $this->telegram->executeCommand('cart');
-        } elseif ($this->settings->button_text_catalog === $text) { //folder emoji preg_match('/^(\x{1F4C2})/iu', $text, $match)
-            $this->telegram->setCommandConfig('catalog', ['id' => 1]);
-            return $this->telegram->executeCommand('catalog');
-        } elseif ($this->settings->button_text_start === $text || preg_match('/^(\x{1F3E0})/iu', $text, $match)) { //home emoji //preg_match('/^(\x{1F3E0})/iu', $text, $match)
-            $this->telegram->executeCommand('start');
-            return $this->telegram->executeCommand('cancel');
-        } elseif ($this->keyword_admin === $text) {
+       // if ($this->settings->button_text_cart === $text) { //cart emoji //preg_match('/^(\x{1F6CD})/iu', $text, $match)
+       //     return $this->telegram->executeCommand('cart');
+       // } elseif ($this->settings->button_text_catalog === $text) { //folder emoji preg_match('/^(\x{1F4C2})/iu', $text, $match)
+        //    $this->telegram->setCommandConfig('catalog', ['id' => 1]);
+        //    return $this->telegram->executeCommand('catalog');
+      //  } elseif ($this->settings->button_text_start === $text || preg_match('/^(\x{1F3E0})/iu', $text, $match)) { //home emoji //preg_match('/^(\x{1F3E0})/iu', $text, $match)
+       //     $this->telegram->executeCommand('start');
+      //      return $this->telegram->executeCommand('cancel');
+        if ($this->keyword_admin === $text) {
             if ($this->telegram->isAdmin($user_id)) {
                 return $this->telegram->executeCommand('AdminPanel');
             }
@@ -246,12 +246,12 @@ class GenericmessageCommand extends SystemCommand
             return $this->telegram->executeCommand('call');
         } elseif (preg_match('/^(\x{2709})/iu', $text, $match)) { //feedback emoji
             return $this->telegram->executeCommand('feedback');
-        } elseif ($this->settings->button_text_history === $text) { //package emoji //preg_match('/^(\x{1F4E6})/iu', $text, $match)
-            return $this->telegram->executeCommand('history');
+        //} elseif ($this->settings->button_text_history === $text) { //package emoji //preg_match('/^(\x{1F4E6})/iu', $text, $match)
+        //    return $this->telegram->executeCommand('history');
         } elseif (preg_match('/^(\x{2699})/iu', $text, $match)) { //gear emoji
             return $this->telegram->executeCommand('settings');
-        } elseif ($this->settings->button_text_search === $text) { //search emoji //preg_match('/^(\x{1F50E})/iu', $text, $match)
-            return $this->telegram->executeCommand('search');
+       // } elseif ($this->settings->button_text_search === $text) { //search emoji //preg_match('/^(\x{1F50E})/iu', $text, $match)
+       //     return $this->telegram->executeCommand('search');
         }
 
         return Request::emptyResponse();

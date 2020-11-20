@@ -190,7 +190,7 @@ class HistoryCommand extends UserCommand
 
 
         } else {
-            $data['text'] = $this->settings->empty_history_text;
+            $data['text'] = Yii::t('telegram/default','HISTORY_EMPTY');
             $data['reply_markup'] = $this->startKeyboards();
             $response = $data;
 
