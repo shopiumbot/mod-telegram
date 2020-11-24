@@ -80,7 +80,7 @@ class CartCommand extends UserCommand
             $user_id = $user->getId();
         }
         $text = trim($message->getText(true));
-
+        $this->setLanguage($user_id);
 
         $data['chat_id'] = $chat_id;
 

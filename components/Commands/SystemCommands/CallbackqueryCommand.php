@@ -46,6 +46,7 @@ class CallbackqueryCommand extends SystemCommand
         $user = $message->getFrom();
         $user_id = $user->getId();
 
+        $this->setLanguage($user_id);
 
         $callback_query_id = $callback_query->getId();
         $callback_data = $callback_query->getData();
@@ -128,6 +129,8 @@ class CallbackqueryCommand extends SystemCommand
 
         } elseif (preg_match('/openCatalog/iu', trim($callback_data), $match)) { //preg_match('/^getCatalog\s+([0-9]+)/iu', trim($callback_data), $match)
             parse_str($callback_data, $params);
+           // $user_id = $callback_query->getFrom()->getId();
+          //  $this->setLanguage($user_id);
             return $this->telegram->setCommandConfig('catalog', [
                 'id' => (int)$params['id']
             ])->executeCommand('catalog');
@@ -163,6 +166,7 @@ class CallbackqueryCommand extends SystemCommand
             parse_str($callback_data, $params);
 
             $user_id = $callback_query->getFrom()->getId();
+            $this->setLanguage($user_id);
             $message = $callback_query->getMessage();
             $id = $params['id'];
             $photo_index = $params['photo_index'];
@@ -251,6 +255,7 @@ class CallbackqueryCommand extends SystemCommand
 
 
             $user_id = $callback_query->getFrom()->getId();
+            $this->setLanguage($user_id);
             parse_str($callback_data, $params);
 
             $orderProduct = OrderProductTemp::findOne([
@@ -304,6 +309,7 @@ class CallbackqueryCommand extends SystemCommand
         } elseif (preg_match('/addCart/iu', trim($callback_data), $match)) {
             parse_str($callback_data, $params);
             $user_id = $callback_query->getFrom()->getId();
+            $this->setLanguage($user_id);
             $product_id = $params['product_id'];
 
 
@@ -443,8 +449,9 @@ class CallbackqueryCommand extends SystemCommand
             parse_str($callback_data, $params);
             $user_id = $callback_query->getFrom()->getId();
             $message = $callback_query->getMessage();
+            $this->setLanguage($user_id);
             $order = OrderTemp::findOne($user_id);
-            // print_r($params);
+
             $product_id = $params['product_id'];
             $page = $params['page'];
             $product = Product::findOne($product_id);
@@ -491,10 +498,11 @@ class CallbackqueryCommand extends SystemCommand
             return Request::answerCallbackQuery($data);
 
         } elseif (preg_match('/getList/iu', trim($callback_data), $match)) {
+
             $user_id = $callback_query->getFrom()->getId();
             parse_str($callback_data, $params);
 
-
+            $this->setLanguage($user_id);
             /** @var Product|ProductQuery $query */
             $query = Product::find()->sort();
 
@@ -512,13 +520,14 @@ class CallbackqueryCommand extends SystemCommand
                     $pagerCommand = 'getList&model=catalog&id=' . $params['id'];
                     $query->applyCategories($params['id']);
                 }
+            } elseif ($params['model'] == 'discounts') {
+                $pagerCommand = 'getList&model=discounts';
+               // $query = $this->getDiscountQuery();
+                $query = $this->getDiscountQuery($query);
             } elseif ($params['model'] == 'new') {
                 $pagerCommand = 'getList&model=new';
-                if (isset($this->settings->label_expire_new) && $this->settings->label_expire_new) {
-                    $query->int2between(time(), time() - (86400 * $this->settings->label_expire_new));
-                } else {
-                    $query->int2between(-1, -1);
-                }
+                $query = $this->getNewQuery($query);
+
             }
 
 
@@ -606,6 +615,7 @@ class CallbackqueryCommand extends SystemCommand
 
         } elseif (preg_match('/getBrandsList123123/iu', trim($callback_data), $match)) {
             $user_id = $callback_query->getFrom()->getId();
+            $this->setLanguage($user_id);
             $order = Order::findOne(['user_id' => $user_id, 'checkout' => 0]);
 
             parse_str($callback_data, $params);
@@ -670,7 +680,7 @@ class CallbackqueryCommand extends SystemCommand
                 } else {
                     $data = [
                         'callback_query_id' => $callback_query_id,
-                        'text' => 'Товаров нет',
+                        'text' => Yii::t('telegram/default','NO_PRODUCTS'),
                         //'show_alert' => true,
                         'cache_time' => 100,
                     ];
@@ -681,7 +691,7 @@ class CallbackqueryCommand extends SystemCommand
 
                 $data['chat_id'] = $chat_id;
                 if ($begin >= $pages->totalCount) {
-                    $data['text'] = 'Все!';
+                    $data['text'] = Yii::t('telegram/default','PAGE_END');
                 } else {
                     $data['text'] = $begin . ' / ' . $pages->totalCount;
                 }

@@ -87,4 +87,5 @@ return [
     'COMMAND_DEBUG'=>'Debug command to help find problems',
     'COMMAND_SENDTOALL' => 'Send a message to all users of the bot',
     'HISTORY_EMPTY' => 'Your story is empty Use the catalog to fill it',
+    'BRANDS_LIST' => '⬇ List of brands',
 ];

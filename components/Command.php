@@ -4,6 +4,8 @@ namespace shopium\mod\telegram\components;
 
 use core\modules\menu\models\Menu;
 use core\modules\pages\models\Pages;
+use core\modules\shop\models\Product;
+use core\modules\shop\models\query\ProductQuery;
 use Longman\TelegramBot\DB;
 use Longman\TelegramBot\Entities\InlineKeyboardButton;
 use Longman\TelegramBot\Entities\Keyboard;
@@ -58,8 +60,8 @@ abstract class Command extends \Longman\TelegramBot\Commands\Command
     public function setLanguage($user_id)
     {
         $user = \shopium\mod\telegram\models\User::findOne($user_id);
-        Yii::$app->language = ($user->language) ? $user->language : 'ru';
-        Yii::$app->languageManager->setActive(Yii::$app->language);
+        $language = ($user->language) ? $user->language : 'ru';
+        Yii::$app->languageManager->setActive($language);
     }
 
     public function preExecute()
@@ -326,5 +328,71 @@ abstract class Command extends \Longman\TelegramBot\Commands\Command
         ]))->setResizeKeyboard(true)->setOneTimeKeyboard(true)->setSelective(true);
 
         return $data;
+    }
+
+
+    /**
+     * @param $query ProductQuery
+     * @return mixed
+     */
+    public function getNewQuery($query){
+      //  $query = Product::find()->published();
+        if (Yii::$app->settings->get('app', 'availability_hide')) {
+            $query->isNotAvailability();
+        }
+        if (isset($this->settings->label_expire_new) && $this->settings->label_expire_new) {
+            $query->int2between(time(), time() - (86400 * $this->settings->label_expire_new));
+        } else {
+            $query->int2between(-1, -1);
+        }
+        return $query;
+    }
+
+    /**
+     * @param $query ProductQuery
+     * @return mixed
+     */
+    public function getDiscountQuery($query){
+       // $query = Product::find()->published();
+        if (Yii::$app->settings->get('app', 'availability_hide')) {
+            $query->isNotAvailability();
+        }
+        $query->andWhere(['IS NOT', Product::tableName() . '.discount', null])
+            ->andWhere(['!=', Product::tableName() . '.discount', '']);
+
+
+        $manufacturers = [];
+        $categories = [];
+        $discounts = (Yii::$app->hasModule('discounts')) ? Yii::$app->getModule('discounts')->discounts : false;
+        if ($discounts) {
+            $categoriesList = [];
+            $manufacturersList = [];
+            foreach ($discounts as $discount) {
+                $categoriesList[] = $discount->categories;
+                $manufacturersList[] = $discount->manufacturers;
+            }
+
+            foreach ($categoriesList as $category) {
+                foreach ($category as $item) {
+                    $categories[] = $item;
+                }
+            }
+
+            foreach ($manufacturersList as $manufacturer) {
+                foreach ($manufacturer as $item2) {
+                    $manufacturers[] = $item2;
+                }
+            }
+
+        }
+
+        if ($manufacturers) {
+            $query->applyManufacturers(array_unique($manufacturers), 'orWhere');
+        }
+        if ($categories) {
+            $query->applyCategories(array_unique($categories));
+        }
+
+        return $query;
     }
 }

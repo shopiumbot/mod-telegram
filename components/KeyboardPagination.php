@@ -134,7 +134,7 @@ class KeyboardPagination extends BaseObject implements Linkable
             if (empty($this->pageSizeLimit)) {
                 $pageSize = $this->defaultPageSize;
                 $this->setPageSize($pageSize);
-                echo 'zzzzzzzzzzzzz';
+              //  echo 'zzzzzzzzzzzzz';
             } else {
 
                // $pageSize = (int) $this->getQueryParam($this->pageSizeParam, $this->defaultPageSize);

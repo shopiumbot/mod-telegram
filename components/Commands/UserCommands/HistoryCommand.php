@@ -57,18 +57,19 @@ class HistoryCommand extends UserCommand
         if ($update->getCallbackQuery()) {
             $callbackQuery = $update->getCallbackQuery();
             $message = $callbackQuery->getMessage();
-            $chat = $message->getChat();
             $user = $callbackQuery->getFrom();
-            $chat_id = $chat->getId();
-            $user_id = $user->getId();
+
         } else {
             $callbackQuery = null;
             $message = $this->getMessage();
-            $chat = $message->getChat();
             $user = $message->getFrom();
-            $chat_id = $chat->getId();
-            $user_id = $user->getId();
+
         }
+        $chat = $message->getChat();
+        $chat_id = $chat->getId();
+        $user_id = $user->getId();
+
+        $this->setLanguage($user_id);
         $data['chat_id'] = $chat_id;
 
         $text = trim($message->getText(true));

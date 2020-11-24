@@ -14,6 +14,7 @@ use shopium\mod\telegram\components\UserCommand;
 use Yii;
 use yii\db\Query;
 use yii\helpers\ArrayHelper;
+use yii\helpers\Html;
 
 /**
  * User "/catalog" command
@@ -79,7 +80,7 @@ class CatalogCommand extends UserCommand
 
         $chat_id = $chat->getId();
         $user_id = $user->getId();
-
+        $this->setLanguage($user_id);
         if (($this->id = trim($this->getConfig('id'))) === '') {
             $this->id = 1;
         }
@@ -151,43 +152,39 @@ class CatalogCommand extends UserCommand
                 if (isset($this->settings->enable_brands) && $this->settings->enable_brands) {
                     $brands = Manufacturer::find()->published()->count();
                     if ($brands) {
-                        $keyboards[] = ArrayHelper::merge($keyboards, [new InlineKeyboardButton([
-                            'text' => Yii::t('telegram/default', 'BRANDS', $brands),
-                            'callback_data' => 'query=getBrandsList'
-                        ])]);
+                        $keyboards[] = ArrayHelper::merge($keyboards, [
+                            new InlineKeyboardButton([
+                                'text' => Yii::t('telegram/default', 'BRANDS', $brands),
+                                'callback_data' => 'query=getBrandsList'
+                            ])
+                        ]);
                     }
                 }
-                if (isset($this->settings->enable_discounts) && $this->settings->enable_discounts && false) {
-                    $discountsQuery = Product::find()->published();
-                    if (Yii::$app->settings->get('app', 'availability_hide')) {
-                        $discountsQuery->isNotAvailability();
-                    }
-                    $discountsQuery->isNotEmpty('discount');
-
-                    $discounts = $discountsQuery->count();
-                    if ($discounts) {
-                        $keyboardsFirst[] = [new InlineKeyboardButton([
-                            'text' => Yii::t('telegram/default', 'DISCOUNT', $discounts),
-                            'callback_data' => 'query=getList&model=discounts'
-                        ])];
+                if (isset($this->settings->enable_discounts) && $this->settings->enable_discounts) {
+                    $query = Product::find()->published();
+                    $query = $this->getDiscountQuery($query);
+                    $countDiscount = $query->count();
+                    if ($countDiscount) {
+                        $keyboardsFirst[] = [
+                            new InlineKeyboardButton([
+                                'text' => Yii::t('telegram/default', 'DISCOUNT', $countDiscount),
+                                'callback_data' => 'query=getList&model=discounts'
+                            ])
+                        ];
                     }
                 }
                 if (isset($this->settings->enable_new) && $this->settings->enable_new) {
-                    $newQuery = Product::find()->published();
-                    if (Yii::$app->settings->get('app', 'availability_hide')) {
-                        $newQuery->isNotAvailability();
-                    }
-                    if (isset($this->settings->label_expire_new) && $this->settings->label_expire_new) {
-                        $newQuery->int2between(time(), time() - (86400 * $this->settings->label_expire_new));
-                    } else {
-                        $newQuery->int2between(-1, -1);
-                    }
-                    $newCount = $newQuery->count();
-                    if ($newCount) {
-                        $keyboardsFirst[] = [new InlineKeyboardButton([
-                            'text' => Yii::t('telegram/default', 'NEW', $newCount),
-                            'callback_data' => 'query=getList&model=new'
-                        ])];
+                    $queryNew = Product::find()->published();
+                    $queryNew = $this->getNewQuery($queryNew);
+                    $countNew = $queryNew->count();
+
+                    if ($countNew) {
+                        $keyboardsFirst[] = [
+                            new InlineKeyboardButton([
+                                'text' => Yii::t('telegram/default', 'NEW', $countNew),
+                                'callback_data' => 'query=getList&model=new'
+                            ])
+                        ];
                     }
                 }
 
@@ -222,38 +219,31 @@ class CatalogCommand extends UserCommand
                     ])]);
                 }
             }
-            //Todo сделать как в магазине. (рабочий вариант)
-            if (isset($this->settings->enable_discounts) && $this->settings->enable_discounts && false) {
-                $discountsQuery = Product::find()->published();
-                if (Yii::$app->settings->get('app', 'availability_hide')) {
-                    $discountsQuery->isNotAvailability();
-                }
-                $discountsQuery->isNotEmpty('discount');
-                $discounts = $discountsQuery->count();
-                if ($discounts) {
-                    $keyboardsFirst[] = [new InlineKeyboardButton([
-                        'text' => Yii::t('telegram/default', 'DISCOUNT', $discounts),
-                        'callback_data' => 'query=getList&model=discounts'
-                    ])];
+            if (isset($this->settings->enable_discounts) && $this->settings->enable_discounts) {
+                $query = Product::find()->published();
+                $query = $this->getDiscountQuery($query);
+                $countDiscount = $query->count();
+                if ($countDiscount) {
+                    $keyboardsFirst[] = [
+                        new InlineKeyboardButton([
+                            'text' => Yii::t('telegram/default', 'DISCOUNT', $countDiscount),
+                            'callback_data' => 'query=getList&model=discounts'
+                        ])
+                    ];
                 }
             }
 
             if (isset($this->settings->enable_new) && $this->settings->enable_new) {
-                $newQuery = Product::find()->published();
-                if (Yii::$app->settings->get('app', 'availability_hide')) {
-                    $newQuery->isNotAvailability();
-                }
-                if (isset($this->settings->label_expire_new) && $this->settings->label_expire_new) {
-                    $newQuery->int2between(time(), time() - (86400 * $this->settings->label_expire_new));
-                } else {
-                    $newQuery->int2between(-1, -1);
-                }
-                $newCount = $newQuery->count();
-                if ($newCount) {
-                    $keyboardsFirst[] = [new InlineKeyboardButton([
-                        'text' => Yii::t('telegram/default', 'NEW', $newCount),
-                        'callback_data' => 'query=getList&model=new'
-                    ])];
+                $queryNew = Product::find()->published();
+                $queryNew = $this->getNewQuery($queryNew);
+                $countNew = $queryNew->count();
+                if ($countNew) {
+                    $keyboardsFirst[] = [
+                        new InlineKeyboardButton([
+                            'text' => Yii::t('telegram/default', 'NEW', $countNew),
+                            'callback_data' => 'query=getList&model=new'
+                        ])
+                    ];
                 }
             }
             $keyboards = ArrayHelper::merge($keyboardsFirst, $keyboards);
@@ -286,4 +276,6 @@ class CatalogCommand extends UserCommand
 
         return $response;
     }
+
+
 }

@@ -89,6 +89,7 @@ class BrandsCommand extends UserCommand
 
         $chat_id = $chat->getId();
         $user_id = $user->getId();
+        $this->setLanguage($user_id);
         $data['chat_id'] = $chat_id;
         if (($this->id = trim($this->getConfig('id'))) === '') {
             $this->id = null;
@@ -141,7 +142,7 @@ class BrandsCommand extends UserCommand
             ]);
 
 
-            $dataCatalog['text'] = '⬇ Список брендов';
+            $dataCatalog['text'] = Yii::t('telegram/default', 'BRANDS_LIST');
             $dataCatalog['chat_id'] = $chat_id;
             $dataCatalog['reply_markup'] = $this->catalogKeyboards();
             $buttonsResponse = Request::sendMessage($dataCatalog);
