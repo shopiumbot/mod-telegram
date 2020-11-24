@@ -31,6 +31,7 @@ class DefaultController extends Controller
 
         Yii::$app->response->format = Response::FORMAT_JSON;
         $db = Yii::$app->db;
+        //Todo: сделать чтобы работало все без авторизации
         $login = Yii::$app->user->loginById(Yii::$app->params['client_id']);
         try {
 

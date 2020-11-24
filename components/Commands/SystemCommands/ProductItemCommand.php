@@ -97,7 +97,6 @@ class ProductItemCommand extends SystemCommand
         /** @var Product $product */
         $product = $this->product;
 
-        $this->notify(Yii::$app->language);
         $caption = '';
         if ($product->hasDiscount) {
             $caption .= '🔥🔥🔥';
@@ -275,7 +274,7 @@ class ProductItemCommand extends SystemCommand
             'product' => [
                 'id' => $product->id,
                 'name' => Html::decode($product->name),
-                'price' => $this->number_format($product->price),
+                'price' => $this->number_format($product->getFrontPrice()),
                 'description' => ($product->description) ? preg_replace("/<br\s*\/?>\s*/i", PHP_EOL, $product->description) : false,
                 'sku' => ($product->sku) ? Html::decode($product->sku) : false,
                 'discount' => $discount,

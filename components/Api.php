@@ -32,8 +32,8 @@ class Api extends \Longman\TelegramBot\Telegram
         //Yii::info('load api');
         $this->enableAdmins();
 
-        $this->setDownloadPath(Yii::getAlias('@app/web/telegram/downloads'));
-        $this->setUploadPath(Yii::getAlias('@app/web/telegram/uploads'));
+        $this->setDownloadPath(Yii::getAlias('@uploads/telegram/downloads'));
+        $this->setUploadPath(Yii::getAlias('@uploads/telegram/uploads'));
 
     }
     public function getUser(){
@@ -173,15 +173,15 @@ class Api extends \Longman\TelegramBot\Telegram
             if ($profile->getResult()->photos && isset($profile->getResult()->photos[0])) {
                 $photo = $profile->getResult()->photos[0][2];
                 $file = Request::getFile(['file_id' => $photo['file_id']]);
-                if (!file_exists(Yii::getAlias('@app/web/telegram/downloads') . DIRECTORY_SEPARATOR . $file->getResult()->file_path)) {
+                if (!file_exists(Yii::getAlias('@uploads/telegram/downloads') . DIRECTORY_SEPARATOR . $file->getResult()->file_path)) {
                     $download = Request::downloadFile($file->getResult());
 
                 } else {
-                    return '/telegram/downloads/' . $file->getResult()->file_path;
+                    return Yii::$app->request->baseUrl.'/uploads/telegram/downloads/' . $file->getResult()->file_path;
                 }
             }
         } else {
-            return '/uploads/no-image.jpg';
+            return Yii::$app->request->baseUrl.'/uploads/no-image.jpg';
         }
     }
 

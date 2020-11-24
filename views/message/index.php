@@ -109,7 +109,7 @@ $api = Yii::$app->telegram->getApi();
                     <div class="chat-meta-user pb-3 border-bottom">
                         <div class="current-chat-user-name">
                                         <span>
-                                            <img src="/uploads/no-image.jpg" alt="dynamic-image" class="rounded-circle"
+                                            <img src="<?= Yii::$app->request->baseUrl; ?>/uploads/no-image.jpg" alt="dynamic-image" class="rounded-circle"
                                                  width="45">
                                             <span class="name font-medium ml-2"></span>
                                         </span>

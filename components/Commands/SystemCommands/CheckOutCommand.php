@@ -105,16 +105,9 @@ class CheckOutCommand extends SystemCommand
         if ($this->orderProducts) {
             // if (!$this->orderProducts->count()) {
             // $data['reply_markup'] = $this->startKeyboards();
-            //  return $this->notify(Yii::$app->settings->get('telegram', 'empty_cart_text'),'info');
+            //  return $this->notify(Yii::t('cart/default','CART_EMPTY'),'info');
 
 
-            //  $data_edit = [
-            //      'chat_id' => $chat_id,
-            //      'message_id' => $message->getMessageId(),
-            //      'text' => $this->settings->empty_cart_text,
-            //  ];
-            //  return Request::editMessageText($data_edit);
-            // }
             if ($chat->isGroupChat() || $chat->isSuperGroup()) {
                 //reply to message id is applied by default
                 //Force reply is applied by default so it can work with privacy on
@@ -512,7 +505,7 @@ class CheckOutCommand extends SystemCommand
                         if ($original) {
                             $command .= '/product' . $product->product_id;
                         }
-                        $content .= '*' . $original->name . '* ' . $command . ' *(' . $product->quantity . ' шт.)*: ' . $this->number_format($original->price) . ' грн.' . PHP_EOL;
+                        $content .= '*' . $original->name . '* ' . $command . ' *(' . $product->quantity . ' шт.)*: ' . $this->number_format($original->price) . ' '.Yii::$app->currency->active['symbol'] . PHP_EOL;
                     }
 
                     unset($notes['state']);
@@ -623,7 +616,7 @@ class CheckOutCommand extends SystemCommand
                     break;
             }
         } else {
-            $data['text'] = $this->settings->empty_cart_text;
+            $data['text'] = Yii::t('cart/default','CART_EMPTY');
             $data['reply_markup'] = $this->startKeyboards();
             $result = Request::sendMessage($data);
 

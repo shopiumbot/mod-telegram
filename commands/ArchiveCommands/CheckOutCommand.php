@@ -103,7 +103,7 @@ class CheckOutCommand extends SystemCommand
 
 
         /*if (!$order || !$order->getProducts()->count()) {
-            $data['text'] = Yii::$app->settings->get('telegram', 'empty_cart_text');
+            $data['text'] = Yii::t('cart/default','CART_EMPTY');
             $data['reply_markup'] = $this->startKeyboards();
              return Request::sendMessage($data);
         }*/
@@ -119,13 +119,13 @@ class CheckOutCommand extends SystemCommand
         if ($order) {
             if (!$order->getProducts()->count()) {
                 // $data['reply_markup'] = $this->startKeyboards();
-                //  return $this->notify(Yii::$app->settings->get('telegram', 'empty_cart_text'),'info');
+                //  return $this->notify(Yii::t('cart/default','CART_EMPTY'),'info');
 
 
                 $data_edit = [
                     'chat_id' => $chat_id,
                     'message_id' => $message->getMessageId(),
-                    'text' => Yii::$app->settings->get('app', 'empty_cart_text'),
+                    'text' => Yii::t('cart/default','CART_EMPTY'),
                 ];
                 return Request::editMessageText($data_edit);
 

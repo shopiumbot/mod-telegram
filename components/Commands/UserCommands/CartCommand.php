@@ -167,9 +167,9 @@ class CartCommand extends UserCommand
 
                     $imageData = ($product->originalProduct) ? $product->originalProduct->getImage() : false;
 
-                    $text = '*Ваша корзина*' . PHP_EOL;
+                    $text = '*' . Yii::t('cart/default', 'YOUR_CART') . '*' . PHP_EOL;
                     if ($imageData) {
-                        $text .= '[' . $original->name . '](https://' . Yii::$app->request->getServerName() . '' . $imageData->getUrlToOrigin() . ')' . PHP_EOL;
+                        $text .= '[' . $original->name . '](https://' . Yii::$app->request->getServerName() . Yii::$app->request->baseUrl . $imageData->getUrlToOrigin() . ')' . PHP_EOL;
                     } else {
                         $text .= '[' . $original->name . '](https://' . Yii::$app->request->getServerName() . '/uploads/no-image.jpg)' . PHP_EOL;
                     }
@@ -207,13 +207,13 @@ class CartCommand extends UserCommand
                         'message_id' => $update->getCallbackQuery()->getMessage()->getMessageId()
                     ]);
                 }
-                $data['text'] = $this->settings->empty_cart_text;
+                $data['text'] = Yii::t('cart/default','CART_EMPTY');
                 $data['reply_markup'] = $this->startKeyboards();
                 $response = $data;
 
             }
         } else {
-            $data['text'] = $this->settings->empty_cart_text;
+            $data['text'] = Yii::t('cart/default','CART_EMPTY');
             $data['reply_markup'] = $this->startKeyboards();
             $response = $data;
         }
