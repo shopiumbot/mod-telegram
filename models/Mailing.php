@@ -97,7 +97,7 @@ class Mailing extends ActiveRecord
             //'sendVoice' => 'Голосовае',
             'sendContact' => self::t('TYPE_SEND_CONTACT'),
             'sendVenue' => self::t('TYPE_SEND_VENUE'),
-            'sendPoll' => self::t('TYPE_SEND_POLL'),
+           // 'sendPoll' => self::t('TYPE_SEND_POLL'),
         ];
     }
 
@@ -175,7 +175,7 @@ class Mailing extends ActiveRecord
                     $img->load($path . $this->thumb);
                     $img->resize(320, 320);
                     $img->save();
-                    $data['thumb'] = 'https://' . Yii::$app->request->getHostName() . '/uploads/tmp/' . $this->thumb;
+                    $data['thumb'] = 'https://' . Yii::$app->request->getHostName() . Yii::$app->request->baseUrl.'/uploads/tmp/' . $this->thumb;
                 }
 
             } elseif ($this->type == 'sendMediaGroup') {
@@ -190,7 +190,7 @@ class Mailing extends ActiveRecord
                         if (file_exists($path . $file)) {
                             //$data['photo_'.$i] = Request::encodeFile($file);
                             //$item['media'] = 'attach://' . $file->tempName;
-                            $item['media'] = 'https://' . Yii::$app->request->getHostName() . '/uploads/tmp/' . $file;
+                            $item['media'] = 'https://' . Yii::$app->request->getHostName() . Yii::$app->request->baseUrl.'/uploads/tmp/' . $file;
                             if ($this->text)
                                 $item['caption'] = $this->text;
 
@@ -281,7 +281,9 @@ class Mailing extends ActiveRecord
             foreach ($results as $res) {
                 /** @var \Longman\TelegramBot\Entities\ServerResponse $res */
                 if (!$res->getOk()) {
-                    Yii::$app->session->addFlash('telegram-error', $res->getDescription());
+                    Yii::$app->session->addFlash('error', $res->getDescription());
+                }else{
+                   // CMS::dump($res);
                 }
             }
         }

@@ -351,7 +351,7 @@ class MailingController extends AdminController
                 $model->send_to_admins = $dy_model->send_to_admins;
                 if ($model->validate()) {
                     $model->save(false);
-                    Yii::$app->session->setFlash('success', 'Рассылка успешно отправлена.');
+                    Yii::$app->session->setFlash('success', $model::t('SUCCESS_SEND'));
                     return $this->redirect(['index']);
                 } else {
                     print_r($model->getErrors());

@@ -29,4 +29,5 @@ return [
     'TYPE_SEND_POLL' => 'Опитування',
     'TYPE_SEND_CONTACT' => 'Контакт',
     'SELECT_TYPE' => '&mdash; тип &mdash;',
+    'SUCCESS_SEND' => 'Розсилка успішно відправлено.'
 ];

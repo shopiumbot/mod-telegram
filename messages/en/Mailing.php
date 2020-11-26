@@ -29,4 +29,5 @@ return [
     'TYPE_SEND_POLL' => 'Poll',
     'TYPE_SEND_CONTACT' => 'Contact',
     'SELECT_TYPE' => '&mdash; type &mdash;',
+    'SUCCESS_SEND' => 'Newsletter successfully sent.'
 ];
