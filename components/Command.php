@@ -28,7 +28,7 @@ abstract class Command extends \Longman\TelegramBot\Commands\Command
     {
 
 
-        //$update = $this->getUpdate();
+
         if ($update->getCallbackQuery()) {
             $user_id = $update->getCallbackQuery()->getMessage()->getFrom()->getId();
         } else {
@@ -60,7 +60,12 @@ abstract class Command extends \Longman\TelegramBot\Commands\Command
     public function setLanguage($user_id)
     {
         $user = \shopium\mod\telegram\models\User::findOne($user_id);
-        $language = ($user->language) ? $user->language : 'ru';
+        if($user){
+            $language = ($user->language) ? $user->language : 'ru';
+        }else{
+            $language = 'ru';
+        }
+
         Yii::$app->languageManager->setActive($language);
     }
 
@@ -130,8 +135,8 @@ abstract class Command extends \Longman\TelegramBot\Commands\Command
     {
 
         $update = $this->getUpdate();
-        $textMyOrders = $this->settings->button_text_history;
-        $textMyCart = $this->settings->button_text_cart;
+        //$textMyOrders = $this->settings->button_text_history;
+        //$textMyCart = $this->settings->button_text_cart;
         // if ($this->orderHistoryCount) {
         // $textMyOrders .= ' (' . $this->orderHistoryCount . ')';
         // }
@@ -252,8 +257,8 @@ abstract class Command extends \Longman\TelegramBot\Commands\Command
     public function catalogKeyboards()
     {
 
-        $textMyOrders = $this->settings->button_text_history;
-        $textMyCart = $this->settings->button_text_cart;
+        //$textMyOrders = $this->settings->button_text_history;
+        //$textMyCart = $this->settings->button_text_cart;
         // if ($this->orderHistoryCount) {
         //    $textMyOrders .= ' (' . $this->orderHistoryCount . ')';
         //}
@@ -316,12 +321,11 @@ abstract class Command extends \Longman\TelegramBot\Commands\Command
 
     public function homeKeyboards()
     {
-
-        $keyboards[] = [
-            new KeyboardButton(['text' => $this->settings->button_text_start]),
-            new KeyboardButton(['text' => $this->settings->button_text_catalog]),
-            new KeyboardButton(['text' => $this->settings->button_text_search]),
-        ];
+        $menus = \core\modules\menu\models\Menu::find()->published()->where(['id'=>[1,2,4]])->all();
+        $keyboards=[];
+        foreach ($menus as $menu) {
+            $keyboards[0][] = new KeyboardButton(['text' => $menu->name]);
+        }
 
         $data = (new Keyboard([
             'keyboard' => $keyboards

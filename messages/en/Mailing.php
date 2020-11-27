@@ -24,7 +24,7 @@ return [
     'TYPE_SEND_PHOTO' => 'Image',
     'TYPE_SEND_AUDIO' => 'Audio',
     'TYPE_SEND_DOCUMENT' => 'Document',
-    'TYPE_SEND_GALLERY' => 'Photo Gallery',
+    'TYPE_SEND_GALLERY' => 'Photogallery',
     'TYPE_SEND_VIDEO' => 'Video',
     'TYPE_SEND_POLL' => 'Poll',
     'TYPE_SEND_CONTACT' => 'Contact',

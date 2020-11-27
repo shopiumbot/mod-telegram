@@ -60,7 +60,9 @@ return [
     'PRODUCT_NOT_FOUND' => '🙁 The product does not exist at the moment',
     'NO_TRANSLATE'=>'No translate',
     'WEBHOOK_SET' => 'Sign bot',
+    'WEBHOOK_SET_SUCCESS' => 'Bot subscribed successfully',
     'WEBHOOK_UNSET' => '☹️ Unsubscribe bot',
+    'WEBHOOK_UNSET_SUCCESS' => 'Bot unsubscribed successfully',
     'WEBHOOK_CONNECT' => 'Bot is connected',
     'WEBHOOK_DISCONNECT' => 'The bot is not connected',
     'MESSAGES' => 'Messages',
@@ -88,4 +90,12 @@ return [
     'COMMAND_SENDTOALL' => 'Send a message to all users of the bot',
     'HISTORY_EMPTY' => 'Your story is empty Use the catalog to fill it',
     'BRANDS_LIST' => '⬇ List of brands',
+    'PRODUCT_ADD_SUCCESS' => '✅ Product added successfully.',
+    'FILE_UPLOAD_SUCCESS' => 'File uploaded successfully',
+    'FILE_UPLOAD_ERROR' => 'Error loading file.',
+    'DRAG_FILE_IMAGE' => 'Drag and drop image',
+    'PRICE_NUMBER' => 'Price must be a number',
+    'PRODUCT_NAME' => 'Please enter product name',
+    'PRODUCT_CATEGORY' => 'Please select a category',
+    'PRODUCT_TYPE' => 'Please select a product type'
 ];

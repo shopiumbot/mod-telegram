@@ -6,6 +6,7 @@ namespace shopium\mod\telegram\models\forms;
 use Longman\TelegramBot\Entities\BotCommand;
 use Longman\TelegramBot\Request;
 use Yii;
+use yii\base\Exception;
 use yii\base\Model;
 
 class CommandsForm extends Model
@@ -17,10 +18,13 @@ class CommandsForm extends Model
     {
         parent::init();
 
-        $cmd = Request::getMyCommands()->getRawData();
-        if ($cmd['ok']) {
-            $this->data = $cmd['result'];
-        }
+
+            $cmd = Request::getMyCommands()->getRawData();
+            if ($cmd['ok']) {
+                $this->data = $cmd['result'];
+            }
+
+
     }
 
     public function rules()

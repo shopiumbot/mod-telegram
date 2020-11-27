@@ -2,7 +2,7 @@
 
 namespace shopium\mod\telegram\components\Commands\UserCommands;
 
-
+use Yii;
 use core\modules\shop\models\Product;
 use Longman\TelegramBot\Entities\ServerResponse;
 use Longman\TelegramBot\Exception\TelegramException;
@@ -79,7 +79,7 @@ class ProductCommand extends UserCommand
                         ])
                         ->executeCommand('productitem');
                 } else {
-                    $text = 'Товар не найден';
+                    $text = Yii::t('shop/default','NOT_FOUND_PRODUCT');
                 }
             } else {
                 $text = 'ID должен быть числом';

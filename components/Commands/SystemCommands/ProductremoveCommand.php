@@ -150,7 +150,7 @@ class ProductremoveCommand extends SystemCommand
                     break;
             }
         } else {
-            $result = $this->notify('Товар не найден!');
+            $result = $this->notify(Yii::t('shop/default','NOT_FOUND_PRODUCT'));
         }
 
 

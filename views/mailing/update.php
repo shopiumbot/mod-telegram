@@ -38,56 +38,56 @@ use panix\ext\multipleinput\MultipleInputColumn;
 
         <div class="card-body">
             <?= $this->render($view, ['model' => $model, 'form' => $form, 'dy_model' => $dy_model]); ?>
-            <?= $form->field($dy_model, 'disable_notification')->checkbox(['checked'=>true]) ?>
+            <?= $form->field($dy_model, 'disable_notification')->checkbox(['checked' => true]) ?>
             <?= $form->field($dy_model, 'send_to_groups')->checkbox() ?>
             <?= $form->field($dy_model, 'send_to_supergroups')->checkbox() ?>
             <?= $form->field($dy_model, 'send_to_channels')->checkbox() ?>
             <?= $form->field($dy_model, 'send_to_users')->checkbox() ?>
             <?= $form->field($dy_model, 'send_to_admins')->checkbox() ?>
+            <?php if (!in_array($model->type, ['sendMediaGroup'])) { ?>
+                <div class="form-group row">
+                    <div class="col-sm-4 col-md-4 col-lg-3 col-xl-2"></div>
+                    <div class="col-sm-8 col-md-8 col-lg-9 col-xl-10">
+                        <?php
+                        echo MultipleInput::widget([
+                            'model' => $dy_model,
+                            'attribute' => 'buttons',
+                            'max' => 7,
+                            'min' => 0,
+                            'allowEmptyList' => false,
+                            'enableGuessTitle' => true,
+                            'showGeneralError' => true,
+                            'addButtonPosition' => \panix\ext\multipleinput\MultipleInput::POS_HEADER, // show add button in the header
+                            'columns' => [
+                                [
+                                    'name' => 'label',
+                                    'title' => $model::t('Название'),
+                                    'enableError' => true,
+                                    'type' => MultipleInputColumn::TYPE_TEXT_INPUT,
 
-            <div class="form-group row">
-                <div class="col-sm-4 col-md-4 col-lg-3 col-xl-2"></div>
-                <div class="col-sm-8 col-md-8 col-lg-9 col-xl-10">
-                    <?php
-                    echo MultipleInput::widget([
-                        'model' => $dy_model,
-                        'attribute' => 'buttons',
-                        'max' => 7,
-                        'min' => 0,
-                        'allowEmptyList' => false,
-                        'enableGuessTitle' => true,
-                        'showGeneralError' => true,
-                        'addButtonPosition' => \panix\ext\multipleinput\MultipleInput::POS_HEADER, // show add button in the header
-                        'columns' => [
-                            [
-                                'name' => 'label',
-                                'title' => $model::t('Название'),
-                                'enableError' => true,
-                                'type' => MultipleInputColumn::TYPE_TEXT_INPUT,
+                                    'options' => ['class' => 'text-center2'],
+                                    'headerOptions' => [
+                                        'style' => 'width: 70px;',
+                                    ],
 
-                                'options' => ['class' => 'text-center2'],
-                                'headerOptions' => [
-                                    'style' => 'width: 70px;',
                                 ],
+                                [
+                                    'name' => 'callback',
+                                    'title' => $model::t('Callback'),
+                                    'enableError' => true,
+                                    'type' => MultipleInputColumn::TYPE_TEXT_INPUT,
+                                    'options' => ['class' => 'text-center2'],
+                                    'headerOptions' => [
+                                        'style' => 'width: 70px;',
+                                    ],
 
-                            ],
-                            [
-                                'name' => 'callback',
-                                'title' => $model::t('Callback'),
-                                'enableError' => true,
-                                'type' => MultipleInputColumn::TYPE_TEXT_INPUT,
-                                'options' => ['class' => 'text-center2'],
-                                'headerOptions' => [
-                                    'style' => 'width: 70px;',
                                 ],
-
-                            ],
-                        ]
-                    ]);
-                    ?>
+                            ]
+                        ]);
+                        ?>
+                    </div>
                 </div>
-            </div>
-
+            <?php } ?>
         </div>
         <div class="card-footer text-center">
             <?= $model->submitButton(); ?>
@@ -102,11 +102,11 @@ use panix\ext\multipleinput\MultipleInputColumn;
 
         $callbacks = [
             [
-                'callback' => 'getList&model=catalog&id=<code>'.Html::encode('<CATEGORY_ID>').'</code>',
+                'callback' => 'getList&model=catalog&id=<code>' . Html::encode('<CATEGORY_ID>') . '</code>',
                 'text' => 'Каталог'
             ],
             [
-                'callback' => 'getList&model=brands&id=<code>'.Html::encode('<BRAND_ID>').'</code>',
+                'callback' => 'getList&model=brands&id=<code>' . Html::encode('<BRAND_ID>') . '</code>',
                 'text' => 'Бренд'
             ],
             [
@@ -126,11 +126,11 @@ use panix\ext\multipleinput\MultipleInputColumn;
                 'text' => 'История заказов'
             ],
             [
-                'callback' => 'getProduct&id=<code>'.Html::encode('<PRODUCT_ID>').'</code>',
+                'callback' => 'getProduct&id=<code>' . Html::encode('<PRODUCT_ID>') . '</code>',
                 'text' => 'Товар'
             ],
             [
-                'callback' => 'addCart&product_id=<code>'.Html::encode('<PRODUCT_ID>').'</code>',
+                'callback' => 'addCart&product_id=<code>' . Html::encode('<PRODUCT_ID>') . '</code>',
                 'text' => 'Добавление товара в корзину'
             ],
         ]
@@ -139,9 +139,9 @@ use panix\ext\multipleinput\MultipleInputColumn;
         ?>
 
 
-
         <!-- Modal -->
-        <div class="modal fade" id="docsCallbackModal" tabindex="-1" role="dialog" aria-labelledby="docsCallbackModalLabel" aria-hidden="true">
+        <div class="modal fade" id="docsCallbackModal" tabindex="-1" role="dialog"
+             aria-labelledby="docsCallbackModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document" style="max-width: 800px">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -157,7 +157,7 @@ use panix\ext\multipleinput\MultipleInputColumn;
                                 <th>Callback</th>
                                 <th>Описание</th>
                             </tr>
-                            <?php foreach($callbacks as $callback){ ?>
+                            <?php foreach ($callbacks as $callback) { ?>
                                 <tr>
                                     <td><?= $callback['callback']; ?></td>
                                     <td><?= $callback['text']; ?></td>
@@ -169,7 +169,6 @@ use panix\ext\multipleinput\MultipleInputColumn;
                 </div>
             </div>
         </div>
-
 
 
         <?php

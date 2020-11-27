@@ -495,95 +495,94 @@ class CheckOutCommand extends SystemCommand
                 case 5:
                     $this->conversation->update();
                     $titleClient = '*✅ Ваш заказ успешно оформлен*' . PHP_EOL . PHP_EOL;
-                    // $orderTemp = OrderTemp::findOne($user_id);
                     $order = new Order;
                     $order->user_id = $chat_id;
                     $content = '';
-                    foreach ($this->orderProducts as $product) {
-                        $original = $product->originalProduct;
-                        $command = '';
-                        if ($original) {
-                            $command .= '/product' . $product->product_id;
-                        }
-                        $content .= '*' . $original->name . '* ' . $command . ' *(' . $product->quantity . ' шт.)*: ' . $this->number_format($original->price) . ' '.Yii::$app->currency->active['symbol'] . PHP_EOL;
-                    }
+                     foreach ($this->orderProducts as $product) {
+                         $original = $product->originalProduct;
+                         $command = '';
+                         if ($original) {
+                             $command .= '/product' . $product->product_id;
+                         }
+                         $content .= '*' . $original->name . '* ' . $command . ' *(' . $product->quantity . ' шт.)*: ' . $this->number_format($original->price) . ' ' . Yii::$app->currency->active['symbol'] . PHP_EOL;
+                     }
 
-                    unset($notes['state']);
+                     unset($notes['state']);
 
-                    $content .= PHP_EOL . '*Имя*: ' . $notes['name'];
-                    $content .= PHP_EOL . '*Телефон*: ' . $notes['phone_number'] . PHP_EOL;
+                     $content .= PHP_EOL . '*Имя*: ' . $notes['name'];
+                     $content .= PHP_EOL . '*Телефон*: ' . $notes['phone_number'] . PHP_EOL;
 
-                    $content .= PHP_EOL . '🚚 Доставка: *' . $notes['delivery'] . '*' . PHP_EOL;
-                    if ($order->area_id && $order->area) {
-                        $content .= 'обл. *' . $order->area . '*, ';
-                    }
-                    if ($order->city_id && $order->city) {
-                        $content .= 'г. *' . $order->city . '*' . PHP_EOL;
-                    }
-
-
-                    if (isset($notes['delivery_city']))
-                        $order->city = $notes['delivery_city'];
-
-                    if (isset($notes['delivery_city_id']))
-                        $order->city_id = $notes['delivery_city_id'];
+                     $content .= PHP_EOL . '🚚 Доставка: *' . $notes['delivery'] . '*' . PHP_EOL;
+                     if ($order->area_id && $order->area) {
+                         $content .= 'обл. *' . $order->area . '*, ';
+                     }
+                     if ($order->city_id && $order->city) {
+                         $content .= 'г. *' . $order->city . '*' . PHP_EOL;
+                     }
 
 
-                    if (isset($notes['delivery_area']))
-                        $order->area = $notes['delivery_area'];
+                     if (isset($notes['delivery_city']))
+                         $order->city = $notes['delivery_city'];
 
-                    if (isset($notes['delivery_area_id']))
-                        $order->area_id = $notes['delivery_area_id'];
-
-
-                    if (isset($notes['delivery_warehouse']))
-                        $order->warehouse = $notes['delivery_warehouse'];
-
-                    if (isset($notes['delivery_warehouse_id']))
-                        $order->warehouse_id = $notes['delivery_warehouse_id'];
-
-                    if ($order->warehouse_id && $order->warehouse) {
-                        $warehouse = NovaPoshtaWarehouses::findOne(['Ref' => trim($order->warehouse_id)]);
-                        if ($warehouse) {
-                            $content .= '*' . $warehouse->DescriptionRu . '*' . PHP_EOL;
-                            $order->user_address = $warehouse->DescriptionRu;
-                        } else {
-                            $content .= 'Отделение: *' . $order->warehouse . '*' . PHP_EOL;
-                            $order->user_address = $order->warehouse;
-                        }
-                    }
-                    $content .= PHP_EOL . '💰 Оплата: *' . $notes['payment'] . '*';
+                     if (isset($notes['delivery_city_id']))
+                         $order->city_id = $notes['delivery_city_id'];
 
 
-                    //$order->delivery = $notes['delivery'];
-                    //$order->payment = $notes['payment'];
-                    $order->delivery_id = $notes['delivery_id'];
-                    $order->payment_id = $notes['payment_id'];
-                    $order->user_phone = $notes['phone_number'];
-                    $order->user_name = $notes['name'];
-                    $order->status_id = 1;
-                    $order->save(false);
+                     if (isset($notes['delivery_area']))
+                         $order->area = $notes['delivery_area'];
 
-                    foreach ($this->orderProducts as $product) {
-                        $original = $product->originalProduct;
-                        $add = $order->addProduct($original, $product->quantity, $original->price);
-
-                    }
-                    OrderTemp::deleteAll(['id' => $user_id]);
-                    OrderProductTemp::deleteAll(['order_id' => $user_id]);
-
-                    $o = Order::findOne($order->id);
-                    $content .= PHP_EOL . PHP_EOL . 'Сумма заказа: *' . $this->number_format($o->total_price) . '* ' . Yii::$app->currency->active['symbol'];
+                     if (isset($notes['delivery_area_id']))
+                         $order->area_id = $notes['delivery_area_id'];
 
 
-                    $titleOwner = '*✅ Новый заказ ' . CMS::idToNumber($o->id) . '*' . PHP_EOL . PHP_EOL;
-                    $admins = $this->telegram->getAdminList();
-                    foreach ($admins as $admin) {
-                        $data2['chat_id'] = $admin;
-                        $data2['parse_mode'] = 'Markdown';
-                        $data2['text'] = $titleOwner . $content;
-                        $result2 = Request::sendMessage($data2);
-                    }
+                     if (isset($notes['delivery_warehouse']))
+                         $order->warehouse = $notes['delivery_warehouse'];
+
+                     if (isset($notes['delivery_warehouse_id']))
+                         $order->warehouse_id = $notes['delivery_warehouse_id'];
+
+                     if ($order->warehouse_id && $order->warehouse) {
+                         $warehouse = NovaPoshtaWarehouses::findOne(['Ref' => trim($order->warehouse_id)]);
+                         if ($warehouse) {
+                             $content .= '*' . $warehouse->DescriptionRu . '*' . PHP_EOL;
+                             $order->user_address = $warehouse->DescriptionRu;
+                         } else {
+                             $content .= 'Отделение: *' . $order->warehouse . '*' . PHP_EOL;
+                             $order->user_address = $order->warehouse;
+                         }
+                     }
+                     $content .= PHP_EOL . '💰 Оплата: *' . $notes['payment'] . '*';
+
+
+                     //$order->delivery = $notes['delivery'];
+                     //$order->payment = $notes['payment'];
+                     $order->delivery_id = $notes['delivery_id'];
+                     $order->payment_id = $notes['payment_id'];
+                     $order->user_phone = $notes['phone_number'];
+                     $order->user_name = $notes['name'];
+                     $order->status_id = 1;
+                     $order->save(false);
+
+                     foreach ($this->orderProducts as $product) {
+                         $original = $product->originalProduct;
+                         $add = $order->addProduct($original, $product->quantity, $original->price);
+
+                     }
+                     OrderTemp::deleteAll(['id' => $user_id]);
+                     OrderProductTemp::deleteAll(['order_id' => $user_id]);
+
+                     $o = Order::findOne($order->id);
+                     $content .= PHP_EOL . PHP_EOL . 'Сумма заказа: *' . $this->number_format($o->total_price) . '* ' . Yii::$app->currency->active['symbol'];
+
+
+                     $titleOwner = '*✅ Новый заказ ' . CMS::idToNumber($o->id) . '*' . PHP_EOL . PHP_EOL;
+                     $admins = $this->telegram->getAdminList();
+                     foreach ($admins as $admin) {
+                         $data2['chat_id'] = $admin;
+                         $data2['parse_mode'] = 'Markdown';
+                         $data2['text'] = $titleOwner . $content;
+                         $result2 = Request::sendMessage($data2);
+                     }
 
 
                     $data['parse_mode'] = 'Markdown';
@@ -599,8 +598,8 @@ class CheckOutCommand extends SystemCommand
                         $inlineKeyboards[] = [
                             new InlineKeyboardButton([
                                 'text' => Yii::t('telegram/default', 'BUTTON_PAY', [
-                                    'price'=>$this->number_format($o->total_price),
-                                    'currency'=>Yii::$app->currency->active['symbol']
+                                    'price' => $this->number_format($o->total_price),
+                                    'currency' => Yii::$app->currency->active['symbol']
                                 ]),
                                 'callback_data' => "query=orderPay&id={$o->id}&system={$system}"
                             ]),
@@ -611,12 +610,14 @@ class CheckOutCommand extends SystemCommand
 
                     }
                     $data['text'] = '🙍🏼‍♀ Наш менеджер свяжеться с вами!‍';
-                    $result = Request::sendMessage($data);
+
                     $this->conversation->stop();
+                    $result = Request::sendMessage($data);
+
                     break;
             }
         } else {
-            $data['text'] = Yii::t('cart/default','CART_EMPTY');
+            $data['text'] = Yii::t('cart/default', 'CART_EMPTY');
             $data['reply_markup'] = $this->startKeyboards();
             $result = Request::sendMessage($data);
 

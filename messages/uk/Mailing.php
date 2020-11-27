@@ -24,7 +24,7 @@ return [
     'TYPE_SEND_PHOTO' => 'Зображення',
     'TYPE_SEND_AUDIO' => 'Аудіо',
     'TYPE_SEND_DOCUMENT' => 'Документ',
-    'TYPE_SEND_GALLERY' => 'Фото галерея',
+    'TYPE_SEND_GALLERY' => 'Фотогалерея',
     'TYPE_SEND_VIDEO' => 'Відео',
     'TYPE_SEND_POLL' => 'Опитування',
     'TYPE_SEND_CONTACT' => 'Контакт',

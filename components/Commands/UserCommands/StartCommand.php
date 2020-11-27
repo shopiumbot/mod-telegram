@@ -50,7 +50,7 @@ class StartCommand extends UserCommand
      */
     public function execute()
     {
-
+        $startItem = \core\modules\menu\models\Menu::findOne(1);
         $message = $this->getMessage();
 
         $chat = $message->getChat();
@@ -59,7 +59,7 @@ class StartCommand extends UserCommand
 
         $chat_id = $chat->getId();
         $user_id = $user->getId();
-        if ($text || !in_array($text, [$this->settings->button_text_start])) {
+        if ($text || !in_array($text, [$startItem->name])) {
             $find = StartSource::findOne(['user_id' => $user_id]);
             if (!$find) {
                 $source = new StartSource();

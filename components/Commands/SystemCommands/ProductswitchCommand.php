@@ -67,24 +67,23 @@ class ProductswitchCommand extends SystemCommand
             $this->switch = NULL;
         }
 
-        $message = $this->getMessage();
         $update = $this->getUpdate();
         if ($update->getCallbackQuery()) {
             $callbackQuery = $update->getCallbackQuery();
             $message = $callbackQuery->getMessage();
-            $chat = $message->getChat();
             $user = $callbackQuery->getFrom();
         } else {
             $message = $this->getMessage();
-            $chat = $message->getChat();
             $user = $message->getFrom();
 
         }
+        $chat = $message->getChat();
         $chat_id = $chat->getId();
         $user_id = $user->getId();
+        $this->setLanguage($user_id);
         $text = trim($message->getText(false));
         $data['chat_id'] = $chat_id;
-
+//Todo: не работает если использовать $this->keyword_cancel
 
         //Conversation start
         $this->conversation = new Conversation($user_id, $chat_id, $this->getName());
@@ -112,10 +111,10 @@ class ProductswitchCommand extends SystemCommand
 
         $product = Product::findOne($notes['id']);
 
-        //if ($text === '❌ Отмена') {
-        //    $this->telegram->executeCommand('cancel');
-        //    return Request::emptyResponse();
-        //}
+        if ($text === $this->keyword_cancel) {
+            return $this->telegram->executeCommand('cancel');
+            //  return Request::emptyResponse();
+        }
         //$accept = ($notes['switch']) ? 'Показать' : 'Скрыть';
 
         $question = (!$this->switch) ? 'Вы уверены что хотите *скрыть* этот товар?' : 'Вы уверены что хотите *показать* этот товар?';
@@ -126,12 +125,12 @@ class ProductswitchCommand extends SystemCommand
             $product = null;
             switch ($state) {
                 case 0:
-                    if ($text === '' || !in_array($text, ['Да', $this->keyword_cancel], true)) {
+                    if ($text === '' || !in_array($text, [Yii::t('yii', 'Yes'), Yii::t('telegram/default', 'KEYWORD_CANCEL')])) {
                         $notes['state'] = 0;
                         $this->conversation->update();
 
                         $data['parse_mode'] = 'Markdown';
-                        $data['reply_markup'] = (new Keyboard(['Да', $this->keyword_cancel]))
+                        $data['reply_markup'] = (new Keyboard([Yii::t('yii', 'Yes'), Yii::t('telegram/default', 'KEYWORD_CANCEL')]))
                             ->setResizeKeyboard(true)
                             ->setOneTimeKeyboard(true)
                             ->setSelective(true);
@@ -151,7 +150,8 @@ class ProductswitchCommand extends SystemCommand
                     $text = '';
                 // no break
                 case 1:
-                    if ($notes['state']) {
+                    if ($notes['state'] || $text !== $this->keyword_cancel) {
+                        $notes['state'] = 1;
                         $product = Product::findOne((int)$notes['id']);
                         if ($product) {
                             $product->switch = $notes['switch'];
@@ -201,7 +201,7 @@ class ProductswitchCommand extends SystemCommand
                     break;
             }
         } else {
-            $result = $this->notify('Товар не найден!');
+            $result = $this->notify(Yii::t('shop/default', 'NOT_FOUND_PRODUCT'));
         }
 
 

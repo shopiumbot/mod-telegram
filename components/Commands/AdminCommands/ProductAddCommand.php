@@ -160,9 +160,9 @@ class ProductAddCommand extends AdminCommand
 
                     $data['reply_markup'] = $buttons;
 
-                    $data['text'] = 'Выберите тип товара:';
+                    $data['text'] = Yii::t('telegram/default','PRODUCT_TYPE').':';
                     if ($text !== '') {
-                        $data['text'] = 'Выберите тип товара, на клавиатуре:';
+                        $data['text'] = Yii::t('telegram/default','PRODUCT_TYPE').':';
                     }
 
                     $result = Request::sendMessage($data);
@@ -208,9 +208,9 @@ class ProductAddCommand extends AdminCommand
 
                     $data['reply_markup'] = $buttons;
 
-                    $data['text'] = 'Выберите категорию:';
+                    $data['text'] = Yii::t('telegram/default','PRODUCT_CATEGORY').':';
                     if ($text !== '') {
-                        $data['text'] = 'Выберите категорию, на клавиатуре:';
+                        $data['text'] = Yii::t('telegram/default','PRODUCT_CATEGORY').':';
                     }
 
                     $result = Request::sendMessage($data);
@@ -244,7 +244,7 @@ class ProductAddCommand extends AdminCommand
                     $notes['state'] = 2;
                     $this->conversation->update();
                     $data['reply_markup'] = $buttons;
-                    $data['text'] = 'Введите название товара:';
+                    $data['text'] = Yii::t('telegram/default','PRODUCT_NAME').':';
 
                     // $data['reply_markup'] = Keyboard::remove(['selective' => true]);
                     $result = Request::sendMessage($data);
@@ -278,9 +278,9 @@ class ProductAddCommand extends AdminCommand
                     $notes['state'] = 3;
                     $this->conversation->update();
                     $data['reply_markup'] = $buttons;
-                    $data['text'] = 'Цена:';
+                    $data['text'] = Yii::t('shop/Product','PRICE').':';
                     if ($text !== '') {
-                        $data['text'] = 'Цена должна быть числом:';
+                        $data['text'] = Yii::t('telegram/default','PRICE_NUMBER').':';
                     }
 
                     $result = Request::sendMessage($data);
@@ -314,7 +314,7 @@ class ProductAddCommand extends AdminCommand
                     $notes['state'] = 4;
                     $this->conversation->update();
                     $data['reply_markup'] = $buttons;
-                    $data['text'] = 'Перетащите изображение:';
+                    $data['text'] = Yii::t('telegram/default','DRAG_FILE_IMAGE').':';
 
                     $result = Request::sendMessage($data);
                     break;
@@ -336,9 +336,10 @@ class ProductAddCommand extends AdminCommand
                         $download = Request::downloadFile($file->getResult());
                     }
 
-                    $data['text'] = $message_type . ' file is located at: ' . $filePath;
+                    //$data['text'] = $message_type . ' file is located at: ' . $filePath;
+                    $data['text'] = Yii::t('telegram/default','FILE_UPLOAD_SUCCESS');
                 } else {
-                    $data['text'] = 'Ошибка загрузки файла.';
+                    $data['text'] = Yii::t('telegram/default','FILE_UPLOAD_ERROR');
                 }
                 $r = Request::sendMessage($data);
 
@@ -350,7 +351,7 @@ class ProductAddCommand extends AdminCommand
             // no break
             case 5:
                 $this->conversation->update();
-                $content = '✅ Товар успешно добавлен' . PHP_EOL;
+                $content = Yii::t('telegram/default','PRODUCT_ADD_SUCCESS') . PHP_EOL;
 
                 $product = new Product;
 

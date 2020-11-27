@@ -2,7 +2,9 @@
 
 namespace shopium\mod\telegram\commands;
 
+use core\modules\user\models\User;
 use Longman\TelegramBot\Request;
+use shopium\mod\telegram\components\Api;
 use yii\console\Controller;
 use Yii;
 class MessagesController extends Controller
@@ -30,21 +32,15 @@ class MessagesController extends Controller
             realpath($basePath . '/components/Commands') . '/UserCommands',
         ];
         $db = Yii::$app->db;
-       // $login = Yii::$app->user->loginById(Yii::$app->params['client_id']);
-
-        $mysql_credentials = [
-            'host'     => 'localhost',
-            'user'     => 'root',
-            'password' => '47228960panix',
-            'database' => 'telegram',
-        ];
+        //$login = Yii::$app->user->loginById(Yii::$app->params['client_id']);
+        $user = User::findOne(Yii::$app->params['client_id']);
 
         try {
             while (true) {
 
                 sleep(2);
                 // Create Telegram API object
-                $telegram = new \Longman\TelegramBot\Telegram('', $bot_username);
+                $telegram = new Api($user->token);
 
                 // Add commands paths containing your custom commands
                 $telegram->addCommandsPaths($commands_paths);
@@ -60,7 +56,7 @@ class MessagesController extends Controller
                 //
                 // Set custom Upload and Download paths
                 $telegram->setDownloadPath(Yii::getAlias('@app/web/downloads/telegram'));
-                $telegram->setUploadPath(Yii::getAlias('@app/web/uploads/telegram'));
+                $telegram->setUploadPath(Yii::getAlias('@uploads/telegram'));
 
                 // Here you can set some command specific parameters
                 // e.g. Google geocode/timezone api key for /date command
