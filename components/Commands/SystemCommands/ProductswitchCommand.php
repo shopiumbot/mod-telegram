@@ -111,13 +111,13 @@ class ProductswitchCommand extends SystemCommand
 
         $product = Product::findOne($notes['id']);
 
-        if ($text === $this->keyword_cancel) {
+        if ($text === Yii::t('telegram/default', 'KEYWORD_CANCEL')) {
             return $this->telegram->executeCommand('cancel');
             //  return Request::emptyResponse();
         }
         //$accept = ($notes['switch']) ? 'Показать' : 'Скрыть';
 
-        $question = (!$this->switch) ? 'Вы уверены что хотите *скрыть* этот товар?' : 'Вы уверены что хотите *показать* этот товар?';
+        $question = Yii::t('telegram/default',((!$this->switch) ? 'PRODUCT_SWITCH_OFF' : 'PRODUCT_SWITCH_ON'));
         $result = Request::emptyResponse();
         if ($product) {
 
@@ -137,7 +137,7 @@ class ProductswitchCommand extends SystemCommand
 
                         $data['text'] = $question;
                         if ($text !== '') {
-                            $data['text'] = 'Выберите вариант!';
+                            $data['text'] = Yii::t('telegram/default','SELECT_VARIANT');
                         }
 
 
@@ -157,7 +157,7 @@ class ProductswitchCommand extends SystemCommand
                             $product->switch = $notes['switch'];
                             $product->save(false);
 
-                            $message = ($notes['switch']) ? 'Вы успешно показали *' . $product->name . '*.' : 'Вы успешно скрыли *' . $product->name . '*.';
+                            $message = Yii::t('telegram/default',(($notes['switch']) ? 'PRODUCT_SWITCH_ON_SUCCESS' : 'PRODUCT_SWITCH_OFF_SUCCESS'),$product->name);
                             //Request::deleteMessage(['chat_id' => $chat_id, 'message_id' => $notes['callback_message_id']]);
                             $result = $this->notify($message, 'success', $this->catalogKeyboards());
 

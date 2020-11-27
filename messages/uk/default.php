@@ -97,5 +97,12 @@ return [
     'PRICE_NUMBER' => 'Ціна повинна бути числом',
     'PRODUCT_NAME' => 'Введіть назву товару',
     'PRODUCT_CATEGORY' => 'Оберіть категорію',
-    'PRODUCT_TYPE' => 'Оберіть тип товару'
+    'PRODUCT_TYPE' => 'Оберіть тип товару',
+    'SELECT_VARIANT' => 'Оберіть варіант',
+    'PRODUCT_SWITCH_OFF' => 'Ви впевнені що хочете *приховати* цей товар?',
+    'PRODUCT_SWITCH_ON' => 'Ви впевнені що хочете *показати* цей товар?',
+    'PRODUCT_SWITCH_OFF_SUCCESS' => 'Ви успішно приховали *{0}*.',
+    'PRODUCT_SWITCH_ON_SUCCESS' => 'Ви успішно показали *{0}*.',
+    'PRODUCT_DELETE' => 'Ви впевнені що хочете видалити *{0}*?',
+    'PRODUCT_DELETE_SUCCESS' => 'Ви успішно видалили *{0}*.',
 ];

@@ -97,5 +97,12 @@ return [
     'PRICE_NUMBER' => 'Price must be a number',
     'PRODUCT_NAME' => 'Please enter product name',
     'PRODUCT_CATEGORY' => 'Please select a category',
-    'PRODUCT_TYPE' => 'Please select a product type'
+    'PRODUCT_TYPE' => 'Please select a product type',
+    'SELECT_VARIANT' => 'Select an option',
+    'PRODUCT_SWITCH_OFF' => 'Are you sure you want to *hide* this product?',
+    'PRODUCT_SWITCH_ON' => 'Are you sure you want to *show* this product?',
+    'PRODUCT_SWITCH_OFF_SUCCESS' => 'You have successfully hidden *{0}*.',
+    'PRODUCT_SWITCH_ON_SUCCESS' => 'You have successfully shown *{0}*.',
+    'PRODUCT_DELETE' => 'Are you sure you want to delete *{0}*?',
+    'PRODUCT_DELETE_SUCCESS' => 'You have successfully deleted *{0}*.',
 ];

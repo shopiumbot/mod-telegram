@@ -57,7 +57,7 @@ class AdminPanelCommand extends AdminCommand
 
         $keyboards[] = [
             new InlineKeyboardButton([
-                'text' => '📦 Добавить товар',
+                'text' => '📦 '.Yii::t('shop/admin','CREATE_PRODUCT'),
                 'callback_data' => "query=addProduct"
             ])
         ];
@@ -82,7 +82,7 @@ class AdminPanelCommand extends AdminCommand
 
 
         $data['chat_id'] = $chat_id;
-        $data['text'] = 'Админ панель!';
+        $data['text'] = Yii::t('admin/default','MODULE_NAME');
 
 
 

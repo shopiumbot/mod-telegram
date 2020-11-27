@@ -69,7 +69,7 @@ class ProductAddCommand extends AdminCommand
             $callbackQuery = $update->getCallbackQuery();
             $message = $callbackQuery->getMessage();
             $user = $callbackQuery->getFrom();
-            parse_str($callbackQuery->getData(), $params);
+            /*parse_str($callbackQuery->getData(), $params);
             if (isset($params['command'])) {
                 if ($params['command'] == 'changeProductImage') {
                     $callbackData = 'changeProductImage';
@@ -83,7 +83,7 @@ class ProductAddCommand extends AdminCommand
                 } elseif ($params['query'] == 'productSpinner') {
                     $callbackData = $params['query'];
                 }
-            }
+            }*/
 
         } else {
             $message = $this->getMessage();
@@ -92,7 +92,7 @@ class ProductAddCommand extends AdminCommand
         $chat = $message->getChat();
         $chat_id = $chat->getId();
         $user_id =  $user->getId();
-
+        $this->setLanguage($user_id);
 
 
         $text = trim($message->getText(true));

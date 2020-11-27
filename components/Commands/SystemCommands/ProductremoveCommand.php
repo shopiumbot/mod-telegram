@@ -59,25 +59,21 @@ class ProductremoveCommand extends SystemCommand
             $this->id = NULL;
         }
 
-        $message = $this->getMessage();
+
         $update = $this->getUpdate();
         if ($update->getCallbackQuery()) {
             $callbackQuery = $update->getCallbackQuery();
             $message = $callbackQuery->getMessage();
-            $chat = $message->getChat();
             $user = $callbackQuery->getFrom();
-            // parse_str($callbackQuery->getData(), $params);
-            // echo $this->id . PHP_EOL;
-            // print_r($params);
-            // die;
         } else {
             $message = $this->getMessage();
-            $chat = $message->getChat();
             $user = $message->getFrom();
 
         }
+        $chat = $message->getChat();
         $chat_id = $chat->getId();
         $user_id = $user->getId();
+        $this->setLanguage($user_id);
         $text = trim($message->getText(false));
         $data['chat_id'] = $chat_id;
 
@@ -100,31 +96,30 @@ class ProductremoveCommand extends SystemCommand
             $notes['callback_message_id'] = $update->getCallbackQuery()->getMessage()->getMessageId();
 
 
-        $product = Product::findOne($notes['id']);
+        $product = Product::findOne((int)$notes['id']);
 
-        if ($text === 'Нет') {
-            $this->telegram->executeCommand('cancel');
-            return Request::emptyResponse();
+        if ($text === Yii::t('yii', 'No')) {
+            return $this->telegram->executeCommand('cancel');
         }
 
         if ($product) {
 
             $result = Request::emptyResponse();
-            $product = null;
+            // $product = null;
             switch ($state) {
                 case 0:
-                    if ($text === '' || !in_array($text, ['Да', 'Нет'], true)) {
+                    if ($text === '' || !in_array($text, [Yii::t('yii', 'Yes'), Yii::t('yii', 'No')], true)) {
                         $notes['state'] = 0;
                         $this->conversation->update();
-
-                        $data['reply_markup'] = (new Keyboard(['Да', 'Нет']))
+                        $data['parse_mode'] = 'Markdown';
+                        $data['reply_markup'] = (new Keyboard([Yii::t('yii', 'Yes'), Yii::t('yii', 'No')]))
                             ->setResizeKeyboard(true)
                             ->setOneTimeKeyboard(true)
                             ->setSelective(true);
 
-                        $data['text'] = 'Вы уверены что хотите удалить этот товар?';
+                        $data['text'] = Yii::t('telegram/default', 'PRODUCT_DELETE', $product->name);
                         if ($text !== '') {
-                            $data['text'] = 'Выберите вариант!';
+                            $data['text'] = Yii::t('telegram/default', 'SELECT_VARIANT');
                         }
 
 
@@ -137,20 +132,19 @@ class ProductremoveCommand extends SystemCommand
                 // no break
                 case 1:
                     if ($notes['state']) {
-                        $product = Product::findOne((int)$notes['id']);
-                        if ($product) {
-                            if($product->delete()){
-                                Request::deleteMessage(['chat_id' => $chat_id, 'message_id' => $notes['callback_message_id']]);
-                                $result = $this->notify('Вы успешно удалили *' . $product->name . '*.', 'success', $this->catalogKeyboards());
-                            }
-
+                        $productName = $product->name;
+                        if ($product->delete()) {
+                            Request::deleteMessage(['chat_id' => $chat_id, 'message_id' => $notes['callback_message_id']]);
+                            $result = $this->notify(Yii::t('telegram/default', 'PRODUCT_DELETE_SUCCESS', $productName), 'success', $this->catalogKeyboards());
+                        } else {
+                            $result = $this->notify('Error #9993', 'error', $this->catalogKeyboards());
                         }
                     }
                     $this->conversation->stop();
                     break;
             }
         } else {
-            $result = $this->notify(Yii::t('shop/default','NOT_FOUND_PRODUCT'));
+            $result = $this->notify(Yii::t('shop/default', 'NOT_FOUND_PRODUCT'));
         }
 
 

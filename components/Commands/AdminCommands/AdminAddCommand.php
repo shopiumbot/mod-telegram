@@ -88,6 +88,7 @@ class AdminAddCommand extends AdminCommand
         $chat = $message->getChat();
         $chat_id = $chat->getId();
         $user_id =  $user->getId();
+
         $text = trim($message->getText(true));
         $data['chat_id'] = $chat_id;
 
