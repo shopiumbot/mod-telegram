@@ -331,7 +331,7 @@ class CheckOutCommand extends SystemCommand
                         $products = $order->products;
                         if ($products) {
                             foreach ($products as $product) {
-                                $content .= '*' . $product->name . ' (' . $product->quantity . ' шт.)*: ' . $this->number_format($product->price) . ' грн.' . PHP_EOL;
+                                $content .= '*' . $product->name . ' (' . $product->quantity . ' '.Yii::t('shop/Product','UNIT_THING').')*: ' . $this->number_format($product->price) . ' грн.' . PHP_EOL;
                             }
                         }
                     }

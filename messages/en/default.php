@@ -36,6 +36,7 @@ return [
     'COMMAND_WHOIS' => 'User or group information',
     'COMMAND_ME' => 'Information about me',
     'COMMAND_START' => 'Start',
+    'COMMAND_EDITMESSAGE' => 'Editing a message',
     'PAID' => 'PAID!',
     'LOAD_MORE' => '🔄 Load more...',
     'PLATFORM_WORK' => 'The bot works on the platform 🥇 @shopiumbot',
@@ -118,5 +119,8 @@ return [
     'MESSAGE' => 'Message',
     'FROM' => 'From',
     'FEEDBACK_TITLE' => 'Feedback form',
-    'FEEDBACK_TEXT' => 'We will review the request and contact you'
+    'FEEDBACK_TEXT' => 'We will review the request and contact you',
+    'HIDE' => '🟢 hide',
+    'SHOW' => '🔴 show',
+    'SELECT_TYPE_SETTINGS' => 'Select a setting type'
 ];

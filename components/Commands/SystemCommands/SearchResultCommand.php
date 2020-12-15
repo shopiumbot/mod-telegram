@@ -195,7 +195,7 @@ class SearchResultCommand extends SystemCommand
                             'callback_data' => "query=productSpinner&order_id={$order->id}&product_id={$product->id}&type=down"
                         ]),
                         new InlineKeyboardButton([
-                            'text' => '' . $orderProduct->quantity . ' шт.',
+                            'text' => '' . $orderProduct->quantity . ' '.Yii::t('shop/Product','UNIT_THING'),
                             'callback_data' => time()
                         ]),
                         new InlineKeyboardButton([

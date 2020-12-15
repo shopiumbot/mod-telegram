@@ -73,7 +73,7 @@ class CartproductquantityCommand extends SystemCommand
                 'callback_data' => "spinner/{$order->id}/{$this->product_id}/down/cart"
             ]),
             new InlineKeyboardButton([
-                'text' => '' . $this->quantity . ' шт.',
+                'text' => '' . $this->quantity . ' '.Yii::t('shop/Product','UNIT_THING'),
                 'callback_data' => time()
             ]),
             new InlineKeyboardButton([

@@ -122,7 +122,7 @@ class PaymentCommand extends SystemCommand
                     foreach ($order->products as $product) {
 
                         $prices[] = new LabeledPrice([
-                            'label' => $product->name . ' (' . $product->quantity . ' шт.)',
+                            'label' => $product->name . ' (' . $product->quantity . ' '.Yii::t('shop/Product','UNIT_THING').')',
                             'amount' => number_format($product->price * $product->quantity, 2, '', '')
                         ]);
                     }

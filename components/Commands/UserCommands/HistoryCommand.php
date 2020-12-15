@@ -134,7 +134,7 @@ class HistoryCommand extends UserCommand
                         $command .= '/product' . $product->product_id;
                     }
                     // $text .= '[' . $product->name . ']('.Url::to($product->originalProduct->getImage()->getUrlToOrigin(),true).') *(' . $product->quantity . ' шт.)*: ' . Yii::$app->currency->number_format($product->price) . ' грн. ' . PHP_EOL;
-                    $text .= '*' . $product->name . '* ' . $command . ' *(' . $product->quantity . ' шт.):* ' . $this->number_format($product->price) . ' '.Yii::$app->currency->active['symbol'] . PHP_EOL;
+                    $text .= '*' . $product->name . '* ' . $command . ' *(' . $product->quantity . ' '.Yii::t('shop/Product','UNIT_THING').'):* ' . $this->number_format($product->price) . ' '.Yii::$app->currency->active['symbol'] . PHP_EOL;
                 }
 
                 $text .= PHP_EOL . ''.Yii::t('cart/Order','CREATED_AT').': *' . CMS::date($order->created_at) . '*' . PHP_EOL;

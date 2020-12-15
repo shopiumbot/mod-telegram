@@ -140,7 +140,7 @@ class CartCommand extends UserCommand
                             'callback_data' => "query=cartSpinner&oid={$order->id}&pid={$product->product_id}&page={$this->page}&type=down"
                         ]),
                         new InlineKeyboardButton([
-                            'text' => $product->quantity . ' шт.',
+                            'text' => $product->quantity . ' '.Yii::t('shop/Product','UNIT_THING'),
                             'callback_data' => time()
                         ]),
                         new InlineKeyboardButton([
@@ -175,7 +175,7 @@ class CartCommand extends UserCommand
                     }
 
                     // $text .= '_описание товара_ ' . PHP_EOL;
-                    $text .= '`' . $this->number_format($original->price) . ' ' . Yii::$app->currency->active['symbol'] . ' / ' . $product->quantity . ' шт = ' . $this->number_format(($original->price * $product->quantity)) . ' ' . Yii::$app->currency->active['symbol'] . '`' . PHP_EOL;
+                    $text .= '`' . $this->number_format($original->price) . ' ' . Yii::$app->currency->active['symbol'] . ' / ' . $product->quantity . ' '.Yii::t('shop/Product','UNIT_THING').' = ' . $this->number_format(($original->price * $product->quantity)) . ' ' . Yii::$app->currency->active['symbol'] . '`' . PHP_EOL;
 
                     //  $data['chat_id'] = $chat_id;
                     $data['text'] = $text;

@@ -188,7 +188,7 @@ class ProductItemCommand extends SystemCommand
                         'callback_data' => "query=productSpinner&oid={$order->id}&pid={$product->id}&type=down&img={$this->photo_index}"
                     ]),
                     new InlineKeyboardButton([
-                        'text' => $orderProduct->quantity . ' шт.',
+                        'text' => $orderProduct->quantity . ' '.Yii::t('shop/Product','UNIT_THING'),
                         'callback_data' => time()
                     ]),
                     new InlineKeyboardButton([

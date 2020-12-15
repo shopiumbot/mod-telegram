@@ -122,7 +122,7 @@ abstract class Command extends \Longman\TelegramBot\Commands\Command
                     'callback_data' => 'query=productUpdate&id=' . $product->id
                 ]),
                 new InlineKeyboardButton([
-                    'text' => ($product->switch) ? '🟢 скрыть' : '🔴 показать',
+                    'text' => Yii::t('telegram/default',($product->switch) ? 'HIDE' : 'SHOW'),
                     'callback_data' => 'query=productSwitch&id=' . $product->id . '&switch=' . (($product->switch) ? 0 : 1)
                 ]),
                 new InlineKeyboardButton([

@@ -2,7 +2,7 @@
 
 namespace shopium\mod\telegram\components\Commands\AdminCommands;
 
-
+use Yii;
 use Longman\TelegramBot\Request;
 use shopium\mod\telegram\components\AdminCommand;
 
@@ -33,6 +33,11 @@ class EditmessageCommand extends AdminCommand
      */
     protected $version = '1.1.0';
 
+    public function getDescription()
+    {
+        return Yii::t('telegram/default', 'COMMAND_EDITMESSAGE');
+    }
+
     /**
      * Command execute method
      *
@@ -41,16 +46,16 @@ class EditmessageCommand extends AdminCommand
      */
     public function execute()
     {
-        $message          = $this->getMessage();
-        $chat_id          = $message->getChat()->getId();
+        $message = $this->getMessage();
+        $chat_id = $message->getChat()->getId();
         $reply_to_message = $message->getReplyToMessage();
-        $text             = $message->getText(true);
+        $text = $message->getText(true);
 
         if ($reply_to_message && $message_to_edit = $reply_to_message->getMessageId()) {
             $data_edit = [
-                'chat_id'    => $chat_id,
+                'chat_id' => $chat_id,
                 'message_id' => $message_to_edit,
-                'text'       => $text ?: 'Edited message',
+                'text' => $text ?: 'Edited message',
             ];
 
             // Try to edit selected message.
@@ -59,7 +64,7 @@ class EditmessageCommand extends AdminCommand
             if ($result->isOk()) {
                 // Delete this editing reply message.
                 Request::deleteMessage([
-                    'chat_id'    => $chat_id,
+                    'chat_id' => $chat_id,
                     'message_id' => $message->getMessageId(),
                 ]);
             }
@@ -69,7 +74,7 @@ class EditmessageCommand extends AdminCommand
 
         $data = [
             'chat_id' => $chat_id,
-            'text'    => sprintf("Ответьте на любое сообщение бота и используйте /%s <ваш текст> для его редактирования.", $this->name),
+            'text' => sprintf("Ответьте на любое сообщение бота и используйте /%s <ваш текст> для его редактирования.", $this->name),
         ];
 
         return Request::sendMessage($data);

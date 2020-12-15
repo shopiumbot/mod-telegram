@@ -507,7 +507,7 @@ class CheckOutCommand extends SystemCommand
                          if ($original) {
                              $command .= '/product' . $product->product_id;
                          }
-                         $content .= '*' . $original->name . '* ' . $command . ' *(' . $product->quantity . ' шт.)*: ' . $this->number_format($original->price) . ' ' . Yii::$app->currency->active['symbol'] . PHP_EOL;
+                         $content .= '*' . $original->name . '* ' . $command . ' *(' . $product->quantity . ' '.Yii::t('shop/Product','UNIT_THING').')*: ' . $this->number_format($original->price) . ' ' . Yii::$app->currency->active['symbol'] . PHP_EOL;
                      }
 
                      unset($notes['state']);

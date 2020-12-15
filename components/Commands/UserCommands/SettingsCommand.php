@@ -69,7 +69,7 @@ class SettingsCommand extends UserCommand
 
 
         $data['chat_id'] = $chat_id;
-        $data['text'] = 'Выберите тип настроек';
+        $data['text'] = Yii::t('telegram/default', 'SELECT_TYPE_SETTINGS');
 
 
         return Request::sendMessage($data);

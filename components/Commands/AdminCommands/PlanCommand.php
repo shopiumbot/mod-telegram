@@ -193,7 +193,7 @@ class PlanCommand extends AdminCommand
 
         $text = '';
         $text .= 'Текущий тариф: *' . Yii::$app->params['plan'][$userData->planId]['name'] . '*' . PHP_EOL;
-        $text .= 'Доступно товаров: *' . $productCount . '* из *' . Yii::$app->params['plan'][$userData->planId]['product_limit'] . '* шт.' . PHP_EOL;
+        $text .= 'Доступно товаров: *' . $productCount . '* из *' . Yii::$app->params['plan'][$userData->planId]['product_limit'] . '* '.Yii::t('shop/Product','UNIT_THING') . PHP_EOL;
 
         $text .= 'Работает до: *' . CMS::date($userData->expire) . '*' . PHP_EOL . PHP_EOL;
 
