@@ -30,12 +30,15 @@ abstract class Command extends \Longman\TelegramBot\Commands\Command
 
 
         if ($update->getCallbackQuery()) {
+						$message=$update->getCallbackQuery()->getMessage();
             $user_id = $update->getCallbackQuery()->getMessage()->getFrom()->getId();
         } else {
+			$message=$update->getMessage();
+		if($message)
             $user_id = $update->getMessage()->getFrom()->getId();
         }
-
-        $this->setLanguage($user_id);
+		if(isset($user_id))
+			$this->setLanguage($user_id);
 
         $this->keyword_back = Yii::t('telegram/default', 'KEYWORD_BACK');
         $this->keyword_cancel = Yii::t('telegram/default', 'KEYWORD_CANCEL');

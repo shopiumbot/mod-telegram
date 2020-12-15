@@ -157,11 +157,11 @@ class CheckOutCommand extends SystemCommand
             //Every time a step is achieved the track is updated
             switch ($state) {
                 case 0:
-                    if ($text === '' || !in_array($text, ['➡ Продолжить', '❌ Отмена'], true)) {
+                    if ($text === '' || !in_array($text, [Yii::t('telegram/default','CONTINUE'), '❌ Отмена'], true)) {
                         $notes['state'] = 0;
                         $this->conversation->update();
 
-                        $data['reply_markup'] = (new Keyboard(['➡ Продолжить', '❌ Отмена']))
+                        $data['reply_markup'] = (new Keyboard([Yii::t('telegram/default','CONTINUE'), '❌ Отмена']))
                             ->setResizeKeyboard(true)
                             ->setOneTimeKeyboard(true)
                             ->setSelective(true);
@@ -174,7 +174,7 @@ class CheckOutCommand extends SystemCommand
                         $result = Request::sendMessage($data);
                         break;
                     }
-                    if ($text === '➡ Продолжить') {
+                    if ($text === Yii::t('telegram/default','CONTINUE')) {
                         $notes['confirm'] = $text;
                         $text = '';
                     } else {
@@ -185,7 +185,7 @@ class CheckOutCommand extends SystemCommand
                     if ($text == '⬅ Назад') {
                         $text = '';
                     }
-                    if ($text === '' || $notes['confirm'] === '➡ Продолжить') {
+                    if ($text === '' || $notes['confirm'] === Yii::t('telegram/default','CONTINUE')) {
                         $notes['state'] = 1;
                         $this->conversation->update();
 
@@ -299,7 +299,7 @@ class CheckOutCommand extends SystemCommand
 
                         $keyboards = [
                             [
-                                (new KeyboardButton('📞 Оставить контакты'))->setRequestContact(true)],
+                                (new KeyboardButton(Yii::t('telegram/default','SET_CONTACT')))->setRequestContact(true)],
                             [
                                 new KeyboardButton('⬅ Назад'),
                                 new KeyboardButton('❌ Отмена')

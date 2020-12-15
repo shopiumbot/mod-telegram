@@ -88,7 +88,7 @@ $this->notify(json_encode($state));
                     $notes['state'] = 0;
                     $this->conversation->update();
 
-                    $data['text'] = 'Напишите сообщение. Оно будет отправлено команде:';
+                    $data['text'] = Yii::t('telegram/default','WRITE_MESSAGE').':';
                     //$data['reply_markup'] = Keyboard::remove(['selective' => true]);
 
 
@@ -100,7 +100,7 @@ $this->notify(json_encode($state));
 
 
                     if ($text !== '') {
-                        $data['text'] = 'Напишите сообщение. Оно будет отправлено команде:';
+                        $data['text'] = Yii::t('telegram/default','WRITE_MESSAGE').':';
                     }
 
                     $result = Request::sendMessage($data);
@@ -117,7 +117,7 @@ $this->notify(json_encode($state));
                 unset($notes['state']);
                 $message = $notes['message'];
                 $out_text .= PHP_EOL . '*Сообщение*: ' . $message;
-                $data['text'] = '123' . PHP_EOL;
+                $data['text'] = '' . PHP_EOL;
                 $data['parse_mode'] = 'Markdown';
                 $data['reply_markup'] = $this->startKeyboards();
 

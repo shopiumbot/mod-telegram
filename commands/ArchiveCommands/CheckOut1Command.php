@@ -370,7 +370,7 @@ class CheckOutCommand extends SystemCommand
 
                         $keyboards = [
                             [
-                                (new KeyboardButton('📞 Оставить контакты'))->setRequestContact(true)],
+                                (new KeyboardButton(Yii::t('telegram/default','SET_CONTACT')))->setRequestContact(true)],
                             [
                                 new KeyboardButton('⬅ Назад'),
                                 new KeyboardButton('❌ Отмена')

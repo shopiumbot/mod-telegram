@@ -93,10 +93,13 @@ class ProductAddCommand extends AdminCommand
         $chat_id = $chat->getId();
         $user_id =  $user->getId();
         $this->setLanguage($user_id);
-
+        $this->keyword_cancel = Yii::t('telegram/default', 'KEYWORD_CANCEL');
 
         $text = trim($message->getText(true));
 
+        if ($text === $this->keyword_cancel) {
+            return $this->telegram->executeCommand('cancel');
+        }
         $data['chat_id'] = $chat_id;
 
         //Preparing Response

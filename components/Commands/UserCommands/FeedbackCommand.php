@@ -103,7 +103,7 @@ class FeedbackCommand extends UserCommand
                     $notes['state'] = 0;
                     $this->conversation->update();
 
-                    $data['text'] = 'Напишите сообщение. Оно будет отправлено команде:';
+                    $data['text'] = Yii::t('telegram/default','WRITE_MESSAGE').':';
                     //$data['reply_markup'] = Keyboard::remove(['selective' => true]);
 
 
@@ -115,7 +115,7 @@ class FeedbackCommand extends UserCommand
 
 
                     if ($text !== '') {
-                        $data['text'] = 'Напишите сообщение. Оно будет отправлено команде:';
+                        $data['text'] = Yii::t('telegram/default','WRITE_MESSAGE').':';
                     }
 
                     $result = Request::sendMessage($data);
@@ -130,12 +130,12 @@ class FeedbackCommand extends UserCommand
                 unset($notes['state']);
                 $this->conversation->update();
                 $content_text = '';
-                $content_text .= 'От /whois' . $user_id . PHP_EOL;
+                $content_text .= Yii::t('telegram/default','FROM').' /whois' . $user_id . PHP_EOL;
 
                 $message = $notes['message'];
-                $content_text .= PHP_EOL . '*Сообщение*: ' . $message;
-                $data['text'] = '✅ *Сообщение успешно отправлено!*' . PHP_EOL;
-                $data['text'] .= 'Мы рассмотрим обращение и свяжемся с Вами.';
+                $content_text .= PHP_EOL . '*'.Yii::t('telegram/default','MESSAGE').'*: ' . $message;
+                $data['text'] = '✅ *'.Yii::t('telegram/default','SEND_MESSAGE_SUCCESS').'*' . PHP_EOL;
+                $data['text'] .= Yii::t('telegram/default','FEEDBACK_TEXT');
                 $data['parse_mode'] = 'Markdown';
                 $data['reply_markup'] = $this->startKeyboards();
 
@@ -146,7 +146,7 @@ class FeedbackCommand extends UserCommand
                     $dataChat['chat_id'] = $admin;
                     $dataChat['parse_mode'] = 'Markdown';
                     $dataChat['disable_notification'] = true;
-                    $dataChat['text'] = '*Заявка обратной связи:* ' . PHP_EOL . $content_text;
+                    $dataChat['text'] = '*'.Yii::t('telegram/default','FEEDBACK_TITLE').':* ' . PHP_EOL . $content_text;
                     //$dataChat['reply_markup'] = new InlineKeyboard([
                     //    'inline_keyboard' => $keyboards
                     //]);

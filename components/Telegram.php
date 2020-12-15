@@ -2,7 +2,10 @@
 
 namespace shopium\mod\telegram\components;
 
+use Longman\TelegramBot\Request;
+use panix\engine\CMS;
 use Yii;
+use yii\helpers\Url;
 
 class Telegram extends \yii\base\Component
 {
@@ -30,7 +33,16 @@ class Telegram extends \yii\base\Component
     {
         $bot = \shopium\mod\telegram\models\User::find()->where(['id' => $this->api->getBotId()])->one();
         if ($bot) {
+
             return $bot->getPhoto();
+        } else {
+            $me = Request::getMe();
+            if ($me->isOk()) {
+                $name =$me->getResult()->first_name;
+            }else{
+                $name = '0';
+            }
+            return Url::to(['/site/placeholder', 'text' => $name]);
         }
     }
 

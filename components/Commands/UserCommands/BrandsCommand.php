@@ -56,11 +56,12 @@ class BrandsCommand extends UserCommand
     public function __construct(Api $telegram, Update $update = null)
     {
 
-        parent::__construct($telegram, $update);
-        if(!Yii::$app->settings->get('app','enable_brands')){
+		if(!Yii::$app->settings->get('app','enable_brands')){
             $this->show_in_help=false;
             $this->enabled=false;
         }
+		parent::__construct($telegram, $update);
+
     }
 
     /**
@@ -71,6 +72,7 @@ class BrandsCommand extends UserCommand
      */
     public function execute()
     {
+
         $update = $this->getUpdate();
 
         $isCallback = false;

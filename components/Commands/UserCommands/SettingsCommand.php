@@ -37,8 +37,10 @@ class SettingsCommand extends UserCommand
         $message = $this->getMessage();
         $chat = $message->getChat();
         $chat_id = $chat->getId();
+        $user = $message->getFrom();
+        $user_id =  $user->getId();
         $text = trim($message->getText(false));
-
+//$this->setLanguage($user_id);
         //if ($text === $this->keyword_cancel) {
         //    return $this->telegram->executeCommand('settings');
         //}
