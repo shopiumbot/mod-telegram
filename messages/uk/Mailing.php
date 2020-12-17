@@ -29,5 +29,6 @@ return [
     'TYPE_SEND_POLL' => 'Опитування',
     'TYPE_SEND_CONTACT' => 'Контакт',
     'SELECT_TYPE' => '&mdash; тип &mdash;',
-    'SUCCESS_SEND' => 'Розсилка успішно відправлено.'
+    'SUCCESS_SEND' => 'Розсилка успішно відправлено.',
+    'HINT_FILE' => 'Виберіть одне або кілька зображень утримуючи Shift'
 ];

@@ -64,10 +64,7 @@ class MailingController extends AdminController
             $model->type = Yii::$app->request->get('Mailing')['type'];
         }
 
-        $this->pageName = ($model->isNewRecord) ? Yii::t('telegram/default', 'Создание рассылки') :
-            Yii::t('telegram/default', 'Редактирование рассылки');
-
-
+        $this->pageName = Yii::t('telegram/default', ($model->isNewRecord) ? 'MAILING_CREATE' : 'MAILING_UPDATE');
         /*$this->view->params['breadcrumbs'][] = [
             'label' => Yii::t('telegram/default', 'MODULE_NAME'),
             'url' => ['index']
@@ -183,7 +180,6 @@ class MailingController extends AdminController
         });
 
 
-
         if (in_array($model->type, ['sendPhoto', 'sendAudio', 'sendDocument', 'sendVideo'])) {
             $dy_model->addRule('media', 'string');
             $dy_model->addRule('media', 'required');
@@ -194,8 +190,8 @@ class MailingController extends AdminController
         } elseif ($model->type == 'sendMessage') {
             $dy_model->addRule('text', 'required');
         } elseif ($model->type == 'sendPoll') {
-            $dy_model->addRule(['poll_question','poll_options'], 'required');
-            $dy_model->addRule(['poll_is_anonymous','poll_allows_multiple_answers'], 'boolean');
+            $dy_model->addRule(['poll_question', 'poll_options'], 'required');
+            $dy_model->addRule(['poll_is_anonymous', 'poll_allows_multiple_answers'], 'boolean');
 
 
             $dy_model->addRule('poll_options', function ($attribute, $params, $validator) use ($dy_model) {
@@ -226,7 +222,6 @@ class MailingController extends AdminController
                 }
 
             });
-
 
 
         } elseif ($model->type == 'sendPhoto') {
@@ -361,8 +356,8 @@ class MailingController extends AdminController
                 //   return $this->redirectPage($isNew, $post);
             } else {
                 // echo 'ee';
-               // print_r($dy_model->getErrors());
-               //   die;
+                // print_r($dy_model->getErrors());
+                //   die;
             }
         }
 

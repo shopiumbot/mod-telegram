@@ -3,7 +3,7 @@
 return [
     'MODULE_NAME' => 'Telegram Bot',
     'MODULE_DESC' => 'Control module Telegram bot',
-    'START_SOURCE' => 'Login source',
+    'START_SOURCE' => 'Start source',
     'CATALOG' => 'Product Catalog',
     'CHOOSE_SECTION' => 'Choose a section:',
     'CATALOG_NO_ITEMS' => 'There are no products in the catalog',
@@ -122,5 +122,7 @@ return [
     'FEEDBACK_TEXT' => 'We will review the request and contact you',
     'HIDE' => '🟢 hide',
     'SHOW' => '🔴 show',
-    'SELECT_TYPE_SETTINGS' => 'Select a setting type'
+    'SELECT_TYPE_SETTINGS' => 'Select a setting type',
+    'MAILING_CREATE' => 'Create mailing list',
+    'MAILING_UPDATE' => 'Edit mailing list'
 ];

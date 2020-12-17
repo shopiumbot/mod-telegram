@@ -29,5 +29,6 @@ return [
     'TYPE_SEND_POLL' => 'Poll',
     'TYPE_SEND_CONTACT' => 'Contact',
     'SELECT_TYPE' => '&mdash; type &mdash;',
-    'SUCCESS_SEND' => 'Newsletter successfully sent.'
+    'SUCCESS_SEND' => 'Newsletter successfully sent.',
+    'HINT_FILE' => 'Select one or more images while holding Shift'
 ];

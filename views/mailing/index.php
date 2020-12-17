@@ -93,6 +93,7 @@ echo GridView::widget([
             'format' => 'raw',
             'value' => function ($model) {
                 return $model->text;
+               // return \panix\engine\emoji\Emoji::emoji_unified_to_html($model->text);
             }
         ],
         [
