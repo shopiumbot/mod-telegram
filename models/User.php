@@ -3,6 +3,9 @@
 namespace shopium\mod\telegram\models;
 
 
+use Longman\TelegramBot\Entities\File;
+use Longman\TelegramBot\Exception\TelegramException;
+use Longman\TelegramBot\TelegramLog;
 use panix\engine\CMS;
 use panix\engine\Html;
 use shopium\mod\telegram\models\query\UserQuery;
@@ -104,16 +107,19 @@ class User extends ActiveRecord
                     if($file->getOk()){
                         if (!file_exists(Yii::getAlias('@uploads/telegram/downloads') . DIRECTORY_SEPARATOR . $file->getResult()->file_path)) {
                             $download = Request::downloadFile($file->getResult());
+                        //    CMS::dump($download);
                         }
+                       // CMS::dump($file);die;
                         return Yii::$app->request->baseUrl.'/uploads/telegram/downloads/' . $file->getResult()->file_path;
                     //}else{
                     //    return '/uploads/no-image.jpg';
                     }
+
                 }
           //  } else {
           //      return '/uploads/no-image.jpg';
             }
-            return Yii::$app->request->baseUrl.'/uploads/no-image.jpg';
+          //  return Yii::$app->request->baseUrl.'/uploads/no-image.jpg';
         } catch (Exception $e) {
 
         }
