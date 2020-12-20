@@ -248,7 +248,7 @@ class CheckOutCommand extends SystemCommand
 
                         $data['reply_markup'] = $buttons;
 
-                        $data['text'] = 'Выберите вариант доставки:';
+                        $data['text'] = Yii::t('telegram/default','SELECT_VARIANT_DELIVERY').':';
                         if ($text !== '') {
                             $data['text'] = Yii::t('telegram/default','SELECT_VARIANT').':';
                         }
@@ -303,7 +303,7 @@ class CheckOutCommand extends SystemCommand
                             $this->conversation->update();
 
                             $data['reply_markup'] = $buttons;
-                            $data['text'] = 'Выберите область доставки:';
+                            $data['text'] = Yii::t('telegram/default','SELECT_VARIANT_PAYMENT').':';
                             if ($text !== '') {
                                 $data['text'] = Yii::t('telegram/default','SELECT_VARIANT').':';
                             }
@@ -378,7 +378,7 @@ class CheckOutCommand extends SystemCommand
                             $this->conversation->update();
 
                             $data['reply_markup'] = $buttons;
-                            $data['text'] = 'Выберите город доставки:';
+                            $data['text'] = Yii::t('telegram/default','SELECT_VARIANT_CITY').':';
                             if ($text !== '') {
                                 $data['text'] = Yii::t('telegram/default','SELECT_VARIANT').':';
                             }
@@ -507,7 +507,7 @@ class CheckOutCommand extends SystemCommand
                          if ($original) {
                              $command .= '/product' . $product->product_id;
                          }
-                         $content .= '*' . $original->name . '* ' . $command . ' *(' . $product->quantity . ' '.Yii::t('shop/Product','UNIT_THING').')*: ' . $this->number_format($original->price) . ' ' . Yii::$app->currency->active['symbol'] . PHP_EOL;
+                         $content .= '*' . $original->name . '* ' . $command . ' *(' . $product->quantity . ' '.Yii::t('shop/Product','UNIT_THING').')*: ' . $this->number_format($original->getFrontPrice()) . ' ' . Yii::$app->currency->active['symbol'] . PHP_EOL;
                      }
 
                      unset($notes['state']);
@@ -567,8 +567,9 @@ class CheckOutCommand extends SystemCommand
                      $order->save(false);
 
                      foreach ($this->orderProducts as $product) {
+                         /** @var Product $original */
                          $original = $product->originalProduct;
-                         $add = $order->addProduct($original, $product->quantity, $original->price);
+                         $add = $order->addProduct($original, $product->quantity, $original->getPrice());
 
                      }
                      OrderTemp::deleteAll(['id' => $user_id]);

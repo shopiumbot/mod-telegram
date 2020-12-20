@@ -70,7 +70,7 @@ return [
     'USERS' => 'Users',
     'OPEN_CHAT' => 'Open a chat from the list',
     'MESSAGE_SEND_BY' => 'the message will be sent on behalf of the Bot.',
-    'PAGE_END' => 'Everyone!',
+    'PAGE_END' => 'The end!',
     'PAGE_SHOWING' => 'shown: *{0}* from *{1}*',
     "BUTTON_CHECKOUT" => '✅ Checkout for — {price} {currency}.',
     'BUTTON_PAY' => '💳 Pay for order — {price} {currency}.',
@@ -124,5 +124,8 @@ return [
     'SHOW' => '🔴 show',
     'SELECT_TYPE_SETTINGS' => 'Select a setting type',
     'MAILING_CREATE' => 'Create mailing list',
-    'MAILING_UPDATE' => 'Edit mailing list'
+    'MAILING_UPDATE' => 'Edit mailing list',
+    'SELECT_VARIANT_DELIVERY' => 'Select a shipping option',
+    'SELECT_VARIANT_PAYMENT' => 'Select shipping area',
+    'SELECT_VARIANT_CITY' => 'Select delivery city'
 ];

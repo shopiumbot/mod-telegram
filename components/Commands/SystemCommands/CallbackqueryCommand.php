@@ -85,7 +85,7 @@ class CallbackqueryCommand extends SystemCommand
                     ['text' => 'Оплатить ', 'pay' => true],
                 ]);
                 $data['chat_id'] = $chat_id;
-                $data['title'] = 'Номер заказа №';
+                $data['title'] = Yii::t('cart/Order','ORDER_ID');
                 $data['description'] = 'Оплата заказа';
                 $data['payload'] = 'order-' . CMS::gen(10);
                 $data['start_parameter'] = CMS::gen(10);

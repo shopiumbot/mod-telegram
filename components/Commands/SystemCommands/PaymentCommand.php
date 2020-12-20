@@ -88,7 +88,7 @@ class PaymentCommand extends SystemCommand
             if ($order) {
 
                 $prices = [];
-                $data['title'] = 'Номер заказа №' . CMS::idToNumber($order->id);
+                $data['title'] = $order::t('ORDER_NUMBER', CMS::idToNumber($order->id));
                 if ($order->paymentMethod) {
                     $settings = false;
                     $model = Payment::findOne($order->payment_id);
@@ -107,7 +107,7 @@ class PaymentCommand extends SystemCommand
 
                         //$params['amount'] = $price + ($price / 100 * 2.75);
 
-                        if ($settings->commission_check) {
+                        if (isset($settings->commission_check) && $settings->commission_check) {
                             $total_price = $order->total_price + ($order->total_price / 100 * 2.75);
 
                             $prices[] = new LabeledPrice([
@@ -122,14 +122,14 @@ class PaymentCommand extends SystemCommand
                     foreach ($order->products as $product) {
 
                         $prices[] = new LabeledPrice([
-                            'label' => $product->name . ' (' . $product->quantity . ' '.Yii::t('shop/Product','UNIT_THING').')',
+                            'label' => $product->name . ' (' . $product->quantity . ' ' . Yii::t('shop/Product', 'UNIT_THING') . ')',
                             'amount' => number_format($product->price * $product->quantity, 2, '', '')
                         ]);
                     }
                     $inline_keyboard = new InlineKeyboard([
                         [
                             'text' => Yii::t('telegram/default', 'BUTTON_PAY', [
-                                'value' => Yii::$app->currency->number_format($total_price),
+                                'price' => Yii::$app->currency->number_format($total_price),
                                 'currency' => $data['currency']
                             ]),
                             'pay' => true

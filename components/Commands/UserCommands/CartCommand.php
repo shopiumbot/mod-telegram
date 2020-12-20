@@ -3,6 +3,7 @@
 namespace shopium\mod\telegram\components\Commands\UserCommands;
 
 
+use core\modules\shop\models\Product;
 use Longman\TelegramBot\DB;
 use Longman\TelegramBot\Entities\InlineKeyboard;
 use Longman\TelegramBot\Entities\InlineKeyboardButton;
@@ -123,6 +124,7 @@ class CartCommand extends UserCommand
             if ($queryCount) {
                 // $total_price = 0;
                 foreach ($products as $product) {
+                    /** @var Product $original */
                     $original = $product->originalProduct;
                     if (!$original) {//todo: пересмотреть
                         $delete = $product->delete();
@@ -175,7 +177,7 @@ class CartCommand extends UserCommand
                     }
 
                     // $text .= '_описание товара_ ' . PHP_EOL;
-                    $text .= '`' . $this->number_format($original->price) . ' ' . Yii::$app->currency->active['symbol'] . ' / ' . $product->quantity . ' '.Yii::t('shop/Product','UNIT_THING').' = ' . $this->number_format(($original->price * $product->quantity)) . ' ' . Yii::$app->currency->active['symbol'] . '`' . PHP_EOL;
+                    $text .= '`' . $this->number_format($original->getFrontPrice()) . ' ' . Yii::$app->currency->active['symbol'] . ' / ' . $product->quantity . ' '.Yii::t('shop/Product','UNIT_THING').' = ' . $this->number_format($original->getFrontPrice() * $product->quantity) . ' ' . Yii::$app->currency->active['symbol'] . '`' . PHP_EOL;
 
                     //  $data['chat_id'] = $chat_id;
                     $data['text'] = $text;
