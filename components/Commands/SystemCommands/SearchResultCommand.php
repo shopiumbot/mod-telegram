@@ -212,9 +212,9 @@ class SearchResultCommand extends SystemCommand
                 } else {
                     $keyboards[] = [
                         new InlineKeyboardButton([
-                            'text' => Yii::t('telegram/default', 'BUTTON_BUY',[
-                                'price'=>$this->number_format($product->price),
-                                'currency'=>Yii::$app->currency->active['symbol']
+                            'text' => Yii::t('telegram/default', 'BUTTON_BUY', [
+                                'price' => $this->number_format($product->getFrontPrice()),
+                                'currency' => Yii::$app->currency->active['symbol']
                             ]),
                             'callback_data' => "query=addCart&product_id={$product->id}"
                         ])
@@ -253,7 +253,7 @@ class SearchResultCommand extends SystemCommand
                         'product' => [
                             'id' => $product->id,
                             'name' => Html::decode($product->name),
-                            'price' => $this->number_format($product->price),
+                            'price' => $this->number_format($product->getFrontPrice()),
                             // 'description' => ($product->description) ? Helper::Test($product->description) : false,
                             'description' => ($product->description) ? $product->description : false,
                             'sku' => ($product->sku) ? Html::decode($product->sku) : false,
