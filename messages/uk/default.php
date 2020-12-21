@@ -127,5 +127,6 @@ return [
     'MAILING_UPDATE' => 'Редагування розсилки',
     'SELECT_VARIANT_DELIVERY' => 'Оберіть варіант доставки',
     'SELECT_VARIANT_PAYMENT' => 'Оберіть область доставки',
-    'SELECT_VARIANT_CITY' => 'Оберіть місто доставки'
+    'SELECT_VARIANT_CITY' => 'Оберіть місто доставки',
+    'SEARCH_QUERY_RESULT' => 'Результат по запиту: *{0}*'
 ];

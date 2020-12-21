@@ -73,6 +73,7 @@ class SearchResultCommand extends SystemCommand
         }
         $chat_id = $chat->getId();
         $user_id = $user->getId();
+        $this->setLanguage($user_id);
         $text = trim($message->getText(true));
 
 
@@ -138,7 +139,7 @@ class SearchResultCommand extends SystemCommand
 
             $data['chat_id'] = $chat_id;
             $data['parse_mode'] = 'Markdown';
-            $data['text'] = "Результат по запросу: *{$this->string}*";
+            $data['text'] = Yii::t('telegram/default','SEARCH_QUERY_RESULT',$this->string);
             $data['reply_markup'] = $this->startKeyboards();
             $r = Request::sendMessage($data);
 
@@ -146,7 +147,7 @@ class SearchResultCommand extends SystemCommand
             foreach ($products as $index => $product) {
                 $keyboards = [];
 
-                $caption = '';
+               /* $caption = '';
                 if ($product->hasDiscount) {
                     $caption .= '🔥🔥🔥';
                 }
@@ -160,26 +161,26 @@ class SearchResultCommand extends SystemCommand
 
                 if ($product->manufacturer_id) {
                     $caption .= '<strong>Производитель</strong>: ' . $product->manufacturer->name . PHP_EOL;
-                }
-                if ($product->sku) {
-                    $caption .= '<strong>Артикул</strong>: ' . $product->sku . PHP_EOL;
-                }
+                }*/
+               // if ($product->sku) {
+               //     $caption .= '<strong>Артикул</strong>: ' . $product->sku . PHP_EOL;
+               // }
 
 
                 $attributes = $this->attributes($product);
                 $attributesList = [];
                 if ($attributes) {
-                    $caption .= PHP_EOL . '<strong>Характеристики:</strong>' . PHP_EOL;
+                 //   $caption .= PHP_EOL . '<strong>Характеристики:</strong>' . PHP_EOL;
                     foreach ($attributes as $name => $data) {
                         if (!empty($data['value'])) {
                             $attributesList[$name] = $data['value'];
-                            $caption .= '<strong>' . $name . '</strong>: ' . $data['value'] . ' ' . $data['abbreviation'] . PHP_EOL;
+                          //  $caption .= '<strong>' . $name . '</strong>: ' . $data['value'] . ' ' . $data['abbreviation'] . PHP_EOL;
                         }
                     }
                 }
-                if ($product->description) {
-                    $caption .= PHP_EOL . Html::encode($product->description) . PHP_EOL . PHP_EOL;
-                }
+               // if ($product->description) {
+               //     $caption .= PHP_EOL . Html::encode($product->description) . PHP_EOL . PHP_EOL;
+               // }
 
                 if ($order) {
                     $orderProduct = OrderProductTemp::findOne(['product_id' => $product->id, 'order_id' => $order->id]);
@@ -242,7 +243,7 @@ class SearchResultCommand extends SystemCommand
 
                 //  Request::sendMessage($test);
 
-                if ($user_id == 812367093) {
+               // if ($user_id == 812367093) {
 
                     if (file_exists(Yii::getAlias('@app/web') . DIRECTORY_SEPARATOR . 'product.twig')) {
                         $tpl = '@app/web/product.twig';
@@ -272,7 +273,7 @@ class SearchResultCommand extends SystemCommand
                     if (!$caption) {
                         return $this->notify('Ошибка шаблона', 'error');
                     }
-                }
+               // }
 
 
                 //Url::to($product->getImage()->getUrlToOrigin(),true),
@@ -299,7 +300,7 @@ class SearchResultCommand extends SystemCommand
 
         $data['chat_id'] = $chat_id;
         if ($begin >= $pages->totalCount) {
-            $data['text'] = ' Все! ';
+            $data['text'] = Yii::t('telegram/default','PAGE_END');
         } else {
             $data['text'] = $begin . ' / ' . $pages->totalCount;
         }

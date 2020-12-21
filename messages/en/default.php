@@ -127,5 +127,6 @@ return [
     'MAILING_UPDATE' => 'Edit mailing list',
     'SELECT_VARIANT_DELIVERY' => 'Select a shipping option',
     'SELECT_VARIANT_PAYMENT' => 'Select shipping area',
-    'SELECT_VARIANT_CITY' => 'Select delivery city'
+    'SELECT_VARIANT_CITY' => 'Select delivery city',
+    'SEARCH_QUERY_RESULT' => 'Result on request: *{0}*'
 ];

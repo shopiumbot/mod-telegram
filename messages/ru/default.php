@@ -127,5 +127,6 @@ return [
     'MAILING_UPDATE' => 'Редактирование рассылки',
     'SELECT_VARIANT_DELIVERY' => 'Выберите вариант доставки',
     'SELECT_VARIANT_PAYMENT' => 'Выберите область доставки',
-    'SELECT_VARIANT_CITY' => 'Выберите город доставки'
+    'SELECT_VARIANT_CITY' => 'Выберите город доставки',
+    'SEARCH_QUERY_RESULT' => 'Результат по запросу: *{0}*'
 ];
