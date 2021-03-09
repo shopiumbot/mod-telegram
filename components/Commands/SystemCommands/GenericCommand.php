@@ -45,11 +45,11 @@ class GenericCommand extends SystemCommand
             $response = Request::answerPreCheckoutQuery([
                 'pre_checkout_query_id' => $preCheckoutQuery->getId(),
                 'ok' => true,
-              //  'error_message'=>'error'
+                //  'error_message'=>'error'
             ]);
 
             if ($response->getOk()) {
-                $this->notify($response->getDescription(),'error');
+                $this->notify($response->getDescription(), 'error');
                 //set order to PAY
                 $payment = new Payments();
                 $payment->system = 'liqpay';
@@ -61,7 +61,6 @@ class GenericCommand extends SystemCommand
                 }
                 return $response;
             }
-
 
 
         }
@@ -83,37 +82,38 @@ class GenericCommand extends SystemCommand
 
         } else {
             $message = $this->getMessage();
+            if ($message) {
+                //  $chat = $message->getChat();
+                //  $from = $message->getFrom();
 
-            $chat = $message->getChat();
-            $from = $message->getFrom();
+                $chat_id = $message->getChat()->getId();
+                 $user_id = $message->getFrom()->getId();
+                $command = $message->getCommand();
 
-            $chat_id = $chat->getId();
-            $user_id = $from->getId();
+
+                //If the user is an admin and the command is in the format "/whoisXYZ", call the /whois command
+                if (stripos($command, 'whois') === 0 && $this->telegram->isAdmin($user_id)) {
+                    return $this->telegram->executeCommand('whois');
+                } elseif (stripos($command, 'product') === 0) {
+                    return $this->telegram->executeCommand('product');
+                }
+
+
+                $text = Yii::t('telegram/default', 'COMMAND_NOT_FOUND_1', $command) . PHP_EOL;
+                $text .= Yii::t('telegram/default', 'COMMAND_NOT_FOUND_2');
+                $data = [
+                    'chat_id' => $chat_id,
+                    'text' => $text,
+                ];
+
+                $result = Request::sendMessage($data);
+                if ($result->isOk()) {
+                    $db = DB::insertMessageRequest($result->getResult());
+                }
+                return $result;
+            }
         }
-        //You can use $command as param
-        $command = $message->getCommand();
 
-
-
-        //If the user is an admin and the command is in the format "/whoisXYZ", call the /whois command
-        if (stripos($command, 'whois') === 0 && $this->telegram->isAdmin($user_id)) {
-            return $this->telegram->executeCommand('whois');
-        } elseif (stripos($command, 'product') === 0) {
-            return $this->telegram->executeCommand('product');
-        }
-        //if ($test) {
-        $text = Yii::t('telegram/default', 'COMMAND_NOT_FOUND_1', $command) . PHP_EOL;
-        $text .= Yii::t('telegram/default', 'COMMAND_NOT_FOUND_2');
-        $data = [
-            'chat_id' => $chat_id,
-            'text' => $text,
-        ];
-
-        $result = Request::sendMessage($data);
-        if ($result->isOk()) {
-            $db = DB::insertMessageRequest($result->getResult());
-        }
-        return $result;
 
 
     }
