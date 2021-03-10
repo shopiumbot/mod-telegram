@@ -241,7 +241,8 @@ abstract class Command extends \Longman\TelegramBot\Commands\Command
         if ($update->getCallbackQuery()) {
             $data['chat_id'] = $update->getCallbackQuery()->getMessage()->getChat()->getId();
         } else {
-            $data['chat_id'] = $update->getMessage()->getChat()->getId();
+			if($update->getMessage())
+				$data['chat_id'] = $update->getMessage()->getChat()->getId();
         }
         $data['parse_mode'] = 'Markdown';
         $data['text'] = $preText . ' ' . $message . '';
