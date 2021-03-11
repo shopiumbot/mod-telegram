@@ -97,9 +97,9 @@ class PaymentCommand extends SystemCommand
                         $settings = $system->getSettings($order->payment_id);
                     }
                     $total_price = $order->total_price;
-
+                    $data['currency'] = 'UAH';
                     if ($order->paymentMethod->system == 'liqpay') {
-                        $data['currency'] = 'UAH';
+
                         $data['description'] = 'Оплата заказа';
                         $data['payload'] = 'order-' . $order->id;
                         $data['start_parameter'] = CMS::gen(10);
