@@ -1,6 +1,6 @@
 <?php
 
-namespace shopium\mod\telegram\migrations;
+//namespace shopium\mod\telegram\migrations;
 
 use yii\console\Exception;
 use panix\engine\db\Migration;
@@ -12,7 +12,10 @@ class m000999_000000_telegram_update extends Migration
     public function safeUp()
     {
 
+
         $this->createTable('{{%telegram__telegram_update}}', [
+
+
             'id' => $this->bigPrimaryKey()->unsigned()->comment('Update\'s unique identifier'),
             'chat_id' => $this->bigInteger()->null()->defaultValue(NULL)->comment('Unique chat identifier'),
             'message_id' => $this->bigInteger()->unsigned()->defaultValue(NULL)->comment('New incoming message of any kind - text, photo, sticker, etc.'),
@@ -25,7 +28,11 @@ class m000999_000000_telegram_update extends Migration
             'shipping_query_id' => $this->bigInteger()->unsigned()->defaultValue(NULL)->comment('New incoming shipping query. Only for invoices with flexible price'),
             'pre_checkout_query_id' => $this->bigInteger()->unsigned()->defaultValue(NULL)->comment('New incoming pre-checkout query. Contains full information about checkout'),
             'poll_id' => $this->bigInteger()->unsigned()->defaultValue(NULL)->comment('New poll state. Bots receive only updates about polls, which are sent or stopped by the bot'),
-            'poll_answer_poll_id'=>$this->bigInteger()->unsigned()->defaultValue(NULL)->comment('A user changed their answer in a non-anonymous poll. Bots receive new votes only in polls that were sent by the bot itself.')
+            'poll_answer_poll_id' => $this->bigInteger()->unsigned()->defaultValue(NULL)->comment('A user changed their answer in a non-anonymous poll. Bots receive new votes only in polls that were sent by the bot itself.'),
+            'my_chat_member_updated_id' => $this->bigInteger()->unsigned()->defaultValue(NULL)->comment('The bot\'s chat member status was updated in a chat. For private chats, this update is received only when the bot is blocked or unblocked by the user.'),
+            'chat_member_updated_id' => $this->bigInteger()->unsigned()->defaultValue(NULL)->comment('A chat member\'\'s status was updated in a chat. The bot must be an administrator in the chat and must explicitly specify “chat_member” in the list of allowed_updates to receive these updates.'),
+
+
         ], 'CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci ENGINE=InnoDB');
 
 
@@ -41,6 +48,11 @@ class m000999_000000_telegram_update extends Migration
         $this->createIndex('pre_checkout_query_id', '{{%telegram__telegram_update}}', 'pre_checkout_query_id');
         $this->createIndex('poll_id', '{{%telegram__telegram_update}}', 'poll_id');
         $this->createIndex('poll_answer_poll_id', '{{%telegram__telegram_update}}', 'poll_answer_poll_id');
+        $this->createIndex('my_chat_member_updated_id', '{{%telegram__telegram_update}}', 'my_chat_member_updated_id');
+        $this->createIndex('chat_member_updated_id', '{{%telegram__telegram_update}}', 'chat_member_updated_id');
+
+
+
 
         $this->addForeignKey(
             '{{%telegram__telegram_update_fk_poll_answer_poll_id}}',
@@ -109,24 +121,21 @@ class m000999_000000_telegram_update extends Migration
         );
 
 
-
-
-
         $this->addForeignKey(
             '{{%telegram__telegram_update_fk_chat_id_channel_post_id}}',
             '{{%telegram__telegram_update}}',
-            ['chat_id','channel_post_id'],
+            ['chat_id', 'channel_post_id'],
             '{{%telegram__message}}',
-            ['chat_id','id']
+            ['chat_id', 'id']
         );
 
 
         $this->addForeignKey(
             '{{%telegram__telegram_update_fk_chat_message_id}}',
             '{{%telegram__telegram_update}}',
-            ['chat_id','message_id'],
+            ['chat_id', 'message_id'],
             '{{%telegram__message}}',
-            ['chat_id','id']
+            ['chat_id', 'id']
         );
 
         $this->addForeignKey(
@@ -136,6 +145,26 @@ class m000999_000000_telegram_update extends Migration
             '{{%telegram__edited_message}}',
             'id'
         );
+
+
+
+
+        /*$this->addForeignKey(
+            '{{%telegram__telegram_update_fk_my_chat_member_updated_id}}',
+            '{{%telegram__telegram_update}}',
+            'my_chat_member_updated_id',
+            '{{%telegram__chat_member_updated}}',
+            'id'
+        );*/
+        //ALTER TABLE `telegram_update` ADD FOREIGN KEY (`my_chat_member_updated_id`) REFERENCES `chat_member_updated` (`id`);
+        //ALTER TABLE `telegram_update` ADD CONSTRAINT `client_telegram__telegram_update_fk_my_chat_member_updated_id` FOREIGN KEY (`my_chat_member_updated_id`) REFERENCES `client_telegram__chat_member_updated` (`id`)
+       /* $this->addForeignKey(
+            '{{%telegram__telegram_update_fk_chat_member_updated_id}}',
+            '{{%telegram__telegram_update}}',
+            'chat_member_updated_id',
+            '{{%telegram__chat_member_updated}}',
+            'id'
+        );*/
 
     }
 

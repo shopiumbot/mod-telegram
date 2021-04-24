@@ -7,6 +7,7 @@ use core\modules\shop\models\Product;
 use Longman\TelegramBot\DB;
 use Longman\TelegramBot\Entities\InlineKeyboard;
 use Longman\TelegramBot\Entities\InlineKeyboardButton;
+use Longman\TelegramBot\Entities\ServerResponse;
 use Longman\TelegramBot\Request;
 use shopium\mod\cart\models\OrderProductTemp;
 use shopium\mod\cart\models\OrderTemp;
@@ -46,7 +47,7 @@ class CartCommand extends UserCommand
     private $page = 0;
     protected $private_only = true;
 
-    public function getDescription()
+    public function getDescription(): string
     {
         return Yii::t('telegram/default', 'COMMAND_CART');
     }
@@ -57,7 +58,7 @@ class CartCommand extends UserCommand
      * @return \Longman\TelegramBot\Entities\ServerResponse
      * @throws \Longman\TelegramBot\Exception\TelegramException
      */
-    public function execute()
+    public function execute(): ServerResponse
     {
         $update = $this->getUpdate();
 

@@ -2,6 +2,7 @@
 
 namespace shopium\mod\telegram\components\Commands\UserCommands;
 
+use Longman\TelegramBot\Entities\ServerResponse;
 use shopium\mod\telegram\components\UserCommand;
 use Longman\TelegramBot\Entities\File;
 use Longman\TelegramBot\Entities\PhotoSize;
@@ -23,7 +24,7 @@ class MeCommand extends UserCommand
     protected $public = true;
     public $enabled = true;
 
-    public function getDescription()
+    public function getDescription():string
     {
         return Yii::t('telegram/default', 'COMMAND_ME');
     }
@@ -31,7 +32,7 @@ class MeCommand extends UserCommand
     /**
      * {@inheritdoc}
      */
-    public function execute()
+    public function execute(): ServerResponse
     {
         $message = $this->getMessage();
 

@@ -6,6 +6,7 @@ use core\modules\images\models\Image;
 use core\modules\shop\models\Attribute;
 use core\modules\shop\models\Product;
 use League\HTMLToMarkdown\HtmlConverter;
+use Longman\TelegramBot\Entities\ServerResponse;
 use Mpdf\Tag\P;
 use shopium\mod\cart\models\OrderProductTemp;
 use shopium\mod\cart\models\OrderTemp;
@@ -49,7 +50,7 @@ class ProductItemCommand extends SystemCommand
     public $photo_index = 0;
     public $product;
 
-    public function execute()
+    public function execute(): ServerResponse
     {
 
         $update = $this->getUpdate();

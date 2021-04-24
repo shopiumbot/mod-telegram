@@ -8,6 +8,7 @@ use core\modules\shop\models\Product;
 use Longman\TelegramBot\DB;
 use Longman\TelegramBot\Entities\InlineKeyboard;
 use Longman\TelegramBot\Entities\InlineKeyboardButton;
+use Longman\TelegramBot\Entities\ServerResponse;
 use Longman\TelegramBot\Request;
 use core\modules\shop\models\Category;
 use shopium\mod\telegram\components\UserCommand;
@@ -49,7 +50,7 @@ class CatalogCommand extends UserCommand
     public $id;
     public $private_only = false;
 
-    public function getDescription()
+    public function getDescription(): string
     {
         return Yii::t('telegram/default', 'CATALOG');
     }
@@ -60,7 +61,7 @@ class CatalogCommand extends UserCommand
      * @return \Longman\TelegramBot\Entities\ServerResponse
      * @throws \Longman\TelegramBot\Exception\TelegramException
      */
-    public function execute()
+    public function execute(): ServerResponse
     {
         $update = $this->getUpdate();
 

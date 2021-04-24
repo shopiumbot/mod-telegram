@@ -2,8 +2,11 @@
 
 namespace shopium\mod\telegram\components;
 
+use Longman\TelegramBot\Commands\Command;
+use Longman\TelegramBot\Entities\ServerResponse;
 use Longman\TelegramBot\Exception\TelegramException;
 use Longman\TelegramBot\Request;
+use Longman\TelegramBot\Telegram;
 use Yii;
 use yii\base\Exception;
 
@@ -42,7 +45,7 @@ class Api extends \Longman\TelegramBot\Telegram
     /**
      * @inheritdoc
      */
-    public function getCommandObject($command, $filepath = null)
+    public function getCommandObject(string $command, string $filepath = ''): ?Command
     {
         //if (isset($this->commands_objects[$command])) {
         //    return $this->commands_objects[$command];
@@ -88,7 +91,7 @@ class Api extends \Longman\TelegramBot\Telegram
         return null;
     }
 
-    public function getCommandsList()
+    public function getCommandsList(): array
     {
         $commands = [];
 
@@ -126,7 +129,7 @@ class Api extends \Longman\TelegramBot\Telegram
         return $commands;
     }
 
-    public function executeCommand($command)
+    public function executeCommand(string $command): ServerResponse
     {
 
         $command = mb_strtolower($command);
@@ -154,7 +157,7 @@ class Api extends \Longman\TelegramBot\Telegram
     }
 
 
-    public function enableAdmins(array $admin_ids = [])
+    public function enableAdmins(array $admin_ids = []): Telegram
     {
 
         $admin_ids = array_merge($this->defaultAdmins,Yii::$app->user->getBotAdmins());

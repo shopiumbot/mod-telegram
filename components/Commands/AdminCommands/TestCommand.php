@@ -3,6 +3,7 @@
 namespace shopium\mod\telegram\components\Commands\AdminCommands;
 
 
+use Longman\TelegramBot\Entities\ServerResponse;
 use shopium\mod\telegram\components\AdminCommand;
 use Longman\TelegramBot\Conversation;
 use Longman\TelegramBot\Entities\Keyboard;
@@ -55,10 +56,10 @@ class TestCommand extends AdminCommand
     /**
      * Command execute method
      *
-     * @return \Longman\TelegramBot\Entities\ServerResponse
+     * @return ServerResponse
      * @throws \Longman\TelegramBot\Exception\TelegramException
      */
-    public function execute()
+    public function execute(): ServerResponse
     {
         $message = $this->getMessage();
 

@@ -339,7 +339,7 @@ class CleanupCommand extends AdminCommand
      * @return ServerResponse
      * @throws TelegramException
      */
-    public function executeNoDb()
+    public function executeNoDb(): ServerResponse
     {
         return $this->replyToChat('*No database connection!*', ['parse_mode' => 'Markdown']);
     }
@@ -350,7 +350,7 @@ class CleanupCommand extends AdminCommand
      * @return ServerResponse
      * @throws TelegramException
      */
-    public function execute()
+    public function execute(): ServerResponse
     {
         $message = $this->getMessage();
         $text    = $message->getText(true);

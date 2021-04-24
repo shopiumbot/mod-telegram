@@ -56,7 +56,7 @@ class ExchangeRatesCommand extends AdminCommand
      * @return ServerResponse
      * @throws TelegramException
      */
-    public function execute()
+    public function execute(): ServerResponse
     {
 
         $update = $this->getUpdate();

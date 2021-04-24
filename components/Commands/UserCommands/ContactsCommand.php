@@ -5,6 +5,7 @@ namespace shopium\mod\telegram\components\Commands\UserCommands;
 
 use core\modules\contacts\models\SettingsForm;
 use Longman\TelegramBot\DB;
+use Longman\TelegramBot\Entities\ServerResponse;
 use Longman\TelegramBot\Request;
 use panix\engine\CMS;
 use panix\engine\Html;
@@ -33,7 +34,7 @@ class ContactsCommand extends UserCommand
      */
     protected $version = '1.0';
 
-    public function getDescription()
+    public function getDescription():string
     {
         return Yii::t('telegram/default', 'COMMAND_CONTACTS');
     }
@@ -44,7 +45,7 @@ class ContactsCommand extends UserCommand
      * @return \Longman\TelegramBot\Entities\ServerResponse
      * @throws \Longman\TelegramBot\Exception\TelegramException
      */
-    public function execute()
+    public function execute(): ServerResponse
     {
         $message = $this->getMessage();
 

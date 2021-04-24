@@ -3,6 +3,7 @@
 namespace shopium\mod\telegram\components\Commands\UserCommands;
 
 
+use Longman\TelegramBot\Entities\ServerResponse;
 use Longman\TelegramBot\Request;
 use shopium\mod\telegram\components\UserCommand;
 use Yii;
@@ -43,7 +44,7 @@ class NewsCommand extends UserCommand
      * @return \Longman\TelegramBot\Entities\ServerResponse
      * @throws \Longman\TelegramBot\Exception\TelegramException
      */
-    public function execute()
+    public function execute(): ServerResponse
     {
         $message = $this->getMessage();
 

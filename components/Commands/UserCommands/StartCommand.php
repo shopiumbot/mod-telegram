@@ -3,6 +3,7 @@
 namespace shopium\mod\telegram\components\Commands\UserCommands;
 
 use Longman\TelegramBot\DB;
+use Longman\TelegramBot\Entities\ServerResponse;
 use Longman\TelegramBot\Request;
 use shopium\mod\telegram\components\UserCommand;
 use shopium\mod\telegram\models\StartSource;
@@ -37,18 +38,15 @@ class StartCommand extends UserCommand
     protected $private_only = true;
     protected $need_mysql = true;
 
-    public function getDescription()
+    public function getDescription():string
     {
         return Yii::t('telegram/default', 'COMMAND_START');
     }
 
     /**
-     * Command execute method
-     *
-     * @return \Longman\TelegramBot\Entities\ServerResponse
-     * @throws \Longman\TelegramBot\Exception\TelegramException
+     * @inheritDoc
      */
-    public function execute()
+    public function execute(): ServerResponse
     {
         $startItem = \core\modules\menu\models\Menu::findOne(1);
         $message = $this->getMessage();

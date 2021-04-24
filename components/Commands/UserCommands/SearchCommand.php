@@ -8,6 +8,7 @@ use Longman\TelegramBot\DB;
 use Longman\TelegramBot\Entities\InlineKeyboard;
 use Longman\TelegramBot\Entities\InlineKeyboardButton;
 use Longman\TelegramBot\Entities\Keyboard;
+use Longman\TelegramBot\Entities\ServerResponse;
 use Longman\TelegramBot\Request;
 use core\modules\shop\models\Product;
 use shopium\mod\telegram\components\UserCommand;
@@ -57,7 +58,7 @@ class SearchCommand extends UserCommand
      */
     protected $conversation;
 
-    public function getDescription()
+    public function getDescription():string
     {
         return Yii::t('telegram/default', 'SEARCH');
     }
@@ -65,10 +66,10 @@ class SearchCommand extends UserCommand
     /**
      * Command execute method
      *
-     * @return \Longman\TelegramBot\Entities\ServerResponse
+     * @return ServerResponse
      * @throws \Longman\TelegramBot\Exception\TelegramException
      */
-    public function execute()
+    public function execute(): ServerResponse
     {
         $message = $this->getMessage();
 

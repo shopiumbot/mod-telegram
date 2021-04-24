@@ -2,6 +2,7 @@
 
 namespace shopium\mod\telegram\components\Commands\SystemCommands;
 
+use Longman\TelegramBot\Entities\ServerResponse;
 use Yii;
 use Longman\TelegramBot\Conversation;
 use Longman\TelegramBot\DB;
@@ -30,7 +31,7 @@ class CancelCommand extends SystemCommand
     /**
      * {@inheritdoc}
      */
-    public function execute()
+    public function execute(): ServerResponse
     {
         // $text = 'No active conversation!';
          $text = '';
@@ -59,7 +60,7 @@ class CancelCommand extends SystemCommand
     /**
      * {@inheritdoc}
      */
-    public function executeNoDb()
+    public function executeNoDb(): ServerResponse
     {
         return $this->hideKeyboard('Nothing to cancel.');
     }

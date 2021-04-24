@@ -29,7 +29,7 @@ abstract class SystemCommand extends Command
      *
      * @return ServerResponse
      */
-    public function execute()
+    public function execute(): ServerResponse
     {
         // System command, return empty ServerResponse by default
         return Request::emptyResponse();

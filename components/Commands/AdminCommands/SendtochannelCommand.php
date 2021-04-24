@@ -48,7 +48,7 @@ class SendtochannelCommand extends AdminCommand
      */
     protected $conversation;
 
-    public function getDescription()
+    public function getDescription():string
     {
         return Yii::t('telegram/default', 'COMMAND_SENDTOCHANNEL');
     }
@@ -56,10 +56,10 @@ class SendtochannelCommand extends AdminCommand
     /**
      * Command execute method
      *
-     * @return ServerResponse|mixed
+     * @return ServerResponse
      * @throws TelegramException
      */
-    public function execute()
+    public function execute(): ServerResponse
     {
         $message = $this->getMessage();
         $chat_id = $message->getChat()->getId();
@@ -355,7 +355,7 @@ class SendtochannelCommand extends AdminCommand
      * @return mixed
      * @throws TelegramException
      */
-    public function executeNoDb()
+    public function executeNoDb(): ServerResponse
     {
         $message = $this->getMessage();
         $text = trim($message->getText(true));

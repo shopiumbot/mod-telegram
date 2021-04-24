@@ -7,6 +7,7 @@ use Longman\TelegramBot\DB;
 use Longman\TelegramBot\Entities\InlineKeyboard;
 use Longman\TelegramBot\Entities\InlineKeyboardButton;
 use Longman\TelegramBot\Entities\Keyboard;
+use Longman\TelegramBot\Entities\ServerResponse;
 use Longman\TelegramBot\Request;
 use panix\engine\CMS;
 use shopium\mod\cart\models\NovaPoshtaWarehouses;
@@ -40,7 +41,7 @@ class HistoryCommand extends UserCommand
     protected $version = '1.0.0';
     private $page = 0;
 
-    public function getDescription()
+    public function getDescription():string
     {
         return Yii::t('telegram/default', 'COMMAND_HISTORY');
     }
@@ -51,7 +52,7 @@ class HistoryCommand extends UserCommand
      * @return \Longman\TelegramBot\Entities\ServerResponse
      * @throws \Longman\TelegramBot\Exception\TelegramException
      */
-    public function execute()
+    public function execute(): ServerResponse
     {
         $update = $this->getUpdate();
         if ($update->getCallbackQuery()) {

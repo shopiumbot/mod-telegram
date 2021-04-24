@@ -4,6 +4,7 @@ namespace shopium\mod\telegram\components\Commands\SystemCommands;
 
 use Longman\TelegramBot\Entities\InlineKeyboard;
 use Longman\TelegramBot\Entities\Payments\LabeledPrice;
+use Longman\TelegramBot\Entities\ServerResponse;
 use Longman\TelegramBot\Request;
 use panix\engine\CMS;
 use shopium\mod\cart\components\payment\BasePaymentSystem;
@@ -36,7 +37,7 @@ class PaymentCommand extends SystemCommand
     /**
      * {@inheritdoc}
      */
-    public function execute()
+    public function execute(): ServerResponse
     {
 
         if (($this->order_id = $this->getConfig('order_id')) === '') {

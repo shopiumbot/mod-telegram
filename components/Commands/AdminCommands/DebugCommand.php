@@ -2,6 +2,7 @@
 
 namespace shopium\mod\telegram\components\Commands\AdminCommands;
 
+use Longman\TelegramBot\Entities\ServerResponse;
 use Yii;
 use shopium\mod\telegram\components\AdminCommand;
 use Longman\TelegramBot\DB;
@@ -32,12 +33,12 @@ class DebugCommand extends AdminCommand
      */
     protected $version = '1.0.0';
 
-    public function getDescription()
+    public function getDescription():string
     {
         return Yii::t('telegram/default', 'COMMAND_DEBUG');
     }
 
-    public function __construct2(Api $telegram, Update $update = null)
+    public function __construct2(Api $telegram, ?Update $update = null)
     {
 
 
@@ -70,7 +71,7 @@ class DebugCommand extends AdminCommand
      * @return mixed
      * @throws TelegramException
      */
-    public function execute()
+    public function execute(): ServerResponse
     {
         $pdo = DB::getPdo();
         $message = $this->getMessage();

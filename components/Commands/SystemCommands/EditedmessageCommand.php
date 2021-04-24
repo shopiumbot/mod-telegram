@@ -2,6 +2,7 @@
 
 namespace shopium\mod\telegram\components\Commands\SystemCommands;
 
+use Longman\TelegramBot\Entities\ServerResponse;
 use shopium\mod\telegram\components\SystemCommand;
 
 /**
@@ -29,10 +30,10 @@ class EditedmessageCommand extends SystemCommand
     /**
      * Command execute method
      *
-     * @return \Longman\TelegramBot\Entities\ServerResponse
+     * @return ServerResponse
      * @throws \Longman\TelegramBot\Exception\TelegramException
      */
-    public function execute()
+    public function execute(): ServerResponse
     {
         //$edited_message = $this->getEditedMessage();
 

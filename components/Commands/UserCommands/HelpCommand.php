@@ -4,6 +4,7 @@ namespace shopium\mod\telegram\components\Commands\UserCommands;
 
 use Longman\TelegramBot\Entities\Keyboard;
 use Longman\TelegramBot\Entities\KeyboardButton;
+use Longman\TelegramBot\Entities\ServerResponse;
 use Longman\TelegramBot\Request;
 use shopium\mod\telegram\components\Command;
 use shopium\mod\telegram\components\UserCommand;
@@ -27,7 +28,7 @@ class HelpCommand extends UserCommand
     /**
      * {@inheritdoc}
      */
-    public function execute()
+    public function execute(): ServerResponse
     {
         $message = $this->getMessage();
         $chat_id = $message->getChat()->getId();

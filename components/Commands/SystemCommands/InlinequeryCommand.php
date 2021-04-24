@@ -4,6 +4,7 @@ namespace shopium\mod\telegram\components\Commands\SystemCommands;
 
 use Longman\TelegramBot\Entities\InlineQuery\InlineQueryResultArticle;
 use Longman\TelegramBot\Entities\InputMessageContent\InputTextMessageContent;
+use Longman\TelegramBot\Entities\ServerResponse;
 use shopium\mod\telegram\components\SystemCommand;
 
 /**
@@ -31,7 +32,7 @@ class InlinequeryCommand extends SystemCommand
      *
      * @return mixed
      */
-    public function execute()
+    public function execute(): ServerResponse
     {
         $inline_query = $this->getInlineQuery();
         $query        = $inline_query->getQuery();

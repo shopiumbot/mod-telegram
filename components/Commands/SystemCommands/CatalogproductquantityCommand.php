@@ -4,6 +4,7 @@ namespace shopium\mod\telegram\components\Commands\SystemCommands;
 
 use Longman\TelegramBot\Entities\InlineKeyboard;
 use Longman\TelegramBot\Entities\InlineKeyboardButton;
+use Longman\TelegramBot\Entities\ServerResponse;
 use Longman\TelegramBot\Request;
 use shopium\mod\cart\models\OrderProductTemp;
 use shopium\mod\telegram\components\SystemCommand;
@@ -37,10 +38,10 @@ class CatalogproductquantityCommand extends SystemCommand
     /**
      * Command execute method
      *
-     * @return \Longman\TelegramBot\Entities\ServerResponse
+     * @return ServerResponse
      * @throws \Longman\TelegramBot\Exception\TelegramException
      */
-    public function execute()
+    public function execute(): ServerResponse
     {
 
         if (($this->product_id = trim($this->getConfig('product_id'))) === '') {

@@ -10,6 +10,7 @@ use Longman\TelegramBot\DB;
 use Longman\TelegramBot\Entities\InlineKeyboardButton;
 use Longman\TelegramBot\Entities\Keyboard;
 use Longman\TelegramBot\Entities\KeyboardButton;
+use Longman\TelegramBot\Entities\ServerResponse;
 use Longman\TelegramBot\Entities\Update;
 use Longman\TelegramBot\Request;
 use Yii;
@@ -24,7 +25,7 @@ abstract class Command extends \Longman\TelegramBot\Commands\Command
     public $keyword_cancel;
     public $keyword_admin;
 
-    public function __construct(Api $telegram, Update $update = null)
+    public function __construct(Api $telegram, ?Update $update = null)
     {
 
 
@@ -72,7 +73,7 @@ abstract class Command extends \Longman\TelegramBot\Commands\Command
         Yii::$app->languageManager->setActive($language);
     }
 
-    public function preExecute()
+    public function preExecute(): ServerResponse
     {
 
         if (time() > $this->telegram->getUser()->expire) {
@@ -86,7 +87,7 @@ abstract class Command extends \Longman\TelegramBot\Commands\Command
 
     }
 
-    public function isSystemCommand()
+    public function isSystemCommand(): bool
     {
         return ($this instanceof SystemCommand);
     }
@@ -96,7 +97,7 @@ abstract class Command extends \Longman\TelegramBot\Commands\Command
      *
      * @return bool
      */
-    public function isAdminCommand()
+    public function isAdminCommand(): bool
     {
         return ($this instanceof AdminCommand);
     }
@@ -106,7 +107,7 @@ abstract class Command extends \Longman\TelegramBot\Commands\Command
      *
      * @return bool
      */
-    public function isUserCommand()
+    public function isUserCommand(): bool
     {
         return ($this instanceof UserCommand);
     }

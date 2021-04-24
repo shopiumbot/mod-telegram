@@ -4,6 +4,7 @@ namespace shopium\mod\telegram\components\Commands\UserCommands;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
+use Longman\TelegramBot\Entities\ServerResponse;
 use Longman\TelegramBot\Exception\TelegramException;
 use Longman\TelegramBot\Request;
 use shopium\mod\telegram\components\UserCommand;
@@ -96,7 +97,7 @@ class WeatherCommand extends UserCommand
     /**
      * {@inheritdoc}
      */
-    public function execute()
+    public function execute(): ServerResponse
     {
         $message = $this->getMessage();
         $chat_id = $message->getChat()->getId();

@@ -6,6 +6,7 @@ namespace shopium\mod\telegram\components\Commands\SystemCommands;
 use core\modules\shop\components\EavBehavior;
 use Longman\TelegramBot\Entities\InlineKeyboard;
 use Longman\TelegramBot\Entities\InlineKeyboardButton;
+use Longman\TelegramBot\Entities\ServerResponse;
 use Longman\TelegramBot\Request;
 use core\modules\shop\models\Attribute;
 use core\modules\shop\models\Product;
@@ -54,10 +55,10 @@ class SearchResultCommand extends SystemCommand
     /**
      * Command execute method
      *
-     * @return \Longman\TelegramBot\Entities\ServerResponse
+     * @return ServerResponse
      * @throws \Longman\TelegramBot\Exception\TelegramException
      */
-    public function execute()
+    public function execute(): ServerResponse
     {
         $update = $this->getUpdate();
 

@@ -3,6 +3,7 @@
 namespace shopium\mod\telegram\components\Commands\SystemCommands;
 
 
+use Longman\TelegramBot\Entities\ServerResponse;
 use Longman\TelegramBot\Request;
 use shopium\mod\cart\models\OrderProductTemp;
 use shopium\mod\telegram\components\SystemCommand;
@@ -31,12 +32,9 @@ class CartproductremoveCommand extends SystemCommand
     public $id;
 
     /**
-     * Command execute method
-     *
-     * @return \Longman\TelegramBot\Entities\ServerResponse
-     * @throws \Longman\TelegramBot\Exception\TelegramException
+     * @inheritDoc
      */
-    public function execute()
+    public function execute(): ServerResponse
     {
 
         if (($this->id = trim($this->getConfig('id'))) === '') {

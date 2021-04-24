@@ -2,6 +2,7 @@
 
 namespace shopium\mod\telegram\components\Commands\SystemCommands;
 
+use Longman\TelegramBot\Entities\ServerResponse;
 use shopium\mod\telegram\components\SystemCommand;
 use Longman\TelegramBot\Request;
 
@@ -28,12 +29,12 @@ class NewchatmembersCommand extends SystemCommand
     /**
      * Command execute method
      *
-     * @return \Longman\TelegramBot\Entities\ServerResponse
+     * @return ServerResponse
      * @throws \Longman\TelegramBot\Exception\TelegramException
      */
-    public function execute()
+    public function execute(): ServerResponse
     {
-        $message = $this->getMessage();
+       /* $message = $this->getMessage();
 
         $chat_id = $message->getChat()->getId();
         $members = $message->getNewChatMembers();
@@ -53,6 +54,20 @@ class NewchatmembersCommand extends SystemCommand
             'text'    => $text,
         ];
 
-        return Request::sendMessage($data);
+        return Request::sendMessage($data);*/
+
+        $message = $this->getMessage();
+        $members = $message->getNewChatMembers();
+
+        if ($message->botAddedInChat()) {
+            return $this->replyToChat('Hi there, you BOT!');
+        }
+
+        $member_names = [];
+        foreach ($members as $member) {
+            $member_names[] = $member->tryMention();
+        }
+
+        return $this->replyToChat('Hi ' . implode(', ', $member_names) . '!');
     }
 }

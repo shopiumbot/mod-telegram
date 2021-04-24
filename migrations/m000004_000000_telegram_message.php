@@ -1,6 +1,6 @@
 <?php
 
-namespace shopium\mod\telegram\migrations;
+//namespace shopium\mod\telegram\migrations;
 
 use yii\console\Exception;
 use panix\engine\db\Migration;
@@ -12,8 +12,11 @@ class m000004_000000_telegram_message extends Migration
     // Use safeUp/safeDown to run migration code within a transaction
     public function safeUp()
     {
+
+
         $this->createTable(Message::tableName(), [
             'chat_id' => $this->bigInteger()->comment('Unique chat identifier'),
+            'sender_chat_id' => $this->bigInteger()->comment('Sender of the message, sent on behalf of a chat'),
             'id' => $this->bigInteger()->unsigned()->comment('Unique message identifier'),
             'user_id' => $this->bigInteger()->null()->comment('Unique user identifier'),
             'date' => $this->timestamp()->null()->defaultValue(NULL)->comment('Date the message was sent in timestamp format'),
@@ -26,7 +29,9 @@ class m000004_000000_telegram_message extends Migration
             'reply_to_chat' => $this->bigInteger()->null()->defaultValue(NULL)->comment('Unique chat identifier'),
             'reply_to_message' => $this->bigInteger()->unsigned()->defaultValue(NULL)->comment('Message that this message is reply to'),
             'via_bot' => $this->bigInteger()->unsigned()->null()->defaultValue(NULL)->comment('Optional. Bot through which the message was sent'),
-            'edit_date' => $this->bigInteger()->unsigned()->defaultValue(NULL)->comment('Date the message was last edited in Unix time'),
+
+            //edited
+            'edit_date' => $this->timestamp()->null()->comment('Date the message was last edited in Unix time'),
             'media_group_id' => $this->text()->comment('The unique identifier of a media message group this message belongs to'),
             'author_signature' => $this->text()->comment('Signature of the post author for messages in channels'),
             'text' => $this->text()->comment('For text messages, the actual UTF-8 text of the message max message length 4096 char utf8mb4'),
@@ -55,6 +60,7 @@ class m000004_000000_telegram_message extends Migration
             'group_chat_created' => $this->tinyInteger(1)->defaultValue(0)->comment('Informs that the group has been created'),
             'supergroup_chat_created' => $this->tinyInteger(1)->defaultValue(0)->comment('Informs that the supergroup has been created'),
             'channel_chat_created' => $this->tinyInteger(1)->defaultValue(0)->comment('Informs that the channel chat has been created'),
+            'message_auto_delete_timer_changed' => $this->text()->comment('MessageAutoDeleteTimerChanged object. Message is a service message: auto-delete timer settings changed in the chat'),
             'migrate_to_chat_id' => $this->bigInteger()->null()->defaultValue(NULL)->comment('Migrate to chat identifier. The group has been migrated to a supergroup with the specified identifier'),
             'migrate_from_chat_id' => $this->bigInteger()->null()->defaultValue(NULL)->comment('Migrate from chat identifier. The supergroup has been migrated from a group with the specified identifier'),
             'pinned_message' => $this->text()->null()->comment('Message object. Specified message was pinned'),
@@ -62,7 +68,12 @@ class m000004_000000_telegram_message extends Migration
             'successful_payment' => $this->text()->null()->comment('Message is a service message about a successful payment, information about the payment'),
             'connected_website' => $this->text()->null()->comment('The domain name of the website on which the user has logged in.'),
             'passport_data' => $this->text()->null()->comment('Telegram Passport data'),
+            'proximity_alert_triggered' => $this->text()->null()->comment('Service message. A user in the chat triggered another user\'s proximity alert while sharing Live Location.'),
+            'voice_chat_started' => $this->text()->comment('VoiceChatStarted object. Message is a service message: voice chat started'),
+            'voice_chat_ended' => $this->text()->comment('VoiceChatEnded object. Message is a service message: voice chat ended'),
+            'voice_chat_participants_invited' => $this->text()->comment('VoiceChatParticipantsInvited object. Message is a service message: new participants invited to a voice chat'),
             'reply_markup' => $this->text()->null()->comment('Inline keyboard attached to the message'),
+
         ], 'CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci ENGINE=InnoDB');
 
 

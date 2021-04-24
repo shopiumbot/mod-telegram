@@ -2,6 +2,7 @@
 
 namespace shopium\mod\telegram\components\Commands\AdminCommands;
 
+use Longman\TelegramBot\Entities\ServerResponse;
 use Yii;
 use Longman\TelegramBot\Request;
 use shopium\mod\telegram\components\AdminCommand;
@@ -33,7 +34,7 @@ class EditmessageCommand extends AdminCommand
      */
     protected $version = '1.1.0';
 
-    public function getDescription()
+    public function getDescription():string
     {
         return Yii::t('telegram/default', 'COMMAND_EDITMESSAGE');
     }
@@ -41,10 +42,10 @@ class EditmessageCommand extends AdminCommand
     /**
      * Command execute method
      *
-     * @return \Longman\TelegramBot\Entities\ServerResponse
+     * @return ServerResponse
      * @throws \Longman\TelegramBot\Exception\TelegramException
      */
-    public function execute()
+    public function execute(): ServerResponse
     {
         $message = $this->getMessage();
         $chat_id = $message->getChat()->getId();

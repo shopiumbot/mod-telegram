@@ -8,6 +8,7 @@ use Longman\TelegramBot\Entities\InlineKeyboardButton;
 use Longman\TelegramBot\Entities\Keyboard;
 use Longman\TelegramBot\Entities\KeyboardButton;
 use Longman\TelegramBot\Entities\Payments\LabeledPrice;
+use Longman\TelegramBot\Entities\ServerResponse;
 use Longman\TelegramBot\Request;
 use panix\engine\CMS;
 use shopium\mod\cart\models\Order;
@@ -38,7 +39,7 @@ class SendMessageCommand extends SystemCommand
     /**
      * {@inheritdoc}
      */
-    public function execute()
+    public function execute(): ServerResponse
     {
 
         if (($this->user_id = $this->getConfig('user_id')) === '') {

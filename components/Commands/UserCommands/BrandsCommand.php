@@ -7,6 +7,7 @@ use core\modules\shop\models\Manufacturer;
 use Longman\TelegramBot\DB;
 use Longman\TelegramBot\Entities\InlineKeyboard;
 use Longman\TelegramBot\Entities\InlineKeyboardButton;
+use Longman\TelegramBot\Entities\ServerResponse;
 use Longman\TelegramBot\Entities\Update;
 use Longman\TelegramBot\Request;
 use core\modules\shop\models\Category;
@@ -48,12 +49,12 @@ class BrandsCommand extends UserCommand
 
     public $private_only = false;
 
-    public function getDescription()
+    public function getDescription(): string
     {
         return Yii::t('shop/default', 'MANUFACTURERS');
     }
 
-    public function __construct(Api $telegram, Update $update = null)
+    public function __construct(Api $telegram, ?Update $update = null)
     {
 
 		if(!Yii::$app->settings->get('app','enable_brands')){
@@ -70,7 +71,7 @@ class BrandsCommand extends UserCommand
      * @return \Longman\TelegramBot\Entities\ServerResponse
      * @throws \Longman\TelegramBot\Exception\TelegramException
      */
-    public function execute()
+    public function execute(): ServerResponse
     {
 
         $update = $this->getUpdate();

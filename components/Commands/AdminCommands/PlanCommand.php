@@ -57,7 +57,7 @@ class PlanCommand extends AdminCommand
      * @return ServerResponse
      * @throws TelegramException
      */
-    public function execute()
+    public function execute(): ServerResponse
     {
         $userData = Yii::$app->user;
         $update = $this->getUpdate();

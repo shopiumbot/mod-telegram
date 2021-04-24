@@ -1,6 +1,6 @@
 <?php
 
-namespace shopium\mod\telegram\migrations;
+//namespace shopium\mod\telegram\migrations;
 
 use yii\console\Exception;
 use panix\engine\db\Migration;

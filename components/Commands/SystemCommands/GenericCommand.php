@@ -4,6 +4,7 @@ namespace shopium\mod\telegram\components\Commands\SystemCommands;
 
 use core\modules\user\models\Payments;
 use Longman\TelegramBot\DB;
+use Longman\TelegramBot\Entities\ServerResponse;
 use shopium\mod\telegram\components\SystemCommand;
 use Longman\TelegramBot\Request;
 use Yii;
@@ -33,11 +34,45 @@ class GenericCommand extends SystemCommand
     /**
      * Command execute method
      *
-     * @return \Longman\TelegramBot\Entities\ServerResponse
+     * @return ServerResponse
      * @throws \Longman\TelegramBot\Exception\TelegramException
      */
-    public function execute()
+    public function execute(): ServerResponse
     {
+
+
+
+        $message = $this->getMessage();
+
+        // Handle new chat members
+        if ($message->getNewChatMembers()) {
+            //return $this->getTelegram()->executeCommand('newchatmembers');
+        }
+
+        // Handle left chat members
+        if ($message->getLeftChatMember()) {
+            //return $this->getTelegram()->executeCommand('leftchatmember');
+        }
+
+        // The chat photo was changed
+        if ($new_chat_photo = $message->getNewChatPhoto()) {
+            // Whatever...
+        }
+
+        // The chat title was changed
+        if ($new_chat_title = $message->getNewChatTitle()) {
+            // Whatever...
+        }
+
+        // A message has been pinned
+        if ($pinned_message = $message->getPinnedMessage()) {
+            // Whatever...
+        }
+
+
+
+
+
         $preCheckoutQuery = $this->getPreCheckoutQuery();
         $shippingQuery = $this->getShippingQuery();
         $callbackQuery = $this->getCallbackQuery();
@@ -69,7 +104,7 @@ class GenericCommand extends SystemCommand
                 'shipping_query_id' => $shippingQuery->getId(),
                 'ok' => true
             ]);
-            return $response;
+
         }
 
         $update = $this->getUpdate();
@@ -87,7 +122,7 @@ class GenericCommand extends SystemCommand
                 //  $from = $message->getFrom();
 
                 $chat_id = $message->getChat()->getId();
-                 $user_id = $message->getFrom()->getId();
+                $user_id = $message->getFrom()->getId();
                 $command = $message->getCommand();
 
 
@@ -113,8 +148,7 @@ class GenericCommand extends SystemCommand
                 return $result;
             }
         }
-
-
+        return Request::emptyResponse();
 
     }
 }

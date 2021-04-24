@@ -4,6 +4,7 @@ namespace shopium\mod\telegram\components\Commands\UserCommands;
 
 
 use Longman\TelegramBot\Entities\Keyboard;
+use Longman\TelegramBot\Entities\ServerResponse;
 use Yii;
 use Longman\TelegramBot\Entities\KeyboardButton;
 use Longman\TelegramBot\Entities\PollOption;
@@ -32,7 +33,7 @@ class SettingsCommand extends UserCommand
     /**
      * {@inheritdoc}
      */
-    public function execute()
+    public function execute(): ServerResponse
     {
         $message = $this->getMessage();
         $chat = $message->getChat();

@@ -6,6 +6,7 @@ namespace shopium\mod\telegram\components\Commands\AdminCommands;
 
 use Longman\TelegramBot\Conversation;
 use Longman\TelegramBot\Entities\Keyboard;
+use Longman\TelegramBot\Entities\ServerResponse;
 use Longman\TelegramBot\Request;
 use shopium\mod\telegram\components\AdminCommand;
 use shopium\mod\telegram\models\User;
@@ -54,10 +55,10 @@ class AdminAddCommand extends AdminCommand
     /**
      * Command execute method
      *
-     * @return \Longman\TelegramBot\Entities\ServerResponse
+     * @return ServerResponse
      * @throws \Longman\TelegramBot\Exception\TelegramException
      */
-    public function execute()
+    public function execute(): ServerResponse
     {
         $update = $this->getUpdate();
 

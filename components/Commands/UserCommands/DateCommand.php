@@ -4,6 +4,7 @@ namespace shopium\mod\telegram\components\Commands\UserCommands;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
+use Longman\TelegramBot\Entities\ServerResponse;
 use shopium\mod\telegram\components\UserCommand;
 use Longman\TelegramBot\Exception\TelegramException;
 use Longman\TelegramBot\Request;
@@ -182,7 +183,7 @@ class DateCommand extends UserCommand
     /**
      * {@inheritdoc}
      */
-    public function execute()
+    public function execute(): ServerResponse
     {
         //First we set up the necessary member variables.
         $this->client = new Client(['base_uri' => $this->google_api_base_uri]);
