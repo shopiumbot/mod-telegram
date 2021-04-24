@@ -93,6 +93,7 @@ class CheckOutCommand extends SystemCommand
             $user = $message->getFrom();
         }
 
+
         $chat_id = $chat->getId();
         $user_id = $user->getId();
         $this->setLanguage($user_id);
@@ -130,31 +131,33 @@ class CheckOutCommand extends SystemCommand
             }
 
             $result = Request::emptyResponse();
-
+            if ($text === $this->keyword_cancel) {
+                return $this->telegram->executeCommand('cancel');
+            }
 
             //State machine
             //Entrypoint of the machine state if given by the track
             //Every time a step is achieved the track is updated
             switch ($state) {
                 case 0:
-                    if ($text === '' || !in_array($text, [Yii::t('telegram/default','CONTINUE'), $this->keyword_cancel], true)) {
+                    if ($text === '' || !in_array($text, [Yii::t('telegram/default', 'CONTINUE'), $this->keyword_cancel], true)) {
                         $notes['state'] = 0;
                         $this->conversation->update();
 
-                        $data['reply_markup'] = (new Keyboard([Yii::t('telegram/default','CONTINUE'), $this->keyword_cancel]))
+                        $data['reply_markup'] = (new Keyboard([Yii::t('telegram/default', 'CONTINUE'), $this->keyword_cancel]))
                             ->setResizeKeyboard(true)
                             ->setOneTimeKeyboard(true)
                             ->setSelective(true);
 
                         $data['text'] = 'Продолжить:';
                         if ($text !== '') {
-                            $data['text'] = Yii::t('telegram/default','SELECT_VARIANT').':';
+                            $data['text'] = Yii::t('telegram/default', 'SELECT_VARIANT') . ':';
                         }
 
                         $result = Request::sendMessage($data);
                         break;
                     }
-                    if ($text === Yii::t('telegram/default','CONTINUE')) {
+                    if ($text === Yii::t('telegram/default', 'CONTINUE')) {
                         $notes['confirm'] = $text;
                         $text = '';
                     } else {
@@ -165,16 +168,16 @@ class CheckOutCommand extends SystemCommand
                     if ($text == $this->keyword_back) {
                         $text = '';
                     }
-                    if ($text === '' || $notes['confirm'] === Yii::t('telegram/default','CONTINUE')) {
+                    if ($text === '' || $notes['confirm'] === Yii::t('telegram/default', 'CONTINUE')) {
                         $notes['state'] = 1;
                         $this->conversation->update();
 
-                        $data['reply_markup'] = (new Keyboard(['👤 ' . $user->getFirstName() . ' ' . $user->getLastName(), Yii::t('telegram/default','KEYWORD_CANCEL')]))
+                        $data['reply_markup'] = (new Keyboard(['👤 ' . $user->getFirstName() . ' ' . $user->getLastName(), Yii::t('telegram/default', 'KEYWORD_CANCEL')]))
                             ->setResizeKeyboard(true)
                             ->setOneTimeKeyboard(true)
                             ->setSelective(true);
 
-                        $data['text'] = Yii::t('telegram/default','YOUR_NAME').':';
+                        $data['text'] = Yii::t('telegram/default', 'YOUR_NAME') . ':';
                         if (empty($text)) {
                             $result = Request::sendMessage($data);
                             break;
@@ -189,13 +192,14 @@ class CheckOutCommand extends SystemCommand
                         $text = '';
                         goto username;
                     }
+
                     if ($message->getContact() === null) {
                         $notes['state'] = 2;
                         $this->conversation->update();
 
                         $keyboards = [
                             [
-                                (new KeyboardButton(Yii::t('telegram/default','SET_CONTACT')))->setRequestContact(true)
+                                (new KeyboardButton(Yii::t('telegram/default', 'SET_CONTACT')))->setRequestContact(true)
                             ],
                             [
                                 new KeyboardButton($this->keyword_back),
@@ -209,7 +213,7 @@ class CheckOutCommand extends SystemCommand
 
 
                         $data['reply_markup'] = $buttons;
-                        $data['text'] = Yii::t('telegram/default','YOUR_CONTACT').':';
+                        $data['text'] = Yii::t('telegram/default', 'YOUR_CONTACT') . ':';
                         $result = Request::sendMessage($data);
                         break;
                     }
@@ -248,9 +252,9 @@ class CheckOutCommand extends SystemCommand
 
                         $data['reply_markup'] = $buttons;
 
-                        $data['text'] = Yii::t('telegram/default','SELECT_VARIANT_DELIVERY').':';
+                        $data['text'] = Yii::t('telegram/default', 'SELECT_VARIANT_DELIVERY') . ':';
                         if ($text !== '') {
-                            $data['text'] = Yii::t('telegram/default','SELECT_VARIANT').':';
+                            $data['text'] = Yii::t('telegram/default', 'SELECT_VARIANT') . ':';
                         }
 
                         $result = Request::sendMessage($data);
@@ -303,9 +307,9 @@ class CheckOutCommand extends SystemCommand
                             $this->conversation->update();
 
                             $data['reply_markup'] = $buttons;
-                            $data['text'] = Yii::t('telegram/default','SELECT_VARIANT_PAYMENT').':';
+                            $data['text'] = Yii::t('telegram/default', 'SELECT_VARIANT_PAYMENT') . ':';
                             if ($text !== '') {
-                                $data['text'] = Yii::t('telegram/default','SELECT_VARIANT').':';
+                                $data['text'] = Yii::t('telegram/default', 'SELECT_VARIANT') . ':';
                             }
 
                             $result = Request::sendMessage($data);
@@ -378,9 +382,9 @@ class CheckOutCommand extends SystemCommand
                             $this->conversation->update();
 
                             $data['reply_markup'] = $buttons;
-                            $data['text'] = Yii::t('telegram/default','SELECT_VARIANT_CITY').':';
+                            $data['text'] = Yii::t('telegram/default', 'SELECT_VARIANT_CITY') . ':';
                             if ($text !== '') {
-                                $data['text'] = Yii::t('telegram/default','SELECT_VARIANT').':';
+                                $data['text'] = Yii::t('telegram/default', 'SELECT_VARIANT') . ':';
                             }
 
                             $result = Request::sendMessage($data);
@@ -440,7 +444,7 @@ class CheckOutCommand extends SystemCommand
                             $data['reply_markup'] = $buttons;
                             $data['text'] = 'Выберите номер отделения доставки:';
                             if ($text !== '') {
-                                $data['text'] = Yii::t('telegram/default','SELECT_VARIANT').':';
+                                $data['text'] = Yii::t('telegram/default', 'SELECT_VARIANT') . ':';
                             }
 
                             $result = Request::sendMessage($data);
@@ -484,7 +488,7 @@ class CheckOutCommand extends SystemCommand
 
                         $data['text'] = 'Выберите вариант оплаты:';
                         if ($text !== '') {
-                            $data['text'] = Yii::t('telegram/default','SELECT_VARIANT').':';
+                            $data['text'] = Yii::t('telegram/default', 'SELECT_VARIANT') . ':';
                         }
 
                         $result = Request::sendMessage($data);
@@ -497,96 +501,96 @@ class CheckOutCommand extends SystemCommand
 
                 case 5:
                     $this->conversation->update();
-                    $titleClient = Yii::t('telegram/default','ORDER_SUCCESS') . PHP_EOL . PHP_EOL;
+                    $titleClient = Yii::t('telegram/default', 'ORDER_SUCCESS') . PHP_EOL . PHP_EOL;
                     $order = new Order;
                     $order->user_id = $chat_id;
                     $content = '';
-                     foreach ($this->orderProducts as $product) {
-                         $original = $product->originalProduct;
-                         $command = '';
-                         if ($original) {
-                             $command .= '/product' . $product->product_id;
-                         }
-                         $content .= '*' . $original->name . '* ' . $command . ' *(' . $product->quantity . ' '.Yii::t('shop/Product','UNIT_THING').')*: ' . $this->number_format($original->getFrontPrice()) . ' ' . Yii::$app->currency->active['symbol'] . PHP_EOL;
-                     }
+                    foreach ($this->orderProducts as $product) {
+                        $original = $product->originalProduct;
+                        $command = '';
+                        if ($original) {
+                            $command .= '/product' . $product->product_id;
+                        }
+                        $content .= '*' . $original->name . '* ' . $command . ' *(' . $product->quantity . ' ' . Yii::t('shop/Product', 'UNIT_THING') . ')*: ' . $this->number_format($original->getFrontPrice()) . ' ' . Yii::$app->currency->active['symbol'] . PHP_EOL;
+                    }
 
-                     unset($notes['state']);
+                    unset($notes['state']);
 
-                     $content .= PHP_EOL . '*'.Yii::t('telegram/User','FIRST_NAME').'*: ' . $notes['name'];
-                     $content .= PHP_EOL . '*'.Yii::t('cart/Order','USER_PHONE').'*: ' . $notes['phone_number'] . PHP_EOL;
+                    $content .= PHP_EOL . '*' . Yii::t('telegram/User', 'FIRST_NAME') . '*: ' . $notes['name'];
+                    $content .= PHP_EOL . '*' . Yii::t('cart/Order', 'USER_PHONE') . '*: ' . $notes['phone_number'] . PHP_EOL;
 
-                     $content .= PHP_EOL . '🚚 '.Yii::t('cart/default','DELIVERY').': *' . $notes['delivery'] . '*' . PHP_EOL;
-                     if ($order->area_id && $order->area) {
-                         $content .= 'обл. *' . $order->area . '*, ';
-                     }
-                     if ($order->city_id && $order->city) {
-                         $content .= 'г. *' . $order->city . '*' . PHP_EOL;
-                     }
-
-
-                     if (isset($notes['delivery_city']))
-                         $order->city = $notes['delivery_city'];
-
-                     if (isset($notes['delivery_city_id']))
-                         $order->city_id = $notes['delivery_city_id'];
+                    $content .= PHP_EOL . '🚚 ' . Yii::t('cart/default', 'DELIVERY') . ': *' . $notes['delivery'] . '*' . PHP_EOL;
+                    if ($order->area_id && $order->area) {
+                        $content .= 'обл. *' . $order->area . '*, ';
+                    }
+                    if ($order->city_id && $order->city) {
+                        $content .= 'г. *' . $order->city . '*' . PHP_EOL;
+                    }
 
 
-                     if (isset($notes['delivery_area']))
-                         $order->area = $notes['delivery_area'];
+                    if (isset($notes['delivery_city']))
+                        $order->city = $notes['delivery_city'];
 
-                     if (isset($notes['delivery_area_id']))
-                         $order->area_id = $notes['delivery_area_id'];
-
-
-                     if (isset($notes['delivery_warehouse']))
-                         $order->warehouse = $notes['delivery_warehouse'];
-
-                     if (isset($notes['delivery_warehouse_id']))
-                         $order->warehouse_id = $notes['delivery_warehouse_id'];
-
-                     if ($order->warehouse_id && $order->warehouse) {
-                         $warehouse = NovaPoshtaWarehouses::findOne(['Ref' => trim($order->warehouse_id)]);
-                         if ($warehouse) {
-                             $content .= '*' . $warehouse->DescriptionRu . '*' . PHP_EOL;
-                             $order->user_address = $warehouse->DescriptionRu;
-                         } else {
-                             $content .= Yii::t('cart/Order','WAREHOUSE').': *' . $order->warehouse . '*' . PHP_EOL;
-                             $order->user_address = $order->warehouse;
-                         }
-                     }
-                     $content .= PHP_EOL . '💰 '.Yii::t('cart/default','PAYMENT').': *' . $notes['payment'] . '*';
+                    if (isset($notes['delivery_city_id']))
+                        $order->city_id = $notes['delivery_city_id'];
 
 
-                     //$order->delivery = $notes['delivery'];
-                     //$order->payment = $notes['payment'];
-                     $order->delivery_id = $notes['delivery_id'];
-                     $order->payment_id = $notes['payment_id'];
-                     $order->user_phone = $notes['phone_number'];
-                     $order->user_name = $notes['name'];
-                     $order->status_id = 1;
-                     $order->save(false);
+                    if (isset($notes['delivery_area']))
+                        $order->area = $notes['delivery_area'];
 
-                     foreach ($this->orderProducts as $product) {
-                         /** @var Product $original */
-                         $original = $product->originalProduct;
-                         $add = $order->addProduct($original, $product->quantity, $original->getPrice());
-
-                     }
-                     OrderTemp::deleteAll(['id' => $user_id]);
-                     OrderProductTemp::deleteAll(['order_id' => $user_id]);
-
-                     $o = Order::findOne($order->id);
-                     $content .= PHP_EOL . PHP_EOL . Yii::t('telegram/default','ORDER_SUM',[$this->number_format($o->total_price),Yii::$app->currency->active['symbol']]);
+                    if (isset($notes['delivery_area_id']))
+                        $order->area_id = $notes['delivery_area_id'];
 
 
-                     $titleOwner = Yii::t('telegram/default','ORDER_NEW',CMS::idToNumber($o->id)) . PHP_EOL . PHP_EOL;
-                     $admins = $this->telegram->getAdminList();
-                     foreach ($admins as $admin) {
-                         $data2['chat_id'] = $admin;
-                         $data2['parse_mode'] = 'Markdown';
-                         $data2['text'] = $titleOwner . $content;
-                         $result2 = Request::sendMessage($data2);
-                     }
+                    if (isset($notes['delivery_warehouse']))
+                        $order->warehouse = $notes['delivery_warehouse'];
+
+                    if (isset($notes['delivery_warehouse_id']))
+                        $order->warehouse_id = $notes['delivery_warehouse_id'];
+
+                    if ($order->warehouse_id && $order->warehouse) {
+                        $warehouse = NovaPoshtaWarehouses::findOne(['Ref' => trim($order->warehouse_id)]);
+                        if ($warehouse) {
+                            $content .= '*' . $warehouse->DescriptionRu . '*' . PHP_EOL;
+                            $order->user_address = $warehouse->DescriptionRu;
+                        } else {
+                            $content .= Yii::t('cart/Order', 'WAREHOUSE') . ': *' . $order->warehouse . '*' . PHP_EOL;
+                            $order->user_address = $order->warehouse;
+                        }
+                    }
+                    $content .= PHP_EOL . '💰 ' . Yii::t('cart/default', 'PAYMENT') . ': *' . $notes['payment'] . '*';
+
+
+                    //$order->delivery = $notes['delivery'];
+                    //$order->payment = $notes['payment'];
+                    $order->delivery_id = $notes['delivery_id'];
+                    $order->payment_id = $notes['payment_id'];
+                    $order->user_phone = $notes['phone_number'];
+                    $order->user_name = $notes['name'];
+                    $order->status_id = 1;
+                    $order->save(false);
+
+                    foreach ($this->orderProducts as $product) {
+                        /** @var Product $original */
+                        $original = $product->originalProduct;
+                        $add = $order->addProduct($original, $product->quantity, $original->getPrice());
+
+                    }
+                    OrderTemp::deleteAll(['id' => $user_id]);
+                    OrderProductTemp::deleteAll(['order_id' => $user_id]);
+
+                    $o = Order::findOne($order->id);
+                    $content .= PHP_EOL . PHP_EOL . Yii::t('telegram/default', 'ORDER_SUM', [$this->number_format($o->total_price), Yii::$app->currency->active['symbol']]);
+
+
+                    $titleOwner = Yii::t('telegram/default', 'ORDER_NEW', CMS::idToNumber($o->id)) . PHP_EOL . PHP_EOL;
+                    $admins = $this->telegram->getAdminList();
+                    foreach ($admins as $admin) {
+                        $data2['chat_id'] = $admin;
+                        $data2['parse_mode'] = 'Markdown';
+                        $data2['text'] = $titleOwner . $content;
+                        $result2 = Request::sendMessage($data2);
+                    }
 
 
                     $data['parse_mode'] = 'Markdown';
@@ -613,7 +617,7 @@ class CheckOutCommand extends SystemCommand
                         ]);
 
                     }
-                    $data['text'] = Yii::t('telegram/default','MANAGER_CONTACT');
+                    $data['text'] = Yii::t('telegram/default', 'MANAGER_CONTACT');
 
                     $this->conversation->stop();
                     $result = Request::sendMessage($data);
